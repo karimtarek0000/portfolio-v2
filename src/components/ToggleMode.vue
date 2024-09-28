@@ -13,24 +13,24 @@
   </button>
 </template>
 
-<script lang="ts" setup>
+<script lang="tsx" setup>
 const moveClass = ref("translate-x-0");
 const cookie = useCookie("theme");
 
 // ------------ Computed ------------ //
-const isDark = computed(() => cookie.value === "dark");
+const isDark: ComputedRef<boolean> = computed(() => cookie.value === "dark");
 
 // ------------ Functions ------------ //
-const setModeHandler = () => {
+const setModeHandler = (): void => {
   cookie.value = cookie.value === "dark" ? "light" : "dark";
 };
 
-const moveHandler = () => {
+const moveHandler = (): void => {
   if (typeof cookie.value === "undefined") cookie.value = "dark";
   moveClass.value = isDark.value ? "translate-x-0" : "translate-x-12";
 };
 
-const toggleHandler = () => {
+const toggleHandler = (): void => {
   setModeHandler();
   moveHandler();
 };
