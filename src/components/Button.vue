@@ -22,10 +22,11 @@ withDefaults(defineProps<Props>(), {
   size: "lg",
 });
 
-const defaultClasses = "capitalize box-border rounded-lg";
+const defaultClasses = "capitalize box-border rounded-lg ";
 const variantClasses: Record<NonNullable<Props["variant"]>, string> = {
   primary: "text-primary-1 bg-primary-2",
-  outline: "border border-1 border-primary-2 text-primary-2 bg-transparent",
+  outline:
+    "outline outline-1 outline-primary-2 dark:outline-primary-3 text-primary-2 bg-transparent",
 };
 const sizeClasses: Record<NonNullable<Props["size"]>, string> = {
   md: "px-3 py-1",

@@ -3,6 +3,7 @@ import multiTheme from "./src/tailwind/mulit-theme";
 import themes from "./src/tailwind/themes";
 
 export default {
+  darkMode: ["selector", '[data-theme="dark"]'],
   content: [
     "./components/**/*.{js,vue,ts}",
     "./layouts/**/*.vue",

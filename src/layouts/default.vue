@@ -1,8 +1,8 @@
 <template>
   <div>
     <Navbar />
-    <Button class="mx-4">contact</Button>
-    <Button class="mx-4" variant="outline">contact</Button>
+    <Button class="mx-4" variant="outline">about me</Button>
+    <Button>contact</Button>
     <slot />
   </div>
 </template>

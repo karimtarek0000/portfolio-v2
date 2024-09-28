@@ -3,6 +3,7 @@ export default {
     primary: {
       1: "#000000",
       2: "#ffffff",
+      3: "#9A9A9A",
     },
   },
   light: {
