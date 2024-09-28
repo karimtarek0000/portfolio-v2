@@ -1,13 +1,14 @@
 <template>
   <button
+    ref=""
     @click="toggleHandler"
     class="relative flex items-center justify-between w-20 h-8 px-1 border rounded-full border-primary-2/80 border-1"
   >
     <RenderSVG iconName="dark-mode" sizes="h-[5rem]" fill="white" />
     <RenderSVG iconName="light-mode" sizes="h-[5rem]" fill="white" />
     <span :class="mergeClasses(classes, moveClass)">
-      <RenderSVG iconName="dark-mode" sizes="h-[5rem]" />
-      <!-- <RenderSVG iconName="light-mode" sizes="h-[5rem]" /> -->
+      <RenderSVG v-if="isDark" iconName="dark-mode" sizes="h-[5rem]" />
+      <RenderSVG v-else iconName="light-mode" sizes="h-[5rem]" />
     </span>
   </button>
 </template>
@@ -16,14 +17,24 @@
 const classes =
   "absolute flex items-center justify-center transition-transform block w-10 h-10 rounded-full bg-primary-2 -start-1 top-1/2 -translate-y-2/4";
 const moveClass = ref("translate-x-0");
+const cookie = useCookie("theme");
 
-const toggleHandler = () => {
-  if (moveClass.value === "translate-x-12") {
-    moveClass.value = "translate-x-0";
-    return;
-  }
-  moveClass.value = "translate-x-12";
+// ------------ Computed ------------ //
+const isDark = computed(() => cookie.value === "dark");
+
+// ------------ Functions ------------ //
+const setModeHandler = () => {
+  cookie.value = cookie.value === "dark" ? "light" : "dark";
 };
+const moveHandler = () => {
+  moveClass.value = isDark.value ? "translate-x-0" : "translate-x-12";
+};
+const toggleHandler = () => {
+  setModeHandler();
+  moveHandler();
+};
+
+moveHandler();
 </script>
 
 <style scoped></style>
