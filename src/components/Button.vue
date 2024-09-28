@@ -22,11 +22,12 @@ withDefaults(defineProps<Props>(), {
   size: "lg",
 });
 
-const defaultClasses = "capitalize box-border rounded-lg ";
+const defaultClasses =
+  "capitalize box-border rounded-lg focus-visible:ring-1 focus-visible:ring-yellow-100 transition-all focus-visible:ring-offset-1 focus-visible:ring-offset-black focus-visible:outline-none";
 const variantClasses: Record<NonNullable<Props["variant"]>, string> = {
-  primary: "text-primary-1 bg-primary-2",
+  primary: "text-primary-1 hover:bg-opacity-90 bg-primary-2",
   outline:
-    "outline outline-1 outline-primary-2 dark:outline-primary-3 text-primary-2 bg-transparent",
+    "border border-1 border-primary-2 dark:border-primary-3 hover:bg-primary-2 hover:text-primary-1 text-primary-2 bg-transparent",
 };
 const sizeClasses: Record<NonNullable<Props["size"]>, string> = {
   md: "px-3 py-1",
