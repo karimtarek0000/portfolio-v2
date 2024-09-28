@@ -1,6 +1,5 @@
 <template>
   <button
-    ref=""
     @click="toggleHandler"
     class="relative flex items-center justify-between w-20 h-8 px-1 border rounded-full border-primary-2/80 border-1"
   >
