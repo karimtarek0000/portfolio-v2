@@ -25,7 +25,7 @@ export const useToggleTheme = () => {
   useHead(() => {
     return {
       bodyAttrs: {
-        "data-theme": cookie.value || "dark",
+        "data-theme": cookie.value,
       },
     };
   });
