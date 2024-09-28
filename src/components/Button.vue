@@ -23,7 +23,7 @@ withDefaults(defineProps<Props>(), {
 });
 
 const defaultClasses =
-  "capitalize box-border rounded-lg focus-visible:ring-1 focus-visible:ring-yellow-100 transition-all focus-visible:ring-offset-1 focus-visible:ring-offset-black focus-visible:outline-none";
+  "capitalize inline-block box-border rounded-lg focus-visible:ring-1 focus-visible:ring-yellow-100 transition-all focus-visible:ring-offset-1 focus-visible:ring-offset-black focus-visible:outline-none";
 const variantClasses: Record<NonNullable<Props["variant"]>, string> = {
   primary: "text-primary-1 hover:bg-opacity-90 bg-primary-2",
   outline:
