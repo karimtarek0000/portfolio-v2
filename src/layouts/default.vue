@@ -1,11 +1,9 @@
 <template>
-  <div>
-    <!-- <Navbar /> -->
-    <ToggleMode />
+  <LayoutHeader />
+
+  <main class="layout-container">
     <slot />
-  </div>
+  </main>
+
+  <LayoutFooter />
 </template>
-
-<script lang="ts" setup></script>
-
-<style></style>
