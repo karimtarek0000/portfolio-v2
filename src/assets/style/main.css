@@ -1,3 +1,13 @@
 body {
-  @apply transition-colors bg-primary-1;
+  @apply transition-colors transition-opacity bg-primary-1;
+  background-repeat: no-repeat;
+  background-size: cover;
+  overflow-x: hidden;
+}
+
+body[data-theme="dark"] {
+  background-image: url("/images/pattern-dark.svg");
+}
+body[data-theme="light"] {
+  background-image: url("/images/pattern-light.svg");
 }

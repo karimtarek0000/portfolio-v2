@@ -1,9 +1,7 @@
 <template>
   <div>
-    <Navbar />
-    <ToggleMode class="mx-10" />
-    <!-- <Button class="mx-4" variant="outline">about me</Button>
-    <Button>contact</Button> -->
+    <!-- <Navbar /> -->
+    <ToggleMode />
     <slot />
   </div>
 </template>
