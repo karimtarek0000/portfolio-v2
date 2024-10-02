@@ -1,7 +1,5 @@
 <template>
-  <footer class="layout-container">
-    <h3 class="text-white">footer</h3>
-  </footer>
+  <footer class="layout-container"></footer>
 </template>
 
 <script lang="ts" setup></script>
