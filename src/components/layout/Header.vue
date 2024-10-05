@@ -22,9 +22,11 @@
 
       <h1 class="hero__title">
         <span class="graident">
-          <span class="text-orange-400">i'm,</span> karim tarek
+          <span class="text-[#FFC948]">i'm,</span> karim tarek
         </span>
-        <span class="graident text-md">frontend software engineer</span>
+        <span class="graident text-md text-nowrap"
+          >frontend software engineer</span
+        >
       </h1>
     </div>
   </header>
