@@ -11,7 +11,9 @@
   </header>
 </template>
 
-<script lang="ts" setup></script>
+<script lang="ts" setup>
+// import { Vue3Lottie } from 'vue3-lottie'
+</script>
 
 <style>
 .hero {
