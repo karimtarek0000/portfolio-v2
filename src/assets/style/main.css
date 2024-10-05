@@ -3,8 +3,7 @@ html {
 }
 
 body {
-  @apply relative transition-colors transition-opacity text-primary-2 bg-primary-1 font-poppins;
-  overflow-x: hidden;
+  @apply relative overflow-x-hidden transition-colors transition-opacity text-primary-2 bg-primary-1 font-poppins;
 }
 
 body::after {
