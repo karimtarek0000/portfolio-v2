@@ -3,15 +3,27 @@
     <LayoutNavbar />
 
     <div class="hero">
-      <client-only class="h-[200px] w-[200px]">
-        <Vue3Lottie
-          :animationLink="isDark ? hiAnimateForDark : hiAnimateForLight"
-          :height="200"
-          :width="200"
-        />
-      </client-only>
+      <div class="h-[550px] w-[400px]">
+        <client-only class="h-[400px] w-[400px]">
+          <Vue3Lottie
+            animationLink="https://lottie.host/98948314-ec15-4af8-9661-9d1b1f71a116/LHbb2MVhfx.json"
+            :height="400"
+            :width="400"
+          />
+        </client-only>
+        <client-only class="h-[200px] w-[200px]">
+          <Vue3Lottie
+            :animationLink="isDark ? hiAnimateForDark : hiAnimateForLight"
+            :height="200"
+            :width="200"
+          />
+        </client-only>
+      </div>
+
       <h1 class="hero__title">
-        <span class="graident">karim tarek</span>
+        <span class="graident">
+          <span class="text-orange-400">i'm,</span> karim tarek
+        </span>
         <span class="graident text-md">frontend software engineer</span>
       </h1>
     </div>

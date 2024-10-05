@@ -5,19 +5,18 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   app: {
     head: {
-      link: [
-        {
-          rel: "preload",
-          as: "style",
-          href: "https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap",
-        },
-        {
-          rel: "stylesheet",
-          href: "https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap",
-        },
-      ],
+      charset: "utf-8",
+      viewport: "width=device-width, initial-scale=1, maximum-scale=1",
+      titleTemplate: "title - %s",
     },
   },
-  modules: ["@nuxtjs/tailwindcss"],
+  modules: ["@nuxtjs/tailwindcss", "@nuxtjs/google-fonts"],
   css: ["~/assets/style/main.css"],
+
+  googleFonts: {
+    families: {
+      Poppins: [400, 500, 600],
+    },
+    preload: true,
+  },
 });

@@ -1,3 +1,7 @@
+html {
+  @apply box-border overflow-x-hidden;
+}
+
 body {
   @apply relative transition-colors transition-opacity text-primary-2 bg-primary-1 font-poppins;
   overflow-x: hidden;
@@ -5,7 +9,7 @@ body {
 
 body::after {
   content: "";
-  @apply absolute inset-0 z-0 w-full h-full bg-no-repeat bg-cover -z-10;
+  @apply absolute inset-0 translate-x-[100px] z-0 w-full h-full bg-center bg-no-repeat bg-cover -z-10;
 }
 
 body[data-theme="dark"]::after {
