@@ -1,5 +1,5 @@
 <template>
-  <header class="flex items-center justify-between layout-container">
+  <header class="layout-container header">
     <LayoutNavbar />
     <SharedToggleMode />
   </header>
@@ -7,4 +7,8 @@
 
 <script lang="ts" setup></script>
 
-<style></style>
+<style>
+.header {
+  @apply flex items-center justify-between;
+}
+</style>
