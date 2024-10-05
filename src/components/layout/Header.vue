@@ -1,6 +1,6 @@
 <template>
   <header class="layout-container">
-    <ToggleMode />
+    <SharedToggleMode />
   </header>
 </template>
 

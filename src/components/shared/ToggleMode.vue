@@ -1,14 +1,23 @@
 <template>
   <button v-if="false" @click="toggleHandler" :class="buttonClasses">
-    <RenderSVG
+    <SharedRenderSVG
       iconName="dark-mode"
       sizes="w-[1.2rem] h-[5rem]"
       :fill="isDark ? 'white' : 'black'"
     />
-    <RenderSVG iconName="light-mode" sizes="w-[1.2rem] h-[5rem]" fill="white" />
+    <SharedRenderSVG
+      iconName="light-mode"
+      sizes="w-[1.2rem] h-[5rem]"
+      fill="white"
+    />
     <span :class="mergeClasses(spanClasses, moveClass)">
-      <RenderSVG v-if="isDark" iconName="dark-mode" sizes="h-[5rem]" />
-      <RenderSVG v-else iconName="light-mode" sizes="h-[5rem]" fill="white" />
+      <SharedRenderSVG v-if="isDark" iconName="dark-mode" sizes="h-[5rem]" />
+      <SharedRenderSVG
+        v-else
+        iconName="light-mode"
+        sizes="h-[5rem]"
+        fill="white"
+      />
     </span>
   </button>
 </template>

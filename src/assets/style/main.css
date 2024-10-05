@@ -1,5 +1,5 @@
 body {
-  @apply transition-colors transition-opacity bg-primary-1;
+  @apply transition-colors transition-opacity bg-primary-1 font-poppins;
   background-repeat: no-repeat;
   background-size: cover;
   overflow-x: hidden;
