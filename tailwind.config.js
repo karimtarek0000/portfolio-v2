@@ -16,6 +16,9 @@ export default {
     fontFamily: {
       poppins: ["Poppins", "sans-serif"],
     },
+    fontSize: {
+      lg: "4rem",
+    },
     extend: {},
   },
   plugins: [

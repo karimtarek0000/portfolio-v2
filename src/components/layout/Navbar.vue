@@ -1,10 +1,11 @@
 <template>
-  <nav>
+  <nav class="navbar">
     <SharedRenderSVG
       iconName="logo-large"
       sizes="w-[3.5rem] h-[10rem]"
       :fill="isDark ? 'white' : 'black'"
     />
+    <SharedToggleMode />
   </nav>
 </template>
 
@@ -12,4 +13,8 @@
 const { isDark } = useToggleTheme();
 </script>
 
-<style></style>
+<style>
+.navbar {
+  @apply flex items-center justify-between w-full;
+}
+</style>
