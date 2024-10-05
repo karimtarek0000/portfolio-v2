@@ -18,6 +18,7 @@ export default {
     },
     fontSize: {
       lg: "4rem",
+      md: "3rem",
     },
     extend: {},
   },
