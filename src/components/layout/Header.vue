@@ -1,5 +1,6 @@
 <template>
-  <header class="layout-container">
+  <header class="flex items-center justify-between layout-container">
+    <LayoutNavbar />
     <SharedToggleMode />
   </header>
 </template>

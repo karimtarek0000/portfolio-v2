@@ -5,12 +5,12 @@ body {
   overflow-x: hidden;
 }
 
-body[data-theme="dark"] {
+/* body[data-theme="dark"] {
   background-image: url("/images/pattern-dark.svg");
 }
 body[data-theme="light"] {
   background-image: url("/images/pattern-light.svg");
-}
+} */
 
 .layout-container {
   @apply container mx-auto;

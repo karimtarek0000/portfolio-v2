@@ -1,5 +1,5 @@
 <template>
-  <button v-if="false" @click="toggleHandler" :class="buttonClasses">
+  <button @click="toggleHandler" :class="buttonClasses">
     <SharedRenderSVG
       iconName="dark-mode"
       sizes="w-[1.2rem] h-[5rem]"
