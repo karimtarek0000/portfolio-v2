@@ -12,10 +12,10 @@ body::after {
 }
 
 body[data-theme="dark"]::after {
-  background-image: url("/images/pattern-dark.svg");
+  /* background-image: url("/images/pattern-dark.svg"); */
 }
 body[data-theme="light"]::after {
-  background-image: url("/images/pattern-light.svg");
+  /* background-image: url("/images/pattern-light.svg"); */
 }
 
 .layout-container {

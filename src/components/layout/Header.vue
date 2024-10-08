@@ -1,8 +1,9 @@
 <template>
-  <header class="layout-container h-dvh">
+  <header class="overflow-hidden layout-container h-dvh">
     <LayoutNavbar />
 
     <div class="hero">
+      <!-- ANIMATIONS -->
       <div class="h-[550px] w-[400px]">
         <client-only class="h-[400px] w-[400px]">
           <Vue3Lottie
@@ -20,6 +21,7 @@
         </client-only>
       </div>
 
+      <!-- TITLE -->
       <h1 class="hero__title">
         <span class="graident">
           <span class="text-[#FFC948]">i'm,</span> karim tarek
@@ -29,7 +31,7 @@
         >
       </h1>
 
-      <!-- ICONS -->
+      <!-- SOCIAL ICONS -->
       <div class="flex justify-center gap-x-5">
         <a
           v-for="{ title, iconName, link } in socialIcons"
@@ -46,6 +48,17 @@
           />
         </a>
       </div>
+
+      <!-- WAVE -->
+      <client-only>
+        <div class="hero__wave">
+          <Vue3Lottie
+            animationLink="https://lottie.host/9096d992-b888-46be-9cba-ead041278377/WwE7Czpczs.json"
+            :scale="1"
+            :spead="0.1"
+          />
+        </div>
+      </client-only>
     </div>
   </header>
 </template>
@@ -80,10 +93,13 @@ const hiAnimateForLight =
 
 <style>
 .hero {
-  @apply flex flex-col items-center justify-center;
+  @apply flex flex-col items-center justify-center relative;
 }
 .hero__title {
   @apply flex flex-col text-center justify-center text-lg font-bold capitalize select-none;
+}
+.hero__wave {
+  @apply absolute opacity-50 pointer-events-none top-2/3 -translate-y-2/4 start-0 end-0 -z-10;
 }
 .graident {
   @apply text-transparent bg-clip-text bg-gradient-to-t 

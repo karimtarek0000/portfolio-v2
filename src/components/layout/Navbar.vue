@@ -15,6 +15,6 @@ const { isDark } = useToggleTheme();
 
 <style>
 .navbar {
-  @apply flex items-center justify-between w-full;
+  @apply flex items-center px-3 justify-between w-full;
 }
 </style>
