@@ -28,6 +28,24 @@
           >frontend software engineer</span
         >
       </h1>
+
+      <!-- ICONS -->
+      <div class="flex justify-center gap-x-5">
+        <a
+          v-for="{ title, iconName, link } in socialIcons"
+          :key="title"
+          class="block"
+          :href="link"
+          :alt="title"
+          target="_blank"
+        >
+          <SharedRenderSVG
+            :iconName="iconName"
+            sizes="w-[2rem] h-[5rem]"
+            :fill="isDark ? 'white' : 'black'"
+          />
+        </a>
+      </div>
     </div>
   </header>
 </template>
@@ -35,6 +53,24 @@
 <script lang="ts" setup>
 import { Vue3Lottie } from "vue3-lottie";
 const { isDark } = useToggleTheme();
+
+const socialIcons = [
+  {
+    title: "github",
+    iconName: "github",
+    link: "",
+  },
+  {
+    title: "linkedin",
+    iconName: "linkedin",
+    link: "",
+  },
+  {
+    title: "whatsapp",
+    iconName: "whatsapp",
+    link: "",
+  },
+];
 
 const hiAnimateForDark =
   "https://lottie.host/d8dd715b-f33c-4941-ac2c-c28cb9a5ceb3/RhmygCE1tr.json";
