@@ -1,10 +1,12 @@
 <template>
   <nav class="navbar">
-    <SharedRenderSVG
-      iconName="logo-large"
-      sizes="w-[3.5rem] h-[10rem]"
-      :fill="isDark ? 'white' : 'black'"
-    />
+    <NuxtLink to="/">
+      <SharedRenderSVG
+        iconName="logo-large"
+        sizes="w-[3.5rem] h-[10rem]"
+        :fill="isDark ? 'white' : 'black'"
+      />
+    </NuxtLink>
     <SharedToggleMode />
   </nav>
 </template>

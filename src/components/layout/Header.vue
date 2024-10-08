@@ -32,18 +32,18 @@
       </h1>
 
       <!-- SOCIAL ICONS -->
-      <div class="flex justify-center gap-x-5">
+      <div class="flex justify-center mt-5 gap-x-5">
         <a
           v-for="{ title, iconName, link } in socialIcons"
           :key="title"
-          class="block"
+          class="transition-transform duration-300 hover:-translate-y-1"
           :href="link"
           :alt="title"
           target="_blank"
         >
           <SharedRenderSVG
             :iconName="iconName"
-            sizes="w-[2rem] h-[5rem]"
+            sizes="w-[2.4rem] h-[2.4rem]"
             :fill="isDark ? 'white' : 'black'"
           />
         </a>
@@ -81,7 +81,7 @@ const socialIcons = [
   {
     title: "whatsapp",
     iconName: "whatsapp",
-    link: "",
+    link: "https://wa.me/12345678900",
   },
 ];
 
