@@ -2,7 +2,8 @@
 
 @layer components {
   .glassmorphism {
-    @apply bg-white/5 border h-[540px] border-white/10 shadow-primary-2/5 shadow-2xl backdrop-blur-lg h-[540px] rounded-lg;
+    @apply bg-white/5 border h-[540px] border-white/10 shadow-primary-2/5 
+    shadow-2xl backdrop-blur-lg h-[540px] rounded-lg;
   }
 }
 
