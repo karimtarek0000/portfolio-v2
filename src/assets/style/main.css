@@ -1,3 +1,11 @@
+@tailwind components;
+
+@layer components {
+  .glassmorphism {
+    @apply bg-white/5 border h-[540px] border-white/10 shadow-primary-2/5 shadow-2xl backdrop-blur-lg h-[540px] rounded-lg;
+  }
+}
+
 html {
   @apply box-border overflow-x-hidden text-[9px] sm:text-[16px];
 }
@@ -12,10 +20,10 @@ body::after {
 }
 
 body[data-theme="dark"]::after {
-  /* background-image: url("/images/pattern-dark.svg"); */
+  background-image: url("/images/pattern-dark.svg");
 }
 body[data-theme="light"]::after {
-  /* background-image: url("/images/pattern-light.svg"); */
+  background-image: url("/images/pattern-light.svg");
 }
 
 .layout-container {
