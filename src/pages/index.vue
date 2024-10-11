@@ -2,20 +2,20 @@
   <section class="skills-section glassmorphism">
     <header class="skills-section__header">
       <h2 class="skills-section__header__title graident">skills</h2>
-      <p class="skills-section__header__subtitle">
-        The skills, tools and technologies
-      </p>
+      <p class="skills-section__header__subtitle">Tools and technologies</p>
     </header>
 
     <!-- Body -->
     <figure class="skills-section__body">
       <figcaption
-        v-for="{ title, iconName } in skills"
+        v-for="{ title, iconName, color } in skills"
         :key="title"
         class="skills-section__body__item"
       >
         <div class="skills-section__body__item__icon">
-          <SharedRenderSVG :iconName="iconName" sizes="h-[4rem] w-[4rem]" />
+          <div :class="['p-5 overflow-hidden  rounded-full', color]">
+            <SharedRenderSVG :iconName="iconName" sizes="h-[4rem] w-[4rem]" />
+          </div>
         </div>
         <span class="skills-section__body__item__title" v-text="title" />
       </figcaption>
@@ -27,48 +27,69 @@
 const skills = [
   {
     title: "html",
-    iconName: "nextjs",
+    iconName: "html",
+    color: "bg-[#E44E26]",
   },
   {
     title: "css",
-    iconName: "github",
+    iconName: "css",
+    color: "bg-[#1472B6]",
   },
   {
     title: "sass",
-    iconName: "github",
+    iconName: "sass",
+    color: "bg-[#40B883]",
   },
   {
-    title: "bootstarp",
-    iconName: "github",
+    title: "bootstrap",
+    iconName: "bootstrap",
+    color: "bg-[#563D7C]",
   },
   {
     title: "tailwindcss",
-    iconName: "github",
+    iconName: "tailwindcss",
+    color: "bg-[#36495E]",
   },
   {
     title: "javascript",
-    iconName: "github",
+    iconName: "js",
+    color: "bg-[#FFCA27]",
   },
   {
     title: "typescript",
-    iconName: "github",
+    iconName: "typescript",
+    color: "bg-[#3278C6]",
   },
   {
     title: "vue.js",
-    iconName: "github",
+    iconName: "vue",
+    color: "bg-[#36495E]/60",
   },
-  // {
-  //   title: "react.js",
-  //   iconName: "github",
-  // },
-  // {
-  //   title: "nuxt.js",
-  //   iconName: "github",
-  // },
-  // {
-  //   title: "next.js",
-  //   iconName: "github",
-  // },
+  {
+    title: "react.js",
+    iconName: "react",
+    color: "bg-black",
+  },
+  {
+    title: "nuxt.js",
+    iconName: "nuxtjs",
+    color: "bg-white",
+  },
+  {
+    title: "next.js",
+    iconName: "nextjs",
+    color: "bg-white",
+  },
+  {
+    title: "node.js/express",
+    iconName: "nodejs",
+    color: "bg-black",
+  },
+  {
+    title: "mongodb database",
+    iconName: "mongodb",
+    color: "bg-[#13AA52]",
+  },
 ];
 </script>
 
@@ -91,15 +112,15 @@ const skills = [
 
 /* Body */
 .skills-section__body {
-  @apply content-center justify-center h-full flex flex-wrap;
+  @apply content-center justify-center gap-y-5 h-full flex flex-wrap;
 }
 .skills-section__body__item {
-  @apply flex flex-col items-center p-1 w-full md:basis-1/2 lg:basis-1/4;
+  @apply flex flex-col items-center p-1 basis-1/2 lg:basis-1/4;
 }
 .skills-section__body__item__icon {
-  @apply p-1 rounded-full bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600;
+  @apply p-1 rounded-full ease-in-out duration-300 transition-transform lg:hover:-translate-y-3  bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600;
 }
 .skills-section__body__item__title {
-  @apply my-2;
+  @apply my-2 capitalize;
 }
 </style>

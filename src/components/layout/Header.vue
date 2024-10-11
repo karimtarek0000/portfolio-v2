@@ -5,7 +5,7 @@
     <div class="hero">
       <!-- ANIMATIONS -->
       <div class="h-[550px] w-[400px]">
-        <client-only class="h-[400px] w-[400px]">
+        <!-- <client-only class="h-[400px] w-[400px]">
           <Vue3Lottie
             animationLink="https://lottie.host/98948314-ec15-4af8-9661-9d1b1f71a116/LHbb2MVhfx.json"
             :height="400"
@@ -18,7 +18,7 @@
             :height="200"
             :width="200"
           />
-        </client-only>
+        </client-only> -->
       </div>
 
       <!-- TITLE -->
@@ -50,7 +50,7 @@
       </div>
 
       <!-- WAVE -->
-      <client-only>
+      <!-- <client-only>
         <div class="hero__wave">
           <Vue3Lottie
             animationLink="https://lottie.host/9096d992-b888-46be-9cba-ead041278377/WwE7Czpczs.json"
@@ -58,7 +58,7 @@
             :spead="0.1"
           />
         </div>
-      </client-only>
+      </client-only> -->
     </div>
   </header>
 </template>
