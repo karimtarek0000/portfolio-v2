@@ -71,6 +71,16 @@ const skills = [
     color: "bg-black",
   },
   {
+    title: "redux",
+    iconName: "redux",
+    color: "bg-white",
+  },
+  {
+    title: "pinia",
+    iconName: "pinia",
+    color: "bg-[#52A256]",
+  },
+  {
     title: "nuxt.js",
     iconName: "nuxtjs",
     color: "bg-white",
@@ -89,6 +99,11 @@ const skills = [
     title: "mongodb database",
     iconName: "mongodb",
     color: "bg-[#13AA52]",
+  },
+  {
+    title: "docker",
+    iconName: "docker",
+    color: "bg-[#1794D4]",
   },
 ];
 </script>
