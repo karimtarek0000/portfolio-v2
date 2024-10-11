@@ -1,5 +1,5 @@
 <template>
-  <header class="overflow-hidden layout-container lg:h-dvh">
+  <header class="h-[80vh] overflow-hidden layout-container lg:h-dvh">
     <LayoutNavbar />
 
     <div class="hero">
@@ -91,7 +91,7 @@ const hiAnimateForLight =
   "https://lottie.host/4773445f-c908-48a1-9bf1-54cd7aba786f/yhof6leJ5S.json";
 </script>
 
-<style>
+<style scoped>
 .hero {
   @apply flex flex-col items-center justify-center relative;
 }
@@ -100,9 +100,5 @@ const hiAnimateForLight =
 }
 .hero__wave {
   @apply absolute opacity-50 pointer-events-none top-2/3 -translate-y-2/4 start-0 end-0 -z-10;
-}
-.graident {
-  @apply text-transparent bg-clip-text bg-gradient-to-t 
-  from-primary-gradient1/60 from-10% to-[rgb(var(--primary-2))];
 }
 </style>
