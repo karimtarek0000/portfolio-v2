@@ -2,7 +2,7 @@
   <section class="skills-section glassmorphism">
     <header class="skills-section__header">
       <h2 class="skills-section__header__title graident">skills</h2>
-      <p class="skills-section__header__subtitle">Tools and technologies</p>
+      <p class="skills-section__header__subtitle">Languages and technologies</p>
     </header>
 
     <!-- Body -->
@@ -38,7 +38,7 @@ const skills = [
   {
     title: "sass",
     iconName: "sass",
-    color: "bg-[#40B883]",
+    color: "bg-white",
   },
   {
     title: "bootstrap",
