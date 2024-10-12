@@ -49,13 +49,25 @@
         </a>
       </div>
 
+      <SharedButton
+        as="a"
+        href="https://drive.google.com/uc?export=download&id=1x6uYDQssXpTFXOgMInQfElMgTmQMhlS-"
+        download
+        class="flex items-center mt-10 gap-x-2"
+      >
+        Download CV
+        <SharedRenderSVG
+          iconName="downloadcv"
+          sizes="h-[2rem] w-[2rem]"
+          :fill="isDark ? 'black' : 'white'"
+        />
+      </SharedButton>
+
       <!-- WAVE -->
       <!-- <client-only>
         <div class="hero__wave">
           <Vue3Lottie
             animationLink="https://lottie.host/9096d992-b888-46be-9cba-ead041278377/WwE7Czpczs.json"
-            :scale="1"
-            :spead="0.1"
           />
         </div>
       </client-only> -->
@@ -99,6 +111,6 @@ const hiAnimateForLight =
   @apply flex flex-col text-center justify-center text-lg font-bold capitalize select-none;
 }
 .hero__wave {
-  @apply absolute opacity-50 pointer-events-none top-2/3 -translate-y-2/4 start-0 end-0 -z-10;
+  @apply absolute opacity-40 pointer-events-none top-2/3 -translate-y-2/4 start-0 end-0 -z-10;
 }
 </style>
