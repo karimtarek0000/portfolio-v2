@@ -1,5 +1,5 @@
 <template>
-  <header class="h-[80vh] overflow-hidden layout-container lg:h-dvh">
+  <header class="overflow-hidden layout-container lg:h-dvh">
     <LayoutNavbar />
 
     <div class="hero">

@@ -112,7 +112,7 @@ const skills = [
 
 <style scoped>
 .skills-section {
-  @apply px-3 py-10 my-20;
+  @apply px-3 py-10 mt-20;
 }
 
 /* Body */

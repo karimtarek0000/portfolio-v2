@@ -11,7 +11,7 @@
 }
 
 html {
-  @apply box-border overflow-x-hidden text-[11px] sm:text-[16px];
+  @apply box-border overflow-x-hidden text-[9px] sm:text-[12px] md:text-[16px];
 }
 
 body {
@@ -31,5 +31,5 @@ body[data-theme="light"]::after {
 }
 
 .layout-container {
-  @apply container px-1 mx-auto;
+  @apply container px-2 mx-auto sm:px-1;
 }

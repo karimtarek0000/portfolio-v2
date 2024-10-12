@@ -1,7 +1,7 @@
 <template>
-  <section class="py-10 glassmorphism">
+  <section class="py-10 mt-20 glassmorphism">
     <SharedHeader title="about" />
-    <p class="px-5 text-sm font-normal">
+    <p class="px-5 text-sm font-normal select-none dark:text-gray-300">
       Lorem ipsum dolor sit amet consectetur adipisicing elit. Eum ipsam vitae
       nemo, commodi voluptates cumque earum consequuntur enim quia quibusdam
       omnis odio possimus doloribus sapiente ut. Doloremque repellat corrupti ea
