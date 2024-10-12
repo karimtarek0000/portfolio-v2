@@ -8,19 +8,19 @@
 <script lang="ts" setup>
 defineProps<{
   title: string;
-  subTitle: string;
+  subTitle?: string;
 }>();
 </script>
 
 <style scoped>
 .header {
-  @apply flex flex-col items-center mt-5 mb-10 lg:mb-20;
+  @apply flex flex-col items-center;
 }
 .header__title {
   @apply font-medium text-center capitalize text-md;
   letter-spacing: 2px;
 }
 .header__subtitle {
-  @apply text-sm;
+  @apply text-sm mb-10;
 }
 </style>

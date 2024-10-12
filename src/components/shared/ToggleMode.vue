@@ -11,11 +11,15 @@
       fill="white"
     />
     <span :class="mergeClasses(spanClasses, moveClass)">
-      <SharedRenderSVG v-if="isDark" iconName="dark-mode" sizes="h-[5rem]" />
+      <SharedRenderSVG
+        v-if="isDark"
+        iconName="dark-mode"
+        sizes="h-[5rem] w-[1.5rem]"
+      />
       <SharedRenderSVG
         v-else
         iconName="light-mode"
-        sizes="h-[5rem]"
+        sizes="h-[5rem] w-[1.5rem]"
         fill="white"
       />
     </span>
@@ -29,5 +33,5 @@ const { isDark, moveClass, toggleHandler } = useToggleTheme();
 const buttonClasses =
   "relative flex items-center justify-between w-20 h-8 px-2 transition-all border rounded-full focus-visible:ring-1 focus-visible:ring-yellow-100 focus-visible:ring-offset-1 focus-visible:ring-offset-black focus-visible:outline-none border-primary-2/80 border-1";
 const spanClasses =
-  "absolute flex items-center justify-center transition-transform block w-10 h-10 rounded-full bg-primary-2 -start-1 top-1/2 -translate-y-2/4";
+  "absolute flex items-center justify-center ease-in-out duration-500 transition-transform block w-10 h-10 rounded-full bg-primary-2 -start-1 top-1/2 -translate-y-2/4";
 </script>
