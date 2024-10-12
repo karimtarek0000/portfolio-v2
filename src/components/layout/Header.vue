@@ -1,24 +1,28 @@
 <template>
   <header class="overflow-hidden layout-container lg:h-dvh">
+    <!-- ------------------ -->
+    <!-- ------NAVBAR------ -->
+    <!-- ------------------ -->
     <LayoutNavbar />
 
     <div class="hero">
       <!-- ANIMATIONS -->
-      <div class="h-[550px] w-[400px]">
-        <!-- <client-only class="h-[400px] w-[400px]">
+      <div
+        class="h-[400px] w-[400px] mt-32 *:shrink-0 flex flex-col justify-center items-center"
+      >
+        <client-only>
           <Vue3Lottie
-            animationLink="https://lottie.host/98948314-ec15-4af8-9661-9d1b1f71a116/LHbb2MVhfx.json"
-            :height="400"
-            :width="400"
+            style="transform: translate3d(0px, 130px, 0px)"
+            animationLink="https://lottie.host/707ad562-0d36-49dc-bc46-b46fa8ce1896/fGbyNuf4y4.json"
           />
         </client-only>
-        <client-only class="h-[200px] w-[200px]">
+        <client-only>
           <Vue3Lottie
-            :animationLink="isDark ? hiAnimateForDark : hiAnimateForLight"
-            :height="200"
-            :width="200"
+            style="transform: translate3d(0px, -70px, 0px)"
+            animationLink="https://lottie.host/eca2fac4-6448-4276-8f61-783f40d33d66/n7MP5EFvxv.json"
+            :loop="false"
           />
-        </client-only> -->
+        </client-only>
       </div>
 
       <!-- TITLE -->
@@ -49,6 +53,7 @@
         </a>
       </div>
 
+      <!-- DOWNLOAD CV -->
       <SharedButton
         as="a"
         href="https://drive.google.com/uc?export=download&id=1x6uYDQssXpTFXOgMInQfElMgTmQMhlS-"
@@ -62,15 +67,6 @@
           :fill="isDark ? 'black' : 'white'"
         />
       </SharedButton>
-
-      <!-- WAVE -->
-      <!-- <client-only>
-        <div class="hero__wave">
-          <Vue3Lottie
-            animationLink="https://lottie.host/9096d992-b888-46be-9cba-ead041278377/WwE7Czpczs.json"
-          />
-        </div>
-      </client-only> -->
     </div>
   </header>
 </template>
@@ -96,11 +92,6 @@ const socialIcons = [
     link: "https://wa.me/12345678900",
   },
 ];
-
-const hiAnimateForDark =
-  "https://lottie.host/d8dd715b-f33c-4941-ac2c-c28cb9a5ceb3/RhmygCE1tr.json";
-const hiAnimateForLight =
-  "https://lottie.host/4773445f-c908-48a1-9bf1-54cd7aba786f/yhof6leJ5S.json";
 </script>
 
 <style scoped>
@@ -109,8 +100,5 @@ const hiAnimateForLight =
 }
 .hero__title {
   @apply flex flex-col text-center justify-center text-lg font-bold capitalize select-none;
-}
-.hero__wave {
-  @apply absolute opacity-40 pointer-events-none top-2/3 -translate-y-2/4 start-0 end-0 -z-10;
 }
 </style>
