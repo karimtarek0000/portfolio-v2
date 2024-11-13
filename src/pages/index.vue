@@ -1,6 +1,6 @@
 <template>
-  <SectionsSkills />
-  <SectionsAbout />
+  <!-- <SectionsSkills />
+  <SectionsAbout /> -->
   <SectionsExperience />
 </template>
 
