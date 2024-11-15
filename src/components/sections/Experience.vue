@@ -4,12 +4,11 @@
 
     <div class="timeline">
       <div class="timeline__wrapper">
-        <div class="timeline__wrapper__timeline"></div>
+        <div class="timeline__wrapper__timeline" />
         <div class="timeline__wrapper__line" />
       </div>
       <div class="timeline__wrapper">
-        dd
-        <div class="timeline__wrapper__timeline"></div>
+        <div class="timeline__wrapper__timeline" />
         <div class="timeline__wrapper__line" />
       </div>
     </div>
