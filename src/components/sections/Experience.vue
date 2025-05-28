@@ -24,55 +24,39 @@ const formatDate = (date: string) => {
   <section class="py-10 mt-20 glassmorphism">
     <!-- <SharedHeader title="experience" /> -->
 
-    <div class="mt-8 space-y-8">
-      <div v-for="item in experience" :key="item.company" class="group">
-        <div class="flex justify-center gap-x-4">
+    <div class="timeline">
+      <div
+        v-for="item in experience"
+        :key="item.company"
+        class="timeline__item group"
+      >
+        <div class="timeline__container">
           <!-- Timeline dot and line -->
-          <div class="flex flex-col items-center">
-            <div
-              class="flex items-center justify-center w-8 h-8 transition-all duration-500 rounded-full dark:bg-gray-800/80 ring-2 ring-blue-400/20 group-hover:ring-blue-400/50 group-hover:shadow-lg group-hover:shadow-blue-500/10"
-            >
-              <div
-                class="w-3 h-3 transition-all duration-500 rounded-full dark:bg-blue-400 group-hover:scale-110 group-hover:bg-primary-2 bg-primary-3"
-              ></div>
+          <div class="timeline__dot-wrapper">
+            <div class="timeline__dot">
+              <div class="timeline__inner-dot"></div>
             </div>
-            <div
-              class="w-[2px] h-24 my-2 bg-gradient-to-b from-blue-400/30 via-gray-700 to-transparent"
-            ></div>
+            <div class="timeline__line"></div>
           </div>
 
           <!-- Content section -->
-          <div
-            class="w-full max-w-md px-5 py-4 transition-all duration-300 border-l-2 border-gray-700/50 rounded-r-md backdrop-blur-sm group-hover:border-primary-2 group-hover:translate-x-1 dark:group-hover:bg-gray-800/30 group-hover:bg-gray-800/10"
-          >
+          <div class="timeline__content">
             <!-- Header with company and date -->
-            <div
-              class="flex flex-wrap items-baseline justify-between gap-2 pb-2 border-b border-gray-700/50"
-            >
-              <h3
-                class="text-sm font-bold dark:text-blue-400 dark:group-hover:text-blue-300"
-              >
-                {{ item.company }}
-              </h3>
-              <span class="px-2 py-1 tracking-wider text-primary-3">
+            <div class="timeline__header">
+              <h3 class="timeline__company">{{ item.company }}</h3>
+              <span class="timeline__date">
                 {{ formatDate(item.startDate) }} -
                 {{ formatDate(item.endDate) }}
               </span>
             </div>
 
             <!-- Job details -->
-            <div class="mt-3 space-y-2">
-              <p class="flex items-center text-sm font-medium text-primary-2">
-                <span
-                  class="inline-block w-1.5 h-1.5 bg-primary-2 rounded-full -ms-0.5 me-2"
-                ></span>
+            <div class="timeline__body">
+              <p class="timeline__position">
+                <span class="timeline__bullet"></span>
                 {{ item.position }}
               </p>
-              <p
-                class="pl-3 text-sm leading-relaxed transition-all duration-300 border-l border-gray-700 group-hover:border-primary-2 text-primary-3"
-              >
-                {{ item.description }}
-              </p>
+              <p class="timeline__description">{{ item.description }}</p>
             </div>
           </div>
         </div>
@@ -82,5 +66,66 @@ const formatDate = (date: string) => {
 </template>
 
 <style>
-/* No custom CSS needed - using only Tailwind classes */
+/* Timeline component using BEM methodology with Tailwind @apply */
+.timeline {
+  @apply mt-8 space-y-8;
+}
+
+.timeline__container {
+  @apply flex justify-center gap-x-4;
+}
+
+.timeline__dot-wrapper {
+  @apply flex flex-col items-center;
+}
+
+.timeline__dot {
+  @apply flex items-center justify-center w-8 h-8 transition-all duration-500 rounded-full 
+         dark:bg-gray-800/80 ring-2 ring-blue-400/20 group-hover:ring-blue-400/50 
+         group-hover:shadow-lg group-hover:shadow-blue-500/10;
+}
+
+.timeline__inner-dot {
+  @apply w-3 h-3 transition-all duration-500 rounded-full dark:bg-blue-400 
+         group-hover:scale-110 group-hover:bg-primary-2 bg-primary-3;
+}
+
+.timeline__line {
+  @apply w-[2px] h-24 my-2 bg-gradient-to-b from-blue-400/30 via-gray-700 to-transparent;
+}
+
+.timeline__content {
+  @apply w-full max-w-md px-5 py-4 transition-all duration-300 border-l-2 border-gray-700/50 
+         rounded-r-md backdrop-blur-sm group-hover:border-primary-2 group-hover:translate-x-1 
+         dark:group-hover:bg-gray-800/30 group-hover:bg-gray-800/10 sm:w-[25rem];
+}
+
+.timeline__header {
+  @apply flex flex-wrap items-baseline justify-between gap-2 pb-2 border-b border-gray-700/50;
+}
+
+.timeline__company {
+  @apply text-sm font-bold dark:text-blue-400 dark:group-hover:text-blue-300;
+}
+
+.timeline__date {
+  @apply px-2 py-1 tracking-wider text-primary-3;
+}
+
+.timeline__body {
+  @apply mt-3 space-y-2;
+}
+
+.timeline__position {
+  @apply flex items-center text-sm font-medium text-primary-2;
+}
+
+.timeline__bullet {
+  @apply inline-block w-1.5 h-1.5 bg-primary-2 rounded-full -ms-0.5 me-2;
+}
+
+.timeline__description {
+  @apply pl-3 text-sm leading-relaxed transition-all duration-300 border-l border-gray-700 
+         group-hover:border-primary-2 text-primary-3;
+}
 </style>
