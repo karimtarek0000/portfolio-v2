@@ -87,7 +87,6 @@ const formatDate = (date: string) => {
 </template>
 
 <style>
-/* Timeline component using BEM methodology with Tailwind @apply */
 .timeline {
   @apply mt-8 space-y-8;
 }
