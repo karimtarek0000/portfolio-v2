@@ -2,7 +2,7 @@
 const experience = shallowRef([
   {
     company: 'HectarApp',
-    position: 'Software Engineer',
+    position: 'Frontend Engineer',
     startDate: '2022-01-01',
     endDate: 'Present',
     description: 'Developing and maintaining web applications.',
@@ -10,7 +10,7 @@ const experience = shallowRef([
 ])
 
 // Add function to format dates nicely
-const formatDate = date => {
+const formatDate = (date: string) => {
   if (date === 'Present') return date
   const d = new Date(date)
   return new Intl.DateTimeFormat('en', {
@@ -28,7 +28,7 @@ const formatDate = date => {
       <div v-for="item in experience" :key="item.company" class="group">
         <div class="flex justify-center gap-x-4">
           <!-- Timeline dot and line -->
-          <!-- <div class="flex flex-col items-center">
+          <div class="flex flex-col items-center">
             <div
               class="flex items-center justify-center w-8 h-8 transition-all duration-500 rounded-full bg-gray-800/80 ring-2 ring-blue-400/20 group-hover:ring-blue-400/50 group-hover:shadow-lg group-hover:shadow-blue-500/10"
             >
@@ -39,7 +39,7 @@ const formatDate = date => {
             <div
               class="w-[2px] h-24 my-2 bg-gradient-to-b from-blue-400/30 via-gray-700 to-transparent"
             ></div>
-          </div> -->
+          </div>
 
           <!-- Content section -->
           <div
@@ -54,9 +54,7 @@ const formatDate = date => {
               >
                 {{ item.company }}
               </h3>
-              <span
-                class="px-2 py-1 tracking-wider text-gray-300 rounded-full bg-gray-800/70"
-              >
+              <span class="px-2 py-1 tracking-wider text-primary-3">
                 {{ formatDate(item.startDate) }} -
                 {{ formatDate(item.endDate) }}
               </span>
