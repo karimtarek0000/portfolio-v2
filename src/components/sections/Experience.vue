@@ -22,7 +22,7 @@ const formatDate = date => {
 
 <template>
   <section class="py-10 mt-20 glassmorphism">
-    <SharedHeader title="experience" />
+    <!-- <SharedHeader title="experience" /> -->
 
     <div class="mt-8 space-y-8">
       <div v-for="item in experience" :key="item.company" class="group">
@@ -43,14 +43,14 @@ const formatDate = date => {
 
           <!-- Content section -->
           <div
-            class="w-full max-w-md px-5 py-4 transition-all duration-300 border-l-2 border-gray-700/50 rounded-r-md backdrop-blur-sm group-hover:border-primary-2 group-hover:translate-x-1 group-hover:bg-gray-800/30 sm:w-[25rem]"
+            class="w-full max-w-md px-5 py-4 transition-all duration-300 border-l-2 border-gray-700/50 rounded-r-md backdrop-blur-sm group-hover:border-primary-2 group-hover:translate-x-1 dark:group-hover:bg-gray-800/30 group-hover:bg-gray-800/10"
           >
             <!-- Header with company and date -->
             <div
               class="flex flex-wrap items-baseline justify-between gap-2 pb-2 border-b border-gray-700/50"
             >
               <h3
-                class="text-sm font-bold dark:text-blue-400 group-hover:text-blue-300"
+                class="text-sm font-bold dark:text-blue-400 dark:group-hover:text-blue-300"
               >
                 {{ item.company }}
               </h3>
