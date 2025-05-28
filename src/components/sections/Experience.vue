@@ -11,14 +11,7 @@ const experience = shallowRef([
     company: 'HectarApp',
     position: 'Frontend Engineer',
     startDate: '2022-01-01',
-    endDate: 'Present',
-    description: 'Developing and maintaining web applications.',
-  },
-  {
-    company: 'HectarApp',
-    position: 'Frontend Engineer',
-    startDate: '2022-01-01',
-    endDate: 'Present',
+    endDate: '2023-01-01',
     description: 'Developing and maintaining web applications.',
   },
   {
