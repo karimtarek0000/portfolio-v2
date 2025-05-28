@@ -9,6 +9,9 @@
     @apply text-transparent bg-clip-text bg-gradient-to-t 
   from-primary-gradient1/60 from-10% to-[rgb(var(--primary-2))];
   }
+  .layout-container {
+    @apply container px-2 mx-auto sm:px-1;
+  }
 }
 
 @layer base {
@@ -17,7 +20,7 @@
   }
 
   body {
-    @apply relative overflow-hidden h-[10000px] transition-colors transition-opacity text-primary-2 bg-primary-1 font-poppins;
+    @apply relative overflow-hidden transition-colors transition-opacity text-primary-2 bg-primary-1 font-poppins;
   }
 
   body::after {
@@ -31,8 +34,4 @@
   body[data-theme='light']::after {
     background-image: url('/images/pattern-light.svg');
   }
-}
-
-.layout-container {
-  @apply container px-2 mx-auto sm:px-1;
 }

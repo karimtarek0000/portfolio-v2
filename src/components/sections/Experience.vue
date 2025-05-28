@@ -7,6 +7,27 @@ const experience = shallowRef([
     endDate: 'Present',
     description: 'Developing and maintaining web applications.',
   },
+  {
+    company: 'HectarApp',
+    position: 'Frontend Engineer',
+    startDate: '2022-01-01',
+    endDate: 'Present',
+    description: 'Developing and maintaining web applications.',
+  },
+  {
+    company: 'HectarApp',
+    position: 'Frontend Engineer',
+    startDate: '2022-01-01',
+    endDate: 'Present',
+    description: 'Developing and maintaining web applications.',
+  },
+  {
+    company: 'HectarApp',
+    position: 'Frontend Engineer',
+    startDate: '2022-01-01',
+    endDate: 'Present',
+    description: 'Developing and maintaining web applications.',
+  },
 ])
 
 // Add function to format dates nicely
@@ -95,9 +116,9 @@ const formatDate = (date: string) => {
 }
 
 .timeline__content {
-  @apply w-full max-w-md px-5 py-4 transition-all duration-300 border-l-2 border-gray-700/50 
+  @apply w-full max-w-lg px-5 py-4 transition-all duration-300 border-l-2 border-gray-700/50 
          rounded-r-md backdrop-blur-sm group-hover:border-primary-2 group-hover:translate-x-1 
-         dark:group-hover:bg-gray-800/30 group-hover:bg-gray-800/10 sm:w-[25rem];
+         dark:group-hover:bg-gray-800/30 group-hover:bg-gray-800/10;
 }
 
 .timeline__header {
