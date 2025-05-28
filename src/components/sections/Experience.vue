@@ -30,10 +30,10 @@ const formatDate = (date: string) => {
           <!-- Timeline dot and line -->
           <div class="flex flex-col items-center">
             <div
-              class="flex items-center justify-center w-8 h-8 transition-all duration-500 rounded-full bg-gray-800/80 ring-2 ring-blue-400/20 group-hover:ring-blue-400/50 group-hover:shadow-lg group-hover:shadow-blue-500/10"
+              class="flex items-center justify-center w-8 h-8 transition-all duration-500 rounded-full dark:bg-gray-800/80 ring-2 ring-blue-400/20 group-hover:ring-blue-400/50 group-hover:shadow-lg group-hover:shadow-blue-500/10"
             >
               <div
-                class="w-3 h-3 transition-all duration-500 bg-blue-400 rounded-full group-hover:scale-110 group-hover:bg-primary-2"
+                class="w-3 h-3 transition-all duration-500 rounded-full dark:bg-blue-400 group-hover:scale-110 group-hover:bg-primary-2 bg-primary-3"
               ></div>
             </div>
             <div
