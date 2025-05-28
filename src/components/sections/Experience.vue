@@ -71,7 +71,7 @@ const formatDate = date => {
                 {{ item.position }}
               </p>
               <p
-                class="pl-3 text-sm leading-relaxed border-l border-gray-700 text-primary-3"
+                class="pl-3 text-sm leading-relaxed transition-all duration-300 border-l border-gray-700 group-hover:border-primary-2 text-primary-3"
               >
                 {{ item.description }}
               </p>
