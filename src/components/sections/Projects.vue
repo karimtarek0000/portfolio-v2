@@ -12,7 +12,6 @@
       :pagination="{ clickable: true }"
       class="projects__slider"
       aria-label="Project showcase slider"
-      @slidechange="onSlideChange"
     >
       <swiper-slide
         v-for="(project, n) in projects"
@@ -27,7 +26,7 @@
           />
           <div class="projects__overlay" />
           <div class="projects__content">
-            <h3 :class="['projects__title']">
+            <h3 class="projects__title">
               {{ project.title }}
             </h3>
             <div class="projects__tech-stack">
@@ -40,7 +39,7 @@
                 {{ tech }}
               </span>
             </div>
-            <p :class="['projects__description']">
+            <p class="projects__description">
               {{ project.description }}
               <button
                 v-if="isDescriptionTruncated(project, n)"
@@ -149,8 +148,6 @@ const breakpoints = {
 
 const DESCRIPTION_LIMIT = 120
 const expandedDescriptions = ref<Record<number, boolean>>({})
-const activeIndex = ref(0)
-const swiperRef = ref<any>(null)
 
 function isDescriptionTruncated(project: any, idx: number) {
   return (
@@ -161,13 +158,6 @@ function isDescriptionTruncated(project: any, idx: number) {
 
 function expandDescription(idx: number) {
   expandedDescriptions.value[idx] = true
-}
-
-function onSlideChange(e: any) {
-  const swiper = e?.detail?.swiper
-  if (swiper) {
-    activeIndex.value = swiper.realIndex
-  }
 }
 </script>
 
@@ -219,14 +209,6 @@ function onSlideChange(e: any) {
   @apply mb-2 font-extrabold leading-tight text-white drop-shadow-lg text-lg transition-all duration-500;
 }
 
-.projects__title--active {
-  @apply opacity-100 translate-y-0;
-}
-
-.projects__title--inactive {
-  @apply opacity-0 translate-y-4;
-}
-
 .projects__tech-stack {
   @apply flex flex-wrap gap-2 mb-2;
 }
@@ -241,14 +223,6 @@ function onSlideChange(e: any) {
 
 .projects__description {
   @apply max-w-xl mb-4 text-sm leading-relaxed text-white/80 transition-opacity duration-500;
-}
-
-.projects__description--active {
-  @apply opacity-100;
-}
-
-.projects__description--inactive {
-  @apply opacity-0;
 }
 
 .projects__read-more {
