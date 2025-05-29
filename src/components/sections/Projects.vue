@@ -177,7 +177,7 @@ const breakpoints = {
 }
 
 .projects__overlay {
-  @apply absolute inset-0 z-10 bg-gradient-to-t from-black/80 via-black/40 to-transparent pointer-events-none;
+  @apply absolute inset-0 z-10 bg-gradient-to-t from-black/95 via-black/60 to-transparent pointer-events-none;
 }
 
 .projects__content {
@@ -213,39 +213,39 @@ const breakpoints = {
 }
 
 .projects__link {
-  @apply rounded-full px-8 py-2 font-bold border shadow-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary-2 backdrop-blur-md bg-opacity-80 select-none relative overflow-hidden tracking-[0.09em] z-[1];
+  @apply rounded-full px-8 py-2 font-bold border shadow-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary-2 backdrop-blur-md bg-opacity-90 select-none relative overflow-hidden tracking-[0.09em] z-[1];
   color: rgb(var(--primary-1));
-  border: 1.5px solid rgba(var(--primary-2), 0.18);
+  border: 1.5px solid rgba(var(--primary-2), 0.3);
   background: linear-gradient(
     120deg,
-    rgba(var(--primary-2), 0.98) 0%,
-    rgba(var(--primary-3), 0.92) 40%,
-    rgba(var(--primary-2), 0.98) 100%
+    rgba(var(--primary-2), 1) 0%,
+    rgba(var(--primary-3), 0.95) 40%,
+    rgba(var(--primary-2), 1) 100%
   );
-  box-shadow: 0 4px 32px 0 rgba(var(--primary-2), 0.18),
-    0 1.5px 8px 0 rgba(var(--primary-3), 0.1);
+  box-shadow: 0 4px 32px 0 rgba(var(--primary-2), 0.25),
+    0 1.5px 8px 0 rgba(var(--primary-3), 0.15);
 }
 
 .dark .projects__link {
   color: rgb(var(--primary-2));
-  border: 1.5px solid rgba(var(--primary-2), 0.45);
+  border: 1.5px solid rgba(var(--primary-2), 0.5);
   background: linear-gradient(
     120deg,
-    rgba(var(--primary-2), 0.98) 0%,
-    rgba(var(--primary-3), 0.85) 40%,
-    rgba(var(--primary-2), 0.98) 100%
+    rgba(var(--primary-2), 1) 0%,
+    rgba(var(--primary-3), 0.9) 40%,
+    rgba(var(--primary-2), 1) 100%
   );
-  box-shadow: 0 4px 32px 0 rgba(var(--primary-2), 0.28),
-    0 1.5px 8px 0 rgba(var(--primary-3), 0.18);
+  box-shadow: 0 4px 32px 0 rgba(var(--primary-2), 0.35),
+    0 1.5px 8px 0 rgba(var(--primary-3), 0.25);
 }
 
 .projects__link::before {
   content: '';
-  @apply absolute inset-0 opacity-40 pointer-events-none transition-all duration-300 z-[2];
+  @apply absolute inset-0 opacity-50 pointer-events-none transition-all duration-300 z-[2];
   background: linear-gradient(
     100deg,
-    rgba(255, 255, 255, 0.18) 0%,
-    rgba(255, 255, 255, 0.05) 100%
+    rgba(255, 255, 255, 0.25) 0%,
+    rgba(255, 255, 255, 0.1) 100%
   );
   background-size: 200% 200%;
   background-position: 0% 50%;
