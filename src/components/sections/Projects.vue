@@ -3,154 +3,78 @@
     <SharedHeader title="projects" />
 
     <ClientOnly>
-      <swiper-container
-        :slides-per-view="1"
-        :space-between="24"
-        :centered-slides="true"
-        :loop="false"
-        :breakpoints="breakpoints"
-        :navigation="true"
-        :pagination="{ clickable: true }"
-        :initial-slide="1"
-        :keyboard="{ enabled: true }"
-        :grab-cursor="true"
-        :autoplay="autoplayConfig"
-        :effect="'slide'"
-        class="projects__slider"
-        aria-label="Project showcase slider"
-        role="region"
-      >
-        <swiper-slide
-          v-for="(project, index) in projects"
-          :key="`slide-${index}`"
-          class="projects__slide"
-          :aria-label="`Project ${index + 1} of ${projects.length}: ${
-            project.title
-          }`"
-        >
-          <article class="projects__card">
-            <img
-              :src="project.image"
-              :alt="`Screenshot of ${project.title} project`"
-              class="projects__image"
-              loading="lazy"
-              width="800"
-              height="500"
-              @error="handleImageError"
-            />
-            <div class="projects__overlay" />
-            <div class="projects__content">
-              <header class="projects__header">
-                <h3 class="projects__title">
-                  {{ project.title }}
-                </h3>
-                <div
-                  class="projects__tech-stack"
-                  role="list"
-                  aria-label="Technologies used"
-                >
-                  <span
-                    v-for="tech in project.technologies"
-                    :key="tech"
-                    class="text-white bg-green-500 projects__tech-tag"
-                    role="listitem"
-                    :aria-label="`Technology: ${tech}`"
-                  >
-                    {{ tech }}
-                  </span>
-                </div>
-              </header>
-
-              <p class="projects__description">
-                {{ project.description }}
-              </p>
-
-              <footer class="projects__actions">
-                <a
-                  :href="project.website"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="projects__link"
-                  :aria-label="`Visit ${project.title} project (opens in new tab)`"
-                >
-                  <span class="projects__link-text">Visit Project</span>
-                  <svg
-                    class="projects__link-icon"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2.5"
-                    viewBox="0 0 24 24"
-                    aria-hidden="true"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      d="M5 12h14m-7-7l7 7-7 7"
-                    />
-                  </svg>
-                </a>
-
-                <button
-                  v-if="project.github"
-                  class="projects__link projects__link--secondary"
-                  @click="openGithub(project.github)"
-                  :aria-label="`View ${project.title} source code on GitHub`"
-                >
-                  <span class="projects__link-text">Source</span>
-                </button>
-              </footer>
-            </div>
-          </article>
-        </swiper-slide>
-      </swiper-container>
-
-      <template #fallback>
-        <div
-          class="projects__fallback"
+      <div class="projects__slider-container">
+        <swiper-container
+          :slides-per-view="1"
+          :space-between="24"
+          :centered-slides="true"
+          :loop="false"
+          :breakpoints="breakpoints"
+          :navigation="true"
+          :pagination="{ clickable: true }"
+          :initial-slide="1"
+          :keyboard="{ enabled: true }"
+          :grab-cursor="true"
+          :autoplay="autoplayConfig"
+          :effect="'slide'"
+          class="projects__slider"
+          aria-label="Project showcase slider"
           role="region"
-          aria-label="Projects gallery"
         >
-          <div
-            class="grid grid-cols-1 gap-6 mt-8 md:grid-cols-2 lg:grid-cols-3"
+          <swiper-slide
+            v-for="(project, index) in projects"
+            :key="`slide-${index}`"
+            class="projects__slide"
+            :aria-label="`Project ${index + 1} of ${projects.length}: ${
+              project.title
+            }`"
           >
-            <article
-              v-for="(project, index) in projects"
-              :key="`fallback-${index}`"
-              class="opacity-100 projects__card"
-            >
+            <article class="projects__card">
               <img
                 :src="project.image"
-                :alt="project.title"
+                :alt="`Screenshot of ${project.title} project`"
                 class="projects__image"
                 loading="lazy"
-                :width="800"
-                :height="500"
+                width="800"
+                height="500"
+                @error="handleImageError"
               />
               <div class="projects__overlay" />
               <div class="projects__content">
-                <h3 class="projects__title">
-                  {{ project.title }}
-                </h3>
-                <div class="projects__tech-stack">
-                  <span
-                    v-for="tech in project.technologies"
-                    :key="tech"
-                    class="text-white bg-green-500 projects__tech-tag"
+                <header class="projects__header">
+                  <h3 class="projects__title">
+                    {{ project.title }}
+                  </h3>
+                  <div
+                    class="projects__tech-stack"
+                    role="list"
+                    aria-label="Technologies used"
                   >
-                    {{ tech }}
-                  </span>
-                </div>
+                    <span
+                      v-for="tech in project.technologies"
+                      :key="tech"
+                      class="text-white bg-green-500 projects__tech-tag"
+                      role="listitem"
+                      :aria-label="`Technology: ${tech}`"
+                    >
+                      {{ tech }}
+                    </span>
+                  </div>
+                </header>
+
                 <p class="projects__description">
                   {{ project.description }}
                 </p>
-                <div class="projects__actions">
+
+                <footer class="projects__actions">
                   <a
                     :href="project.website"
                     target="_blank"
                     rel="noopener noreferrer"
                     class="projects__link"
+                    :aria-label="`Visit ${project.title} project (opens in new tab)`"
                   >
-                    <span class="projects__link-text">Visit</span>
+                    <span class="projects__link-text">Visit Project</span>
                     <svg
                       class="projects__link-icon"
                       fill="none"
@@ -166,9 +90,46 @@
                       />
                     </svg>
                   </a>
-                </div>
+
+                  <button
+                    v-if="project.github"
+                    class="projects__link projects__link--secondary"
+                    @click="openGithub(project.github)"
+                    :aria-label="`View ${project.title} source code on GitHub`"
+                  >
+                    <span class="projects__link-text">Source</span>
+                  </button>
+                </footer>
               </div>
             </article>
+          </swiper-slide>
+        </swiper-container>
+      </div>
+
+      <template #fallback>
+        <div class="projects__slider-container">
+          <div class="projects__skeleton">
+            <div class="projects__skeleton-slide">
+              <div class="projects__skeleton-card">
+                <div class="projects__skeleton-image"></div>
+                <div class="projects__skeleton-content">
+                  <div class="projects__skeleton-title"></div>
+                  <div class="projects__skeleton-tags">
+                    <div class="projects__skeleton-tag"></div>
+                    <div class="projects__skeleton-tag"></div>
+                    <div class="projects__skeleton-tag"></div>
+                  </div>
+                  <div class="projects__skeleton-description">
+                    <div class="projects__skeleton-line"></div>
+                    <div class="projects__skeleton-line"></div>
+                    <div
+                      class="projects__skeleton-line projects__skeleton-line--short"
+                    ></div>
+                  </div>
+                  <div class="projects__skeleton-button"></div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </template>
@@ -270,6 +231,13 @@ const openGithub = (githubUrl: string) => {
 </script>
 
 <style scoped>
+.projects__slider-container {
+  @apply mt-8;
+  min-height: 500px;
+  width: 100%;
+  position: relative;
+}
+
 .projects__slider {
   --swiper-navigation-color: rgb(var(--primary-2));
   --swiper-pagination-color: #fff;
@@ -277,11 +245,15 @@ const openGithub = (githubUrl: string) => {
   --swiper-pagination-bullet-inactive-opacity: 0.4;
   --swiper-pagination-bullet-size: 12px;
   --swiper-pagination-bullet-horizontal-gap: 6px;
-  @apply mt-8 overflow-visible;
+  @apply overflow-visible;
+  height: 500px;
+  width: 100%;
 }
 
 .projects__slide {
   @apply transition-all duration-500 opacity-60 blur-[1px] grayscale-[20%] scale-[0.92] will-change-transform;
+  height: 500px;
+  width: auto;
 }
 
 .projects__slide.swiper-slide-active {
@@ -294,7 +266,9 @@ const openGithub = (githubUrl: string) => {
 }
 
 .projects__card {
-  @apply relative flex flex-col justify-end items-start h-[420px] md:h-[500px] w-full rounded-2xl overflow-hidden shadow-2xl bg-black/60;
+  @apply relative flex flex-col justify-end items-start w-full rounded-2xl overflow-hidden shadow-2xl bg-black/60;
+  height: 500px;
+  min-height: 500px;
 }
 
 .projects__image {
@@ -318,7 +292,6 @@ const openGithub = (githubUrl: string) => {
     filter 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Ensure hover works on all slides */
 .projects__slide:hover .projects__card .projects__image {
   transform: scale(1.05) !important;
   filter: brightness(0.9);
@@ -326,7 +299,6 @@ const openGithub = (githubUrl: string) => {
     filter 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Enhanced hover for active slide */
 .projects__slide.swiper-slide-active:hover .projects__card .projects__image {
   transform: scale(1.1) !important;
   filter: brightness(0.75);
@@ -471,11 +443,72 @@ const openGithub = (githubUrl: string) => {
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
 }
 
-.projects__fallback {
-  @apply mt-8;
+.projects__skeleton {
+  @apply flex justify-center items-center;
+  height: 500px;
+  width: 100%;
 }
 
-/* Enhanced responsive design */
+.projects__skeleton-slide {
+  @apply w-full max-w-md;
+  height: 500px;
+}
+
+.projects__skeleton-card {
+  @apply relative w-full h-full rounded-2xl overflow-hidden bg-gray-200 dark:bg-gray-700;
+  animation: pulse 2s infinite;
+}
+
+.projects__skeleton-image {
+  @apply absolute inset-0 bg-gray-300 dark:bg-gray-600;
+}
+
+.projects__skeleton-content {
+  @apply absolute bottom-0 left-0 right-0 p-8 space-y-4;
+}
+
+.projects__skeleton-title {
+  @apply h-6 bg-gray-300 dark:bg-gray-600 rounded;
+  width: 60%;
+}
+
+.projects__skeleton-tags {
+  @apply flex gap-2;
+}
+
+.projects__skeleton-tag {
+  @apply h-6 bg-gray-300 dark:bg-gray-600 rounded-full;
+  width: 60px;
+}
+
+.projects__skeleton-description {
+  @apply space-y-2;
+}
+
+.projects__skeleton-line {
+  @apply h-4 bg-gray-300 dark:bg-gray-600 rounded;
+}
+
+.projects__skeleton-line--short {
+  width: 70%;
+}
+
+.projects__skeleton-button {
+  @apply h-10 bg-gray-300 dark:bg-gray-600 rounded-full;
+  width: 120px;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* Remove mobile-specific height changes to prevent CLS */
 @media (max-width: 640px) {
   .projects__content {
     @apply p-6 gap-3;
