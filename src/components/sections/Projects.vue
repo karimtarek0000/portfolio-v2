@@ -10,6 +10,8 @@
       :breakpoints="breakpoints"
       :navigation="true"
       :pagination="{ clickable: true }"
+      :preload-images="false"
+      :lazy="true"
       class="projects__slider"
       aria-label="Project showcase slider"
     >
@@ -23,6 +25,9 @@
             :src="project.image"
             :alt="project.title"
             class="projects__image"
+            loading="lazy"
+            :width="800"
+            :height="500"
           />
           <div class="projects__overlay" />
           <div class="projects__content">
@@ -56,6 +61,7 @@
                   stroke="currentColor"
                   stroke-width="2.5"
                   viewBox="0 0 24 24"
+                  aria-hidden="true"
                 >
                   <path
                     stroke-linecap="round"
@@ -152,7 +158,7 @@ const breakpoints = {
 }
 
 .projects__slide {
-  @apply transition-all duration-500 opacity-50 blur-[2px] grayscale-[30%] scale-[0.9];
+  @apply transition-all duration-500 opacity-50 blur-[2px] grayscale-[30%] scale-[0.9] will-change-transform;
 }
 
 .projects__slide.swiper-slide-active {
@@ -169,7 +175,7 @@ const breakpoints = {
 }
 
 .projects__image {
-  @apply absolute inset-0 z-0 object-cover object-center w-full h-full transition-all duration-500;
+  @apply absolute inset-0 z-0 object-cover object-center w-full h-full transition-all duration-500 will-change-transform;
 }
 
 .projects__card:hover .projects__image {
@@ -181,7 +187,11 @@ const breakpoints = {
 }
 
 .projects__content {
-  @apply relative z-20 flex flex-col w-full gap-4 p-8 pointer-events-auto;
+  @apply relative z-20 flex flex-col w-full gap-4 p-8 pointer-events-auto translate-y-10 opacity-0 transition-all duration-700 ease-out;
+}
+
+.projects__slide.swiper-slide-active .projects__content {
+  @apply translate-y-0 opacity-100;
 }
 
 .projects__title {
@@ -204,17 +214,12 @@ const breakpoints = {
   @apply max-w-xl mb-4 text-sm leading-relaxed text-white/80 transition-opacity duration-500;
 }
 
-.projects__read-more {
-  @apply ml-2 text-sm underline rounded text-primary-2 hover:text-primary-3 focus:outline-none focus:ring-2 focus:ring-primary-2;
-}
-
 .projects__actions {
   @apply flex items-center gap-2 mt-auto;
 }
 
 .projects__link {
-  @apply rounded-full px-8 py-2 font-bold border shadow-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary-2 backdrop-blur-md bg-opacity-90 select-none relative overflow-hidden tracking-[0.09em] z-[1];
-  color: rgb(var(--primary-1));
+  @apply rounded-full px-8 py-2 font-bold border shadow-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary-2 backdrop-blur-md bg-opacity-90 select-none relative overflow-hidden tracking-[0.09em] z-[1] text-white will-change-transform;
   border: 1.5px solid rgba(var(--primary-2), 0.3);
   background: linear-gradient(
     120deg,
@@ -227,7 +232,7 @@ const breakpoints = {
 }
 
 .dark .projects__link {
-  color: rgb(var(--primary-2));
+  @apply text-white;
   border: 1.5px solid rgba(var(--primary-2), 0.5);
   background: linear-gradient(
     120deg,
