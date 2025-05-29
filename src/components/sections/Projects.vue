@@ -149,7 +149,7 @@ const breakpoints = {
 <style scoped>
 .projects__slider {
   --swiper-navigation-color: rgb(var(--primary-2));
-  --swiper-pagination-color: rgb(var(--primary-2));
+  --swiper-pagination-color: #fff;
   --swiper-pagination-bullet-inactive-color: #fff;
   --swiper-pagination-bullet-inactive-opacity: 0.4;
   --swiper-pagination-bullet-size: 12px;
