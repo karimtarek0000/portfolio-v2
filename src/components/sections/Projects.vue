@@ -1,5 +1,5 @@
 <template>
-  <section class="py-10 mt-20 glassmorphism">
+  <section class="py-10 mt-20 projects glassmorphism">
     <SharedHeader title="projects" />
     <swiper-container
       ref="swiperRef"
@@ -10,44 +10,40 @@
       :breakpoints="breakpoints"
       :navigation="true"
       :pagination="{ clickable: true }"
-      class="mt-8 project-slider"
+      class="projects__slider"
       aria-label="Project showcase slider"
       @slidechange="onSlideChange"
     >
       <swiper-slide
         v-for="(project, n) in projects"
         :key="n"
-        class="project-slider__slide"
+        class="projects__slide"
       >
-        <article
-          class="relative flex flex-col justify-end items-start h-[420px] md:h-[500px] w-full rounded-2xl overflow-hidden shadow-2xl bg-black/60 group"
-        >
+        <article class="projects__card">
           <img
             :src="project.image"
             :alt="project.title"
-            class="absolute inset-0 z-0 object-cover object-center w-full h-full transition-all duration-500 group-hover:scale-105 group-hover:brightness-90"
+            class="projects__image"
           />
-          <div
-            class="absolute inset-0 z-10 bg-gradient-to-t from-black/80 via-black/40 to-transparent"
-          />
-          <div class="relative z-20 flex flex-col w-full gap-4 p-8">
+          <div class="projects__overlay" />
+          <div class="projects__content">
             <h3
               :class="[
-                'mb-2 font-extrabold leading-tight text-white drop-shadow-lg text-lg transition-all duration-500',
+                'projects__title',
                 activeIndex === n
-                  ? 'opacity-100 translate-y-0'
-                  : 'opacity-0 translate-y-4',
+                  ? 'projects__title--active'
+                  : 'projects__title--inactive',
               ]"
               :aria-label="project.title"
             >
               {{ project.title }}
             </h3>
-            <div class="flex flex-wrap gap-2 mb-2">
+            <div class="projects__tech-stack">
               <span
                 v-for="tech in project.technologies"
                 :key="tech"
-                class="px-3 py-1 text-sm font-semibold transition transform rounded-full cursor-pointer select-none"
-                :class="techColorMap[tech] || 'bg-gray-400 text-white'"
+                class="projects__tech-tag"
+                :class="techColorMap[tech] || 'projects__tech-tag--default'"
                 tabindex="0"
                 :aria-label="tech + ' technology'"
               >
@@ -56,8 +52,10 @@
             </div>
             <p
               :class="[
-                'max-w-xl mb-4 text-sm leading-relaxed text-white/80 transition-opacity duration-500',
-                activeIndex === n ? 'opacity-100' : 'opacity-0',
+                'projects__description',
+                activeIndex === n
+                  ? 'projects__description--active'
+                  : 'projects__description--inactive',
               ]"
             >
               {{
@@ -70,24 +68,24 @@
                   isDescriptionTruncated(project, n) && !expandedDescriptions[n]
                 "
                 @click="() => expandDescription(n)"
-                class="ml-2 text-sm underline rounded text-primary-2 hover:text-primary-3 focus:outline-none focus:ring-2 focus:ring-primary-2"
+                class="projects__read-more"
                 aria-label="Read more about project description"
               >
                 Read more
               </button>
             </p>
-            <div class="flex items-center gap-2 mt-auto">
+            <div class="projects__actions">
               <a
                 :href="project.website"
                 target="_blank"
                 rel="noopener noreferrer"
-                class="project-slider__visit-btn dark:text-primary-2 dark:border-primary-2"
+                class="projects__link"
                 aria-label="Visit project website for {{ project.title }}"
                 tabindex="0"
               >
-                <span class="font-bold tracking-wider uppercase">Visit</span>
+                <span class="projects__link-text">Visit</span>
                 <svg
-                  class="w-5 h-5 project-slider__arrow-icon"
+                  class="projects__link-icon"
                   fill="none"
                   stroke="currentColor"
                   stroke-width="2.5"
@@ -204,30 +202,94 @@ function onSlideChange(e: any) {
 </script>
 
 <style scoped>
-.project-slider {
+.projects__slider {
   --swiper-navigation-color: rgb(var(--primary-2));
   --swiper-pagination-color: rgb(var(--primary-2));
   --swiper-pagination-bullet-inactive-color: #fff;
   --swiper-pagination-bullet-inactive-opacity: 0.4;
   --swiper-pagination-bullet-size: 12px;
   --swiper-pagination-bullet-horizontal-gap: 6px;
-  @apply overflow-visible;
+  @apply mt-8 overflow-visible;
 }
 
-.project-slider__slide {
+.projects__slide {
   @apply transition-all duration-500 opacity-50 blur-[2px] grayscale-[30%] scale-[0.9];
 }
 
-.project-slider__slide.swiper-slide-active {
+.projects__slide.swiper-slide-active {
   @apply opacity-100 blur-0 grayscale-0 scale-100 z-[2];
 }
 
-.project-slider__slide.swiper-slide-next,
-.project-slider__slide.swiper-slide-prev {
+.projects__slide.swiper-slide-next,
+.projects__slide.swiper-slide-prev {
   @apply opacity-70 blur-[1px] grayscale-[10%] scale-[0.95] z-[1];
 }
 
-.project-slider__visit-btn {
+.projects__card {
+  @apply relative flex flex-col justify-end items-start h-[420px] md:h-[500px] w-full rounded-2xl overflow-hidden shadow-2xl bg-black/60;
+}
+
+.projects__image {
+  @apply absolute inset-0 z-0 object-cover object-center w-full h-full transition-all duration-500;
+}
+
+.projects__card.group:hover .projects__image {
+  @apply scale-105 brightness-90;
+}
+
+.projects__overlay {
+  @apply absolute inset-0 z-10 bg-gradient-to-t from-black/80 via-black/40 to-transparent pointer-events-none;
+}
+
+.projects__content {
+  @apply relative z-20 flex flex-col w-full gap-4 p-8 pointer-events-auto;
+}
+
+.projects__title {
+  @apply mb-2 font-extrabold leading-tight text-white drop-shadow-lg text-lg transition-all duration-500;
+}
+
+.projects__title--active {
+  @apply opacity-100 translate-y-0;
+}
+
+.projects__title--inactive {
+  @apply opacity-0 translate-y-4;
+}
+
+.projects__tech-stack {
+  @apply flex flex-wrap gap-2 mb-2;
+}
+
+.projects__tech-tag {
+  @apply px-3 py-1 text-sm font-semibold transition transform rounded-full cursor-pointer select-none;
+}
+
+.projects__tech-tag--default {
+  @apply bg-gray-400 text-white;
+}
+
+.projects__description {
+  @apply max-w-xl mb-4 text-sm leading-relaxed text-white/80 transition-opacity duration-500;
+}
+
+.projects__description--active {
+  @apply opacity-100;
+}
+
+.projects__description--inactive {
+  @apply opacity-0;
+}
+
+.projects__read-more {
+  @apply ml-2 text-sm underline rounded text-primary-2 hover:text-primary-3 focus:outline-none focus:ring-2 focus:ring-primary-2;
+}
+
+.projects__actions {
+  @apply flex items-center gap-2 mt-auto;
+}
+
+.projects__link {
   @apply rounded-full px-8 py-2 font-bold border shadow-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary-2 backdrop-blur-md bg-opacity-80 select-none relative overflow-hidden tracking-[0.09em] z-[1];
   color: rgb(var(--primary-1));
   border: 1.5px solid rgba(var(--primary-2), 0.18);
@@ -241,7 +303,7 @@ function onSlideChange(e: any) {
     0 1.5px 8px 0 rgba(var(--primary-3), 0.1);
 }
 
-.dark .project-slider__visit-btn {
+.dark .projects__link {
   color: rgb(var(--primary-2));
   border: 1.5px solid rgba(var(--primary-2), 0.45);
   background: linear-gradient(
@@ -254,7 +316,7 @@ function onSlideChange(e: any) {
     0 1.5px 8px 0 rgba(var(--primary-3), 0.18);
 }
 
-.project-slider__visit-btn::before {
+.projects__link::before {
   content: '';
   @apply absolute inset-0 opacity-40 pointer-events-none transition-all duration-300 z-[2];
   background: linear-gradient(
@@ -266,7 +328,7 @@ function onSlideChange(e: any) {
   background-position: 0% 50%;
 }
 
-.project-slider__visit-btn::after {
+.projects__link::after {
   content: '';
   @apply absolute top-0 w-[60%] h-full opacity-0 transition-all duration-300 z-[3];
   left: -60%;
@@ -278,44 +340,39 @@ function onSlideChange(e: any) {
   filter: blur(2px);
 }
 
-.project-slider__visit-btn:hover::before,
-.project-slider__visit-btn:focus::before {
+.projects__link:hover::before,
+.projects__link:focus::before {
   @apply opacity-70;
   background-position: 100% 50%;
 }
 
-.project-slider__visit-btn:hover::after,
-.project-slider__visit-btn:focus::after {
+.projects__link:hover::after,
+.projects__link:focus::after {
   @apply opacity-100;
   left: 110%;
 }
 
-.project-slider__visit-btn:hover,
-.project-slider__visit-btn:focus {
+.projects__link:hover,
+.projects__link:focus {
   @apply scale-[1.065];
   box-shadow: 0 8px 40px 0 rgba(var(--primary-2), 0.32),
     0 2px 12px 0 rgba(var(--primary-3), 0.22),
     0 0 16px 2px rgba(var(--primary-2), 0.18);
 }
 
-.project-slider__arrow-icon {
-  @apply inline-block align-middle transition-transform duration-300;
+.projects__link-text {
+  @apply font-bold tracking-wider uppercase;
+}
+
+.projects__link-icon {
+  @apply w-5 h-5 inline-block align-middle transition-transform duration-300;
   color: inherit;
   filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
   transition-timing-function: cubic-bezier(0.4, 2, 0.6, 1);
 }
 
-.project-slider__visit-btn:hover .project-slider__arrow-icon,
-.project-slider__visit-btn:focus .project-slider__arrow-icon {
+.projects__link:hover .projects__link-icon,
+.projects__link:focus .projects__link-icon {
   @apply translate-x-1 scale-110;
-}
-
-/* Ensure overlays do not block interaction */
-.relative.z-20 {
-  @apply pointer-events-auto;
-}
-
-.absolute.z-10 {
-  @apply pointer-events-none;
 }
 </style>
