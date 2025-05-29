@@ -10,12 +10,15 @@
       :breakpoints="breakpoints"
       :navigation="true"
       :pagination="{ clickable: true }"
-      effect="coverflow"
       class="mt-8 project-slider"
       aria-label="Project showcase slider"
       @slidechange="onSlideChange"
     >
-      <swiper-slide v-for="(project, n) in projects" :key="n">
+      <swiper-slide
+        v-for="(project, n) in projects"
+        :key="n"
+        class="project-slider__slide"
+      >
         <article
           class="relative flex flex-col justify-end items-start h-[420px] md:h-[500px] w-full rounded-2xl overflow-hidden shadow-2xl bg-black/60 group"
         >
@@ -78,13 +81,13 @@
                 :href="project.website"
                 target="_blank"
                 rel="noopener noreferrer"
-                class="visit-btn dark:text-primary-2 dark:border-primary-2"
+                class="project-slider__visit-btn dark:text-primary-2 dark:border-primary-2"
                 aria-label="Visit project website for {{ project.title }}"
                 tabindex="0"
               >
                 <span class="font-bold tracking-wider uppercase">Visit</span>
                 <svg
-                  class="w-5 h-5 arrow-icon"
+                  class="w-5 h-5 project-slider__arrow-icon"
                   fill="none"
                   stroke="currentColor"
                   stroke-width="2.5"
@@ -208,39 +211,24 @@ function onSlideChange(e: any) {
   --swiper-pagination-bullet-inactive-opacity: 0.4;
   --swiper-pagination-bullet-size: 12px;
   --swiper-pagination-bullet-horizontal-gap: 6px;
+  @apply overflow-visible;
 }
 
-/* Fade/scale effect for side slides */
-swiper-slide {
-  transition: transform 0.5s, opacity 0.5s, filter 0.5s;
-  opacity: 0.5;
-  filter: blur(2px) grayscale(30%);
-  transform: scale(0.92);
-}
-swiper-slide.swiper-slide-active {
-  opacity: 1;
-  filter: none;
-  transform: scale(1);
-  z-index: 2;
-}
-swiper-slide.swiper-slide-next,
-swiper-slide.swiper-slide-prev {
-  opacity: 0.7;
-  filter: blur(1px) grayscale(10%);
-  transform: scale(0.97);
-  z-index: 1;
+.project-slider__slide {
+  @apply transition-all duration-500 opacity-50 blur-[2px] grayscale-[30%] scale-[0.9];
 }
 
-/* Ensure overlays do not block interaction */
-.relative.z-20 {
-  pointer-events: auto;
-}
-.absolute.z-10 {
-  pointer-events: none;
+.project-slider__slide.swiper-slide-active {
+  @apply opacity-100 blur-0 grayscale-0 scale-100 z-[2];
 }
 
-.visit-btn {
-  @apply rounded-full px-8 py-2 font-bold border shadow-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary-2 backdrop-blur-md bg-opacity-80 select-none;
+.project-slider__slide.swiper-slide-next,
+.project-slider__slide.swiper-slide-prev {
+  @apply opacity-70 blur-[1px] grayscale-[10%] scale-[0.95] z-[1];
+}
+
+.project-slider__visit-btn {
+  @apply rounded-full px-8 py-2 font-bold border shadow-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary-2 backdrop-blur-md bg-opacity-80 select-none relative overflow-hidden tracking-[0.09em] z-[1];
   color: rgb(var(--primary-1));
   border: 1.5px solid rgba(var(--primary-2), 0.18);
   background: linear-gradient(
@@ -251,12 +239,9 @@ swiper-slide.swiper-slide-prev {
   );
   box-shadow: 0 4px 32px 0 rgba(var(--primary-2), 0.18),
     0 1.5px 8px 0 rgba(var(--primary-3), 0.1);
-  position: relative;
-  overflow: hidden;
-  letter-spacing: 0.09em;
-  z-index: 1;
 }
-.dark .visit-btn {
+
+.dark .project-slider__visit-btn {
   color: rgb(var(--primary-2));
   border: 1.5px solid rgba(var(--primary-2), 0.45);
   background: linear-gradient(
@@ -268,65 +253,69 @@ swiper-slide.swiper-slide-prev {
   box-shadow: 0 4px 32px 0 rgba(var(--primary-2), 0.28),
     0 1.5px 8px 0 rgba(var(--primary-3), 0.18);
 }
-.visit-btn::before {
+
+.project-slider__visit-btn::before {
   content: '';
-  position: absolute;
-  inset: 0;
+  @apply absolute inset-0 opacity-40 pointer-events-none transition-all duration-300 z-[2];
   background: linear-gradient(
     100deg,
     rgba(255, 255, 255, 0.18) 0%,
     rgba(255, 255, 255, 0.05) 100%
   );
-  opacity: 0.4;
-  pointer-events: none;
-  transition: opacity 0.3s, background-position 0.7s;
   background-size: 200% 200%;
   background-position: 0% 50%;
-  z-index: 2;
 }
-.visit-btn::after {
-  /* Animated shine */
+
+.project-slider__visit-btn::after {
   content: '';
-  position: absolute;
+  @apply absolute top-0 w-[60%] h-full opacity-0 transition-all duration-300 z-[3];
   left: -60%;
-  top: 0;
-  width: 60%;
-  height: 100%;
   background: linear-gradient(
     120deg,
     rgba(255, 255, 255, 0.18) 0%,
     rgba(255, 255, 255, 0.01) 100%
   );
   filter: blur(2px);
-  opacity: 0;
-  transition: opacity 0.3s, left 0.7s;
-  z-index: 3;
 }
-.visit-btn:hover::before,
-.visit-btn:focus::before {
-  opacity: 0.7;
+
+.project-slider__visit-btn:hover::before,
+.project-slider__visit-btn:focus::before {
+  @apply opacity-70;
   background-position: 100% 50%;
 }
-.visit-btn:hover::after,
-.visit-btn:focus::after {
-  opacity: 1;
+
+.project-slider__visit-btn:hover::after,
+.project-slider__visit-btn:focus::after {
+  @apply opacity-100;
   left: 110%;
 }
-.visit-btn:hover,
-.visit-btn:focus {
+
+.project-slider__visit-btn:hover,
+.project-slider__visit-btn:focus {
+  @apply scale-[1.065];
   box-shadow: 0 8px 40px 0 rgba(var(--primary-2), 0.32),
     0 2px 12px 0 rgba(var(--primary-3), 0.22),
     0 0 16px 2px rgba(var(--primary-2), 0.18);
-  transform: scale(1.065);
 }
-.visit-btn svg.arrow-icon {
-  @apply inline-block align-middle;
+
+.project-slider__arrow-icon {
+  @apply inline-block align-middle transition-transform duration-300;
   color: inherit;
   filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
-  transition: transform 0.3s cubic-bezier(0.4, 2, 0.6, 1);
+  transition-timing-function: cubic-bezier(0.4, 2, 0.6, 1);
 }
-.visit-btn:hover svg.arrow-icon,
-.visit-btn:focus svg.arrow-icon {
-  transform: translateX(4px) scale(1.12);
+
+.project-slider__visit-btn:hover .project-slider__arrow-icon,
+.project-slider__visit-btn:focus .project-slider__arrow-icon {
+  @apply translate-x-1 scale-110;
+}
+
+/* Ensure overlays do not block interaction */
+.relative.z-20 {
+  @apply pointer-events-auto;
+}
+
+.absolute.z-10 {
+  @apply pointer-events-none;
 }
 </style>
