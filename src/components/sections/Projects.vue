@@ -27,15 +27,7 @@
           />
           <div class="projects__overlay" />
           <div class="projects__content">
-            <h3
-              :class="[
-                'projects__title',
-                activeIndex === n
-                  ? 'projects__title--active'
-                  : 'projects__title--inactive',
-              ]"
-              :aria-label="project.title"
-            >
+            <h3 :class="['projects__title']">
               {{ project.title }}
             </h3>
             <div class="projects__tech-stack">
@@ -44,32 +36,16 @@
                 :key="tech"
                 class="projects__tech-tag"
                 :class="techColorMap[tech] || 'projects__tech-tag--default'"
-                tabindex="0"
-                :aria-label="tech + ' technology'"
               >
                 {{ tech }}
               </span>
             </div>
-            <p
-              :class="[
-                'projects__description',
-                activeIndex === n
-                  ? 'projects__description--active'
-                  : 'projects__description--inactive',
-              ]"
-            >
-              {{
-                isDescriptionTruncated(project, n)
-                  ? truncatedDescription(project)
-                  : project.description
-              }}
+            <p :class="['projects__description']">
+              {{ project.description }}
               <button
-                v-if="
-                  isDescriptionTruncated(project, n) && !expandedDescriptions[n]
-                "
+                v-if="isDescriptionTruncated(project, n)"
                 @click="() => expandDescription(n)"
                 class="projects__read-more"
-                aria-label="Read more about project description"
               >
                 Read more
               </button>
@@ -80,8 +56,6 @@
                 target="_blank"
                 rel="noopener noreferrer"
                 class="projects__link"
-                aria-label="Visit project website for {{ project.title }}"
-                tabindex="0"
               >
                 <span class="projects__link-text">Visit</span>
                 <svg
@@ -90,7 +64,6 @@
                   stroke="currentColor"
                   stroke-width="2.5"
                   viewBox="0 0 24 24"
-                  aria-hidden="true"
                 >
                   <path
                     stroke-linecap="round"
@@ -185,17 +158,14 @@ function isDescriptionTruncated(project: any, idx: number) {
     !expandedDescriptions.value[idx]
   )
 }
-function truncatedDescription(project: any) {
-  return project.description.slice(0, DESCRIPTION_LIMIT) + '...'
-}
+
 function expandDescription(idx: number) {
   expandedDescriptions.value[idx] = true
 }
+
 function onSlideChange(e: any) {
-  // Swiper web component emits event with detail.swiper.activeIndex
   const swiper = e?.detail?.swiper
   if (swiper) {
-    // Because of loop mode, use realIndex
     activeIndex.value = swiper.realIndex
   }
 }
@@ -233,7 +203,7 @@ function onSlideChange(e: any) {
   @apply absolute inset-0 z-0 object-cover object-center w-full h-full transition-all duration-500;
 }
 
-.projects__card.group:hover .projects__image {
+.projects__card:hover .projects__image {
   @apply scale-105 brightness-90;
 }
 
