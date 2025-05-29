@@ -2,80 +2,145 @@
   <section class="py-10 mt-20 projects glassmorphism">
     <SharedHeader title="projects" />
 
-    <swiper-container
-      :slides-per-view="1"
-      :space-between="32"
-      :centered-slides="true"
-      :loop="true"
-      :breakpoints="breakpoints"
-      :navigation="true"
-      :pagination="{ clickable: true }"
-      :initial-slide="1"
-      :preload-images="false"
-      :lazy="true"
-      class="projects__slider"
-      aria-label="Project showcase slider"
-    >
-      <swiper-slide
-        v-for="(project, n) in projects"
-        :key="n"
-        class="projects__slide"
+    <ClientOnly>
+      <swiper-container
+        :slides-per-view="1"
+        :space-between="24"
+        :centered-slides="true"
+        :loop="false"
+        :breakpoints="breakpoints"
+        :navigation="true"
+        :pagination="{ clickable: true }"
+        :initial-slide="0"
+        class="projects__slider"
+        aria-label="Project showcase slider"
       >
-        <article class="projects__card">
-          <img
-            :src="project.image"
-            :alt="project.title"
-            class="projects__image"
-            loading="lazy"
-            :width="800"
-            :height="500"
-          />
-          <div class="projects__overlay" />
-          <div class="projects__content">
-            <h3 class="projects__title">
-              {{ project.title }}
-            </h3>
-            <div class="projects__tech-stack">
-              <span
-                v-for="tech in project.technologies"
-                :key="tech"
-                class="projects__tech-tag"
-                :class="techColorMap[tech] || 'projects__tech-tag--default'"
-              >
-                {{ tech }}
-              </span>
-            </div>
-            <p class="projects__description">
-              {{ project.description }}
-            </p>
-            <div class="projects__actions">
-              <a
-                :href="project.website"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="projects__link"
-              >
-                <span class="projects__link-text">Visit</span>
-                <svg
-                  class="projects__link-icon"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2.5"
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
+        <swiper-slide
+          v-for="(project, index) in projects"
+          :key="`slide-${index}`"
+          class="projects__slide"
+        >
+          <article class="projects__card">
+            <img
+              :src="project.image"
+              :alt="project.title"
+              class="projects__image"
+              loading="lazy"
+              :width="800"
+              :height="500"
+            />
+            <div class="projects__overlay" />
+            <div class="projects__content">
+              <h3 class="projects__title">
+                {{ project.title }}
+              </h3>
+              <div class="projects__tech-stack">
+                <span
+                  v-for="tech in project.technologies"
+                  :key="tech"
+                  class="projects__tech-tag"
+                  :class="techColorMap[tech] || 'projects__tech-tag--default'"
                 >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M5 12h14m-7-7l7 7-7 7"
-                  />
-                </svg>
-              </a>
+                  {{ tech }}
+                </span>
+              </div>
+              <p class="projects__description">
+                {{ project.description }}
+              </p>
+              <div class="projects__actions">
+                <a
+                  :href="project.website"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="projects__link"
+                >
+                  <span class="projects__link-text">Visit</span>
+                  <svg
+                    class="projects__link-icon"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.5"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M5 12h14m-7-7l7 7-7 7"
+                    />
+                  </svg>
+                </a>
+              </div>
             </div>
+          </article>
+        </swiper-slide>
+      </swiper-container>
+      <template #fallback>
+        <div class="projects__fallback">
+          <div
+            class="grid grid-cols-1 gap-6 mt-8 md:grid-cols-2 lg:grid-cols-3"
+          >
+            <article
+              v-for="(project, index) in projects"
+              :key="`fallback-${index}`"
+              class="opacity-100 projects__card"
+            >
+              <img
+                :src="project.image"
+                :alt="project.title"
+                class="projects__image"
+                loading="lazy"
+                :width="800"
+                :height="500"
+              />
+              <div class="projects__overlay" />
+              <div class="projects__content">
+                <h3 class="projects__title">
+                  {{ project.title }}
+                </h3>
+                <div class="projects__tech-stack">
+                  <span
+                    v-for="tech in project.technologies"
+                    :key="tech"
+                    class="projects__tech-tag"
+                    :class="techColorMap[tech] || 'projects__tech-tag--default'"
+                  >
+                    {{ tech }}
+                  </span>
+                </div>
+                <p class="projects__description">
+                  {{ project.description }}
+                </p>
+                <div class="projects__actions">
+                  <a
+                    :href="project.website"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="projects__link"
+                  >
+                    <span class="projects__link-text">Visit</span>
+                    <svg
+                      class="projects__link-icon"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2.5"
+                      viewBox="0 0 24 24"
+                      aria-hidden="true"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M5 12h14m-7-7l7 7-7 7"
+                      />
+                    </svg>
+                  </a>
+                </div>
+              </div>
+            </article>
           </div>
-        </article>
-      </swiper-slide>
-    </swiper-container>
+        </div>
+      </template>
+    </ClientOnly>
   </section>
 </template>
 
@@ -143,15 +208,18 @@ const projects = [
 const breakpoints = {
   640: {
     slidesPerView: 1,
-    spaceBetween: 32,
+    spaceBetween: 24,
+    centeredSlides: true,
   },
   1024: {
-    slidesPerView: 1.5,
+    slidesPerView: 1.8,
     spaceBetween: 32,
+    centeredSlides: true,
   },
   1280: {
-    slidesPerView: 2.2,
+    slidesPerView: 2.5,
     spaceBetween: 32,
+    centeredSlides: true,
   },
 }
 </script>
@@ -312,5 +380,9 @@ const breakpoints = {
 .projects__link:hover .projects__link-icon,
 .projects__link:focus .projects__link-icon {
   @apply translate-x-1 scale-110;
+}
+
+.projects__fallback {
+  @apply mt-8;
 }
 </style>
