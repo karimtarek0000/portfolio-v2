@@ -5,14 +5,12 @@
     <ClientOnly>
       <div class="projects__slider-container">
         <swiper-container
-          :slides-per-view="1"
           :space-between="24"
           :centered-slides="true"
-          :loop="false"
           :breakpoints="breakpoints"
           :navigation="false"
           :pagination="{ clickable: true }"
-          :initial-slide="1"
+          :initial-slide="0"
           :keyboard="{ enabled: true }"
           :grab-cursor="true"
           :autoplay="autoplayConfig"
