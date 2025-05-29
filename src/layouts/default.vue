@@ -1,12 +1,5 @@
 <template>
   <LayoutHeader />
-
-  <main>
-    <slot />
-  </main>
-  <!-- <main class="layout-container">
-    <slot />
-  </main> -->
-
+  <slot />
   <LayoutFooter />
 </template>

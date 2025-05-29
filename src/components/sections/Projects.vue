@@ -78,11 +78,11 @@
                 :href="project.website"
                 target="_blank"
                 rel="noopener noreferrer"
-                class="text-sm primary-btn"
+                class="text-sm visit-btn"
                 aria-label="View website for {{ project.title }}"
                 tabindex="0"
               >
-                View Website
+                Visit
               </a>
             </div>
           </div>
@@ -225,7 +225,19 @@ swiper-slide.swiper-slide-prev {
   pointer-events: none;
 }
 
-.primary-btn {
-  @apply bg-primary-2 text-primary-1 rounded-full px-5 py-2 font-bold shadow transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-2 hover:bg-primary-3 active:scale-95;
+.visit-btn {
+  @apply rounded-full px-5 py-2 font-bold shadow-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-2 text-primary-1;
+  background: linear-gradient(
+    90deg,
+    rgb(var(--primary-2)),
+    rgb(var(--primary-3)),
+    rgb(var(--primary-2)) 90%
+  );
+  box-shadow: 0 4px 24px 0 rgb(var(--primary-2), 0.15);
+}
+.visit-btn:hover,
+.visit-btn:focus {
+  filter: brightness(1.15) saturate(1.2);
+  transform: scale(1.04);
 }
 </style>

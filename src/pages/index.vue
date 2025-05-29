@@ -1,7 +1,9 @@
 <template>
-  <SectionsSkills />
-  <SectionsAbout />
-  <SectionsExperience />
+  <main class="layout-container">
+    <SectionsSkills />
+    <SectionsAbout />
+    <SectionsExperience />
+  </main>
   <SectionsProjects />
   <div class="mt-[1000px]"></div>
 </template>
