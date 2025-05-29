@@ -10,13 +10,14 @@
           :centered-slides="true"
           :loop="false"
           :breakpoints="breakpoints"
-          :navigation="true"
+          :navigation="false"
           :pagination="{ clickable: true }"
           :initial-slide="1"
           :keyboard="{ enabled: true }"
           :grab-cursor="true"
           :autoplay="autoplayConfig"
           :effect="'slide'"
+          :speed="700"
           class="projects__slider"
           aria-label="Project showcase slider"
           role="region"
@@ -239,7 +240,6 @@ const openGithub = (githubUrl: string) => {
 }
 
 .projects__slider {
-  --swiper-navigation-color: rgb(var(--primary-2));
   --swiper-pagination-color: #fff;
   --swiper-pagination-bullet-inactive-color: #fff;
   --swiper-pagination-bullet-inactive-opacity: 0.4;
@@ -311,7 +311,7 @@ const openGithub = (githubUrl: string) => {
 }
 
 .projects__content {
-  @apply relative z-20 flex flex-col w-full gap-4 p-8 pointer-events-auto translate-y-10 opacity-0 transition-all duration-700 ease-out;
+  @apply relative z-20 flex flex-col w-full gap-4 p-8 pointer-events-auto translate-y-24 opacity-0 transition-all duration-700 ease-out;
 }
 
 .projects__slide.swiper-slide-active .projects__content {
