@@ -51,7 +51,7 @@
                     <span
                       v-for="tech in project.technologies"
                       :key="tech"
-                      class="text-white bg-green-500 projects__tech-tag"
+                      class="projects__tech-tag"
                       role="listitem"
                       :aria-label="`Technology: ${tech}`"
                     >
@@ -293,7 +293,7 @@ const breakpoints = {
 }
 
 .projects__content {
-  @apply relative z-20 h-full flex flex-col w-full p-6 pointer-events-auto translate-y-24 opacity-0 transition-all duration-700 ease-out sm:p-8;
+  @apply relative z-20 justify-center h-full flex flex-col w-full p-6 pointer-events-auto translate-y-24 opacity-0 transition-all duration-700 ease-out sm:p-8;
 }
 
 .projects__slide.swiper-slide-active .projects__content {
@@ -313,7 +313,7 @@ const breakpoints = {
 }
 
 .projects__tech-tag {
-  @apply px-2 py-1 text-sm font-semibold transition transform rounded-full cursor-pointer select-none sm:px-3;
+  @apply px-2 py-1  font-semibold transition transform rounded-full text-white bg-green-500  cursor-pointer select-none sm:px-5 py-2 px-5 sm:py-2;
 }
 
 .projects__description {
