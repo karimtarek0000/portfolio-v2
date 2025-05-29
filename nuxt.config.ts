@@ -10,7 +10,7 @@ export default defineNuxtConfig({
       title: 'karim tarek',
     },
   },
-  modules: ['@nuxtjs/tailwindcss', '@nuxtjs/google-fonts'],
+  modules: ['@nuxtjs/tailwindcss', '@nuxtjs/google-fonts', 'nuxt-swiper'],
   css: ['~/assets/style/main.css'],
 
   googleFonts: {

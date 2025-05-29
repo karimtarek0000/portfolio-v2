@@ -13,6 +13,7 @@
     "@nuxtjs/tailwindcss": "^6.12.1",
     "hex-rgb": "^5.0.0",
     "nuxt": "^3.13.0",
+    "nuxt-swiper": "^2.0.1",
     "vue": "latest",
     "vue-router": "latest",
     "vue3-lottie": "^3.3.1"
