@@ -11,7 +11,7 @@
         :breakpoints="breakpoints"
         :navigation="true"
         :pagination="{ clickable: true }"
-        :initial-slide="0"
+        :initial-slide="1"
         :keyboard="{ enabled: true }"
         :grab-cursor="true"
         :autoplay="autoplayConfig"
@@ -208,9 +208,10 @@ const techColorMap: Record<string, string> = {
 }
 
 const autoplayConfig = {
-  delay: 5000,
+  delay: 3000,
   disableOnInteraction: false,
   pauseOnMouseEnter: true,
+  reverseDirection: false,
 }
 
 const projects: Project[] = [
