@@ -293,7 +293,7 @@ const breakpoints = {
 }
 
 .projects__content {
-  @apply relative z-20 flex flex-col w-full gap-4 p-8 pointer-events-auto translate-y-24 opacity-0 transition-all duration-700 ease-out;
+  @apply relative z-20 flex flex-col w-full gap-3 p-6 pointer-events-auto translate-y-24 opacity-0 transition-all duration-700 ease-out sm:gap-4 sm:p-8;
 }
 
 .projects__slide.swiper-slide-active .projects__content {
@@ -305,7 +305,7 @@ const breakpoints = {
 }
 
 .projects__title {
-  @apply mb-2 font-extrabold leading-tight text-white drop-shadow-lg text-lg transition-all duration-500;
+  @apply mb-2 font-extrabold leading-tight text-white drop-shadow-lg text-sm transition-all duration-500 sm:text-lg;
 }
 
 .projects__tech-stack {
@@ -313,7 +313,7 @@ const breakpoints = {
 }
 
 .projects__tech-tag {
-  @apply px-3 py-1 text-sm font-semibold transition transform rounded-full cursor-pointer select-none;
+  @apply px-2 py-1 text-sm font-semibold transition transform rounded-full cursor-pointer select-none sm:px-3;
 }
 
 .projects__description {
@@ -325,7 +325,7 @@ const breakpoints = {
 }
 
 .projects__link {
-  @apply rounded-full px-8 py-2 font-bold border-[1.5px] border-primary-2/30 shadow-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary-2 backdrop-blur-md bg-opacity-90 select-none relative overflow-hidden tracking-[0.09em] z-[1] text-white;
+  @apply rounded-full px-6 py-2 text-sm font-bold border-[1.5px] border-primary-2/30 shadow-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary-2 backdrop-blur-md bg-opacity-90 select-none relative overflow-hidden tracking-[0.09em] z-[1] text-white sm:px-8;
 }
 
 .dark .projects__link {
@@ -402,83 +402,8 @@ const breakpoints = {
   @apply shadow-[0_4px_16px_rgba(0,0,0,0.2)];
 }
 
-.projects__skeleton {
-  @apply flex justify-center items-center w-full h-[500px];
-}
-
-.projects__skeleton-slide {
-  @apply w-full max-w-md h-[500px];
-}
-
-.projects__skeleton-card {
-  @apply relative w-full h-full rounded-2xl overflow-hidden bg-gray-200 dark:bg-gray-700 animate-pulse;
-}
-
-.projects__skeleton-image {
-  @apply absolute inset-0 bg-gray-300 dark:bg-gray-600;
-}
-
-.projects__skeleton-content {
-  @apply absolute bottom-0 left-0 right-0 p-8 space-y-4;
-}
-
-.projects__skeleton-title {
-  @apply h-6 bg-gray-300 dark:bg-gray-600 rounded w-[60%];
-}
-
-.projects__skeleton-tags {
-  @apply flex gap-2;
-}
-
-.projects__skeleton-tag {
-  @apply h-6 bg-gray-300 dark:bg-gray-600 rounded-full w-[60px];
-}
-
-.projects__skeleton-description {
-  @apply space-y-2;
-}
-
-.projects__skeleton-line {
-  @apply h-4 bg-gray-300 dark:bg-gray-600 rounded;
-}
-
-.projects__skeleton-line--short {
-  @apply w-[70%];
-}
-
-.projects__skeleton-button {
-  @apply h-10 bg-gray-300 dark:bg-gray-600 rounded-full w-[120px];
-}
-
-.projects__image[data-loading='true'] {
-  @apply opacity-50;
-}
-
 .projects__link:focus,
 .projects__tech-tag:focus {
   @apply outline-none ring-2 ring-primary-2 ring-offset-2 ring-offset-gray-900;
-}
-
-/* Mobile responsive */
-@media (max-width: 640px) {
-  .projects__content {
-    @apply p-6 gap-3;
-  }
-
-  .projects__title {
-    @apply text-sm;
-  }
-
-  .projects__description {
-    @apply text-sm leading-relaxed;
-  }
-
-  .projects__tech-tag {
-    @apply px-2 py-1 text-sm;
-  }
-
-  .projects__link {
-    @apply px-6 py-2 text-sm;
-  }
 }
 </style>
