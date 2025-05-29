@@ -78,11 +78,25 @@
                 :href="project.website"
                 target="_blank"
                 rel="noopener noreferrer"
-                class="text-sm visit-btn"
-                aria-label="View website for {{ project.title }}"
+                class="visit-btn dark:text-primary-2 dark:border-primary-2"
+                aria-label="Visit project website for {{ project.title }}"
                 tabindex="0"
               >
-                Visit
+                <span class="font-bold tracking-wider uppercase">Visit</span>
+                <svg
+                  class="w-5 h-5 arrow-icon"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.5"
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M5 12h14m-7-7l7 7-7 7"
+                  />
+                </svg>
               </a>
             </div>
           </div>
@@ -226,18 +240,93 @@ swiper-slide.swiper-slide-prev {
 }
 
 .visit-btn {
-  @apply rounded-full px-5 py-2 font-bold shadow-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-2 text-primary-1;
+  @apply rounded-full px-8 py-2 font-bold border shadow-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary-2 backdrop-blur-md bg-opacity-80 select-none;
+  color: rgb(var(--primary-1));
+  border: 1.5px solid rgba(var(--primary-2), 0.18);
   background: linear-gradient(
-    90deg,
-    rgb(var(--primary-2)),
-    rgb(var(--primary-3)),
-    rgb(var(--primary-2)) 90%
+    120deg,
+    rgba(var(--primary-2), 0.98) 0%,
+    rgba(var(--primary-3), 0.92) 40%,
+    rgba(var(--primary-2), 0.98) 100%
   );
-  box-shadow: 0 4px 24px 0 rgb(var(--primary-2), 0.15);
+  box-shadow: 0 4px 32px 0 rgba(var(--primary-2), 0.18),
+    0 1.5px 8px 0 rgba(var(--primary-3), 0.1);
+  position: relative;
+  overflow: hidden;
+  letter-spacing: 0.09em;
+  z-index: 1;
+}
+.dark .visit-btn {
+  color: rgb(var(--primary-2));
+  border: 1.5px solid rgba(var(--primary-2), 0.45);
+  background: linear-gradient(
+    120deg,
+    rgba(var(--primary-2), 0.98) 0%,
+    rgba(var(--primary-3), 0.85) 40%,
+    rgba(var(--primary-2), 0.98) 100%
+  );
+  box-shadow: 0 4px 32px 0 rgba(var(--primary-2), 0.28),
+    0 1.5px 8px 0 rgba(var(--primary-3), 0.18);
+}
+.visit-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    100deg,
+    rgba(255, 255, 255, 0.18) 0%,
+    rgba(255, 255, 255, 0.05) 100%
+  );
+  opacity: 0.4;
+  pointer-events: none;
+  transition: opacity 0.3s, background-position 0.7s;
+  background-size: 200% 200%;
+  background-position: 0% 50%;
+  z-index: 2;
+}
+.visit-btn::after {
+  /* Animated shine */
+  content: '';
+  position: absolute;
+  left: -60%;
+  top: 0;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(
+    120deg,
+    rgba(255, 255, 255, 0.18) 0%,
+    rgba(255, 255, 255, 0.01) 100%
+  );
+  filter: blur(2px);
+  opacity: 0;
+  transition: opacity 0.3s, left 0.7s;
+  z-index: 3;
+}
+.visit-btn:hover::before,
+.visit-btn:focus::before {
+  opacity: 0.7;
+  background-position: 100% 50%;
+}
+.visit-btn:hover::after,
+.visit-btn:focus::after {
+  opacity: 1;
+  left: 110%;
 }
 .visit-btn:hover,
 .visit-btn:focus {
-  filter: brightness(1.15) saturate(1.2);
-  transform: scale(1.04);
+  box-shadow: 0 8px 40px 0 rgba(var(--primary-2), 0.32),
+    0 2px 12px 0 rgba(var(--primary-3), 0.22),
+    0 0 16px 2px rgba(var(--primary-2), 0.18);
+  transform: scale(1.065);
+}
+.visit-btn svg.arrow-icon {
+  @apply inline-block align-middle;
+  color: inherit;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
+  transition: transform 0.3s cubic-bezier(0.4, 2, 0.6, 1);
+}
+.visit-btn:hover svg.arrow-icon,
+.visit-btn:focus svg.arrow-icon {
+  transform: translateX(4px) scale(1.12);
 }
 </style>
