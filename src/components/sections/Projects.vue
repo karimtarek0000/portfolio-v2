@@ -36,7 +36,6 @@
                 loading="lazy"
                 width="800"
                 height="500"
-                @error="handleImageError"
               />
               <div class="projects__overlay" />
               <div class="projects__content">
@@ -215,20 +214,11 @@ const breakpoints = {
     centeredSlides: true,
   },
 }
-
-// Enhanced methods
-const handleImageError = (event: Event) => {
-  const img = event.target as HTMLImageElement
-  img.src = '/images/project-placeholder.jpg' // Add a fallback image
-  console.warn(`Failed to load project image: ${img.src}`)
-}
 </script>
 
 <style scoped>
 .projects__slider-container {
-  @apply mt-8 relative;
-  min-height: 500px;
-  width: 100%;
+  @apply mt-8 relative min-h-[500px];
 }
 
 .projects__slider {
@@ -237,14 +227,11 @@ const handleImageError = (event: Event) => {
   --swiper-pagination-bullet-inactive-opacity: 0.4;
   --swiper-pagination-bullet-size: 12px;
   --swiper-pagination-bullet-horizontal-gap: 6px;
-  @apply overflow-visible w-full;
-  height: 500px;
+  @apply overflow-visible w-full h-[500px];
 }
 
 .projects__slide {
-  @apply transition-all duration-500 opacity-60 blur-[1px] grayscale-[20%] scale-[0.92] will-change-transform;
-  height: 500px;
-  width: auto;
+  @apply transition-all duration-500 opacity-60 blur-[1px] grayscale-[20%] scale-[0.92] will-change-transform h-[500px] w-auto;
 }
 
 .projects__slide.swiper-slide-active {
@@ -257,38 +244,31 @@ const handleImageError = (event: Event) => {
 }
 
 .projects__card {
-  @apply relative flex flex-col justify-end items-start w-full rounded-2xl overflow-hidden shadow-2xl bg-black/60;
-  height: 500px;
-  min-height: 500px;
+  @apply relative flex flex-col justify-end items-start w-full rounded-2xl overflow-hidden shadow-2xl bg-black/60 h-[500px] min-h-[500px];
 }
 
 .projects__image {
-  @apply absolute inset-0 z-0 object-cover object-center w-full h-full will-change-transform transition-opacity duration-300;
-  transform: scale(1);
+  @apply absolute inset-0 z-0 object-cover object-center w-full h-full will-change-transform transition-opacity duration-300 scale-100;
   transition: transform 0.4s ease-in-out, filter 0.8s ease-in-out;
 }
 
 .projects__card:hover .projects__image {
-  transform: scale(1.05) !important;
-  filter: brightness(0.9);
+  @apply scale-105 brightness-90;
   transition: transform 0.8s ease-in-out, filter 0.8s ease-in-out;
 }
 
 .projects__slide.swiper-slide-active .projects__card:hover .projects__image {
-  transform: scale(1.1) !important;
-  filter: brightness(0.75);
+  @apply scale-110 brightness-75;
   transition: transform 0.8s ease-in-out, filter 0.8s ease-in-out;
 }
 
 .projects__slide:hover .projects__card .projects__image {
-  transform: scale(1.05) !important;
-  filter: brightness(0.9);
+  @apply scale-105 brightness-90;
   transition: transform 0.8s ease-in-out, filter 0.8s ease-in-out;
 }
 
 .projects__slide.swiper-slide-active:hover .projects__card .projects__image {
-  transform: scale(1.1) !important;
-  filter: brightness(0.75);
+  @apply scale-110 brightness-75;
   transition: transform 0.8s ease-in-out, filter 0.8s ease-in-out;
 }
 
@@ -329,8 +309,7 @@ const handleImageError = (event: Event) => {
 }
 
 .projects__link {
-  @apply rounded-full px-8 py-2 font-bold border shadow-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary-2 backdrop-blur-md bg-opacity-90 select-none relative overflow-hidden tracking-[0.09em] z-[1] text-white will-change-transform;
-  border: 1.5px solid rgba(var(--primary-2), 0.3);
+  @apply rounded-full px-8 py-2 font-bold border-[1.5px] border-primary-2/30 shadow-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary-2 backdrop-blur-md bg-opacity-90 select-none relative overflow-hidden tracking-[0.09em] z-[1] text-white will-change-transform;
   background: linear-gradient(
     120deg,
     rgba(var(--primary-2), 1) 0%,
@@ -342,8 +321,7 @@ const handleImageError = (event: Event) => {
 }
 
 .dark .projects__link {
-  @apply text-white;
-  border: 1.5px solid rgba(var(--primary-2), 0.5);
+  @apply text-white border-primary-2/50;
   background: linear-gradient(
     120deg,
     rgba(var(--primary-2), 1) 0%,
@@ -367,9 +345,8 @@ const handleImageError = (event: Event) => {
 }
 
 .projects__link::after {
-  @apply absolute top-0 w-[60%] h-full opacity-0 transition-all duration-300 z-[3];
+  @apply absolute top-0 w-[60%] h-full opacity-0 transition-all duration-300 z-[3] -left-[60%];
   content: '';
-  left: -60%;
   background: linear-gradient(
     120deg,
     rgba(255, 255, 255, 0.18) 0%,
@@ -386,8 +363,7 @@ const handleImageError = (event: Event) => {
 
 .projects__link:hover::after,
 .projects__link:focus::after {
-  @apply opacity-100;
-  left: 110%;
+  @apply opacity-100 left-[110%];
 }
 
 .projects__link:hover,
@@ -403,9 +379,8 @@ const handleImageError = (event: Event) => {
 }
 
 .projects__link-icon {
-  @apply w-5 h-5 inline-block align-middle transition-transform duration-300;
+  @apply w-5 h-5 inline-block align-middle transition-transform duration-300 drop-shadow-[0_1px_2px_rgba(0,0,0,0.1)];
   color: inherit;
-  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
   transition-timing-function: cubic-bezier(0.4, 2, 0.6, 1);
 }
 
@@ -415,23 +390,20 @@ const handleImageError = (event: Event) => {
 }
 
 .projects__link--secondary {
-  @apply bg-transparent border-gray-500 text-gray-300 hover:border-gray-400 hover:text-white scale-105;
+  @apply bg-transparent border-gray-500 text-gray-300 hover:border-gray-400 hover:text-white scale-105 shadow-[0_2px_8px_rgba(0,0,0,0.1)];
   background: transparent !important;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .projects__link--secondary:hover {
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  @apply shadow-[0_4px_16px_rgba(0,0,0,0.2)];
 }
 
 .projects__skeleton {
-  @apply flex justify-center items-center w-full;
-  height: 500px;
+  @apply flex justify-center items-center w-full h-[500px];
 }
 
 .projects__skeleton-slide {
-  @apply w-full max-w-md;
-  height: 500px;
+  @apply w-full max-w-md h-[500px];
 }
 
 .projects__skeleton-card {
@@ -447,8 +419,7 @@ const handleImageError = (event: Event) => {
 }
 
 .projects__skeleton-title {
-  @apply h-6 bg-gray-300 dark:bg-gray-600 rounded;
-  width: 60%;
+  @apply h-6 bg-gray-300 dark:bg-gray-600 rounded w-[60%];
 }
 
 .projects__skeleton-tags {
@@ -456,8 +427,7 @@ const handleImageError = (event: Event) => {
 }
 
 .projects__skeleton-tag {
-  @apply h-6 bg-gray-300 dark:bg-gray-600 rounded-full;
-  width: 60px;
+  @apply h-6 bg-gray-300 dark:bg-gray-600 rounded-full w-[60px];
 }
 
 .projects__skeleton-description {
@@ -469,12 +439,11 @@ const handleImageError = (event: Event) => {
 }
 
 .projects__skeleton-line--short {
-  width: 70%;
+  @apply w-[70%];
 }
 
 .projects__skeleton-button {
-  @apply h-10 bg-gray-300 dark:bg-gray-600 rounded-full;
-  width: 120px;
+  @apply h-10 bg-gray-300 dark:bg-gray-600 rounded-full w-[120px];
 }
 
 .projects__image[data-loading='true'] {
