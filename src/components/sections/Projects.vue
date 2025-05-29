@@ -52,8 +52,7 @@
                   <span
                     v-for="tech in project.technologies"
                     :key="tech"
-                    class="projects__tech-tag"
-                    :class="getTechColorClass(tech)"
+                    class="text-white bg-green-500 projects__tech-tag"
                     role="listitem"
                     :aria-label="`Technology: ${tech}`"
                   >
@@ -73,7 +72,6 @@
                   rel="noopener noreferrer"
                   class="projects__link"
                   :aria-label="`Visit ${project.title} project (opens in new tab)`"
-                  @click="trackProjectClick(project.title)"
                 >
                   <span class="projects__link-text">Visit Project</span>
                   <svg
@@ -137,8 +135,7 @@
                   <span
                     v-for="tech in project.technologies"
                     :key="tech"
-                    class="projects__tech-tag"
-                    :class="techColorMap[tech] || 'projects__tech-tag--default'"
+                    class="text-white bg-green-500 projects__tech-tag"
                   >
                     {{ tech }}
                   </span>
@@ -188,23 +185,6 @@ interface Project {
   website: string
   github?: string
   featured?: boolean
-}
-
-const techColorMap: Record<string, string> = {
-  JavaScript: 'bg-yellow-300 text-black',
-  TypeScript: 'bg-blue-500 text-white',
-  Vue: 'bg-green-500 text-white',
-  Nuxt: 'bg-emerald-700 text-white',
-  Tailwind: 'bg-cyan-400 text-black',
-  Swiper: 'bg-purple-400 text-white',
-  HTML: 'bg-orange-400 text-white',
-  CSS: 'bg-blue-300 text-black',
-  'Node.js': 'bg-green-700 text-white',
-  Express: 'bg-gray-700 text-white',
-  MongoDB: 'bg-green-600 text-white',
-  Jest: 'bg-pink-400 text-white',
-  Vitest: 'bg-lime-400 text-black',
-  Lottie: 'bg-indigo-400 text-white',
 }
 
 const autoplayConfig = {
@@ -278,23 +258,10 @@ const breakpoints = {
 }
 
 // Enhanced methods
-const getTechColorClass = (tech: string): string => {
-  return techColorMap[tech] || 'projects__tech-tag--default'
-}
-
 const handleImageError = (event: Event) => {
   const img = event.target as HTMLImageElement
   img.src = '/images/project-placeholder.jpg' // Add a fallback image
   console.warn(`Failed to load project image: ${img.src}`)
-}
-
-const trackProjectClick = (projectTitle: string) => {
-  // Analytics tracking
-  if (typeof gtag !== 'undefined') {
-    gtag('event', 'project_visit', {
-      project_name: projectTitle,
-    })
-  }
 }
 
 const openGithub = (githubUrl: string) => {
