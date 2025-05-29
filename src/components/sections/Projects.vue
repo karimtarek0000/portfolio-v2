@@ -1,8 +1,8 @@
 <template>
   <section class="py-10 mt-20 projects glassmorphism">
     <SharedHeader title="projects" />
+
     <swiper-container
-      ref="swiperRef"
       :slides-per-view="1"
       :space-between="32"
       :centered-slides="true"
@@ -10,8 +10,18 @@
       :breakpoints="breakpoints"
       :navigation="true"
       :pagination="{ clickable: true }"
+      :modules="modules"
+      :autoplay="{
+        delay: 3000,
+        disableOnInteraction: false,
+        pauseOnMouseEnter: true,
+      }"
       :preload-images="false"
       :lazy="true"
+      :watch-slides-progress="true"
+      :observer="true"
+      :observe-parents="true"
+      :initial-slide="1"
       class="projects__slider"
       aria-label="Project showcase slider"
     >
@@ -79,6 +89,13 @@
 </template>
 
 <script lang="ts" setup>
+import 'swiper/css'
+import 'swiper/css/navigation'
+import 'swiper/css/pagination'
+import { Autoplay, Navigation, Pagination } from 'swiper/modules'
+
+const modules = [Autoplay, Navigation, Pagination]
+
 const techColorMap: Record<string, string> = {
   JavaScript: 'bg-yellow-300 text-black',
   TypeScript: 'bg-blue-500 text-white',
@@ -140,9 +157,18 @@ const projects = [
 ]
 
 const breakpoints = {
-  640: { slidesPerView: 1 },
-  1024: { slidesPerView: 1.5 },
-  1280: { slidesPerView: 2.2 },
+  640: {
+    slidesPerView: 1,
+    spaceBetween: 32,
+  },
+  1024: {
+    slidesPerView: 1.5,
+    spaceBetween: 32,
+  },
+  1280: {
+    slidesPerView: 2.2,
+    spaceBetween: 32,
+  },
 }
 </script>
 
