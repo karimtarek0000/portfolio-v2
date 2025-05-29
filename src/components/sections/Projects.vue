@@ -38,7 +38,7 @@
                 height="500"
               />
               <div class="projects__overlay" />
-              <div class="mb-5 projects__content">
+              <div class="projects__content">
                 <header class="projects__header">
                   <h3 class="projects__title">
                     {{ project.title }}
@@ -162,7 +162,7 @@ interface Project {
 }
 
 const autoplayConfig = {
-  delay: 3000,
+  delay: 10000000,
   disableOnInteraction: false,
   pauseOnMouseEnter: true,
   reverseDirection: false,
@@ -171,7 +171,7 @@ const autoplayConfig = {
 const projects: Project[] = [
   {
     image: 'https://picsum.photos/id/1015/800/500',
-    title: 'E-Commerce Platform',
+    title: 'test 1',
     description:
       'A modern e-commerce platform built with Vue 3 and Nuxt, featuring real-time inventory management and seamless payment integration.',
     technologies: ['Vue', 'Nuxt', 'Tailwind', 'Swiper'],
@@ -293,7 +293,7 @@ const breakpoints = {
 }
 
 .projects__content {
-  @apply relative z-20 flex flex-col w-full gap-3 p-6 pointer-events-auto translate-y-24 opacity-0 transition-all duration-700 ease-out sm:gap-4 sm:p-8;
+  @apply relative z-20 h-full flex flex-col w-full p-6 pointer-events-auto translate-y-24 opacity-0 transition-all duration-700 ease-out sm:p-8;
 }
 
 .projects__slide.swiper-slide-active .projects__content {
@@ -321,7 +321,7 @@ const breakpoints = {
 }
 
 .projects__actions {
-  @apply flex items-center gap-2 mt-auto;
+  @apply flex items-center mt-5 gap-2;
 }
 
 .projects__link {
