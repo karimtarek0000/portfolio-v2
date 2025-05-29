@@ -65,14 +65,15 @@
                 </p>
 
                 <footer class="projects__actions">
+                  <!-- Visit button -->
                   <a
                     :href="project.website"
                     target="_blank"
                     rel="noopener noreferrer"
-                    class="projects__link"
+                    class="projects__link projects__link--secondary"
                     :aria-label="`Visit ${project.title} project (opens in new tab)`"
                   >
-                    <span class="projects__link-text">Visit Project</span>
+                    <span class="projects__link-text">Visit</span>
                     <svg
                       class="projects__link-icon"
                       fill="none"
@@ -89,12 +90,27 @@
                     </svg>
                   </a>
 
+                  <!-- Source button -->
                   <button
                     v-if="project.github"
-                    class="projects__link projects__link--secondary"
+                    class="mx-3 projects__link projects__link--secondary"
                     :aria-label="`View ${project.title} source code on GitHub`"
                   >
                     <span class="projects__link-text">Source</span>
+                    <svg
+                      class="projects__link-icon"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2.5"
+                      viewBox="0 0 24 24"
+                      aria-hidden="true"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M5 12h14m-7-7l7 7-7 7"
+                      />
+                    </svg>
                   </button>
                 </footer>
               </div>
@@ -309,15 +325,7 @@ const breakpoints = {
 }
 
 .projects__link {
-  @apply rounded-full px-8 py-2 font-bold border-[1.5px] border-primary-2/30 shadow-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary-2 backdrop-blur-md bg-opacity-90 select-none relative overflow-hidden tracking-[0.09em] z-[1] text-white will-change-transform;
-  background: linear-gradient(
-    120deg,
-    rgba(var(--primary-2), 1) 0%,
-    rgba(var(--primary-3), 0.95) 40%,
-    rgba(var(--primary-2), 1) 100%
-  );
-  box-shadow: 0 4px 32px 0 rgba(var(--primary-2), 0.25),
-    0 1.5px 8px 0 rgba(var(--primary-3), 0.15);
+  @apply rounded-full px-8 py-2 font-bold border-[1.5px] border-primary-2/30 shadow-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary-2 backdrop-blur-md bg-opacity-90 select-none relative overflow-hidden tracking-[0.09em] z-[1] text-white;
 }
 
 .dark .projects__link {
@@ -372,10 +380,6 @@ const breakpoints = {
   box-shadow: 0 8px 40px 0 rgba(var(--primary-2), 0.32),
     0 2px 12px 0 rgba(var(--primary-3), 0.22),
     0 0 16px 2px rgba(var(--primary-2), 0.18);
-}
-
-.projects__link-text {
-  @apply font-bold tracking-wider uppercase;
 }
 
 .projects__link-icon {
