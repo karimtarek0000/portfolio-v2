@@ -233,10 +233,9 @@ const openGithub = (githubUrl: string) => {
 
 <style scoped>
 .projects__slider-container {
-  @apply mt-8;
+  @apply mt-8 relative;
   min-height: 500px;
   width: 100%;
-  position: relative;
 }
 
 .projects__slider {
@@ -245,9 +244,8 @@ const openGithub = (githubUrl: string) => {
   --swiper-pagination-bullet-inactive-opacity: 0.4;
   --swiper-pagination-bullet-size: 12px;
   --swiper-pagination-bullet-horizontal-gap: 6px;
-  @apply overflow-visible;
+  @apply overflow-visible w-full;
   height: 500px;
-  width: 100%;
 }
 
 .projects__slide {
@@ -272,38 +270,33 @@ const openGithub = (githubUrl: string) => {
 }
 
 .projects__image {
-  @apply absolute inset-0 z-0 object-cover object-center w-full h-full will-change-transform;
+  @apply absolute inset-0 z-0 object-cover object-center w-full h-full will-change-transform transition-opacity duration-300;
   transform: scale(1);
-  transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1),
-    filter 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 0.4s ease-in-out, filter 0.8s ease-in-out;
 }
 
 .projects__card:hover .projects__image {
   transform: scale(1.05) !important;
   filter: brightness(0.9);
-  transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1),
-    filter 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 0.8s ease-in-out, filter 0.8s ease-in-out;
 }
 
 .projects__slide.swiper-slide-active .projects__card:hover .projects__image {
   transform: scale(1.1) !important;
   filter: brightness(0.75);
-  transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1),
-    filter 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 0.8s ease-in-out, filter 0.8s ease-in-out;
 }
 
 .projects__slide:hover .projects__card .projects__image {
   transform: scale(1.05) !important;
   filter: brightness(0.9);
-  transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1),
-    filter 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 0.8s ease-in-out, filter 0.8s ease-in-out;
 }
 
 .projects__slide.swiper-slide-active:hover .projects__card .projects__image {
   transform: scale(1.1) !important;
   filter: brightness(0.75);
-  transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1),
-    filter 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 0.8s ease-in-out, filter 0.8s ease-in-out;
 }
 
 .projects__overlay {
@@ -332,10 +325,6 @@ const openGithub = (githubUrl: string) => {
 
 .projects__tech-tag {
   @apply px-3 py-1 text-sm font-semibold transition transform rounded-full cursor-pointer select-none;
-}
-
-.projects__tech-tag--default {
-  @apply bg-gray-400 text-white;
 }
 
 .projects__description {
@@ -373,8 +362,8 @@ const openGithub = (githubUrl: string) => {
 }
 
 .projects__link::before {
-  content: '';
   @apply absolute inset-0 opacity-50 pointer-events-none transition-all duration-300 z-[2];
+  content: '';
   background: linear-gradient(
     100deg,
     rgba(255, 255, 255, 0.25) 0%,
@@ -385,8 +374,8 @@ const openGithub = (githubUrl: string) => {
 }
 
 .projects__link::after {
-  content: '';
   @apply absolute top-0 w-[60%] h-full opacity-0 transition-all duration-300 z-[3];
+  content: '';
   left: -60%;
   background: linear-gradient(
     120deg,
@@ -433,20 +422,18 @@ const openGithub = (githubUrl: string) => {
 }
 
 .projects__link--secondary {
-  @apply bg-transparent border-gray-500 text-gray-300 hover:border-gray-400 hover:text-white;
+  @apply bg-transparent border-gray-500 text-gray-300 hover:border-gray-400 hover:text-white scale-105;
   background: transparent !important;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .projects__link--secondary:hover {
-  @apply scale-105;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
 }
 
 .projects__skeleton {
-  @apply flex justify-center items-center;
+  @apply flex justify-center items-center w-full;
   height: 500px;
-  width: 100%;
 }
 
 .projects__skeleton-slide {
@@ -455,8 +442,7 @@ const openGithub = (githubUrl: string) => {
 }
 
 .projects__skeleton-card {
-  @apply relative w-full h-full rounded-2xl overflow-hidden bg-gray-200 dark:bg-gray-700;
-  animation: pulse 2s infinite;
+  @apply relative w-full h-full rounded-2xl overflow-hidden bg-gray-200 dark:bg-gray-700 animate-pulse;
 }
 
 .projects__skeleton-image {
@@ -498,17 +484,16 @@ const openGithub = (githubUrl: string) => {
   width: 120px;
 }
 
-@keyframes pulse {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.5;
-  }
+.projects__image[data-loading='true'] {
+  @apply opacity-50;
 }
 
-/* Remove mobile-specific height changes to prevent CLS */
+.projects__link:focus,
+.projects__tech-tag:focus {
+  @apply outline-none ring-2 ring-primary-2 ring-offset-2 ring-offset-gray-900;
+}
+
+/* Mobile responsive */
 @media (max-width: 640px) {
   .projects__content {
     @apply p-6 gap-3;
@@ -529,20 +514,5 @@ const openGithub = (githubUrl: string) => {
   .projects__link {
     @apply px-6 py-2 text-sm;
   }
-}
-
-/* Loading states */
-.projects__image {
-  @apply transition-opacity duration-300;
-}
-
-.projects__image[data-loading='true'] {
-  @apply opacity-50;
-}
-
-/* Focus states for accessibility */
-.projects__link:focus,
-.projects__tech-tag:focus {
-  @apply outline-none ring-2 ring-primary-2 ring-offset-2 ring-offset-gray-900;
 }
 </style>
