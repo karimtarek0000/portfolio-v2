@@ -10,18 +10,9 @@
       :breakpoints="breakpoints"
       :navigation="true"
       :pagination="{ clickable: true }"
-      :modules="modules"
-      :autoplay="{
-        delay: 3000,
-        disableOnInteraction: false,
-        pauseOnMouseEnter: true,
-      }"
+      :initial-slide="1"
       :preload-images="false"
       :lazy="true"
-      :watch-slides-progress="true"
-      :observer="true"
-      :observe-parents="true"
-      :initial-slide="1"
       class="projects__slider"
       aria-label="Project showcase slider"
     >
@@ -89,13 +80,6 @@
 </template>
 
 <script lang="ts" setup>
-import 'swiper/css'
-import 'swiper/css/navigation'
-import 'swiper/css/pagination'
-import { Autoplay, Navigation, Pagination } from 'swiper/modules'
-
-const modules = [Autoplay, Navigation, Pagination]
-
 const techColorMap: Record<string, string> = {
   JavaScript: 'bg-yellow-300 text-black',
   TypeScript: 'bg-blue-500 text-white',
