@@ -41,13 +41,6 @@
             </div>
             <p class="projects__description">
               {{ project.description }}
-              <button
-                v-if="isDescriptionTruncated(project, n)"
-                @click="() => expandDescription(n)"
-                class="projects__read-more"
-              >
-                Read more
-              </button>
             </p>
             <div class="projects__actions">
               <a
@@ -144,20 +137,6 @@ const breakpoints = {
   640: { slidesPerView: 1 },
   1024: { slidesPerView: 1.5 },
   1280: { slidesPerView: 2.2 },
-}
-
-const DESCRIPTION_LIMIT = 120
-const expandedDescriptions = ref<Record<number, boolean>>({})
-
-function isDescriptionTruncated(project: any, idx: number) {
-  return (
-    project.description.length > DESCRIPTION_LIMIT &&
-    !expandedDescriptions.value[idx]
-  )
-}
-
-function expandDescription(idx: number) {
-  expandedDescriptions.value[idx] = true
 }
 </script>
 
