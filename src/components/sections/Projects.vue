@@ -12,49 +12,70 @@
         :navigation="true"
         :pagination="{ clickable: true }"
         :initial-slide="0"
+        :keyboard="{ enabled: true }"
+        :grab-cursor="true"
+        :autoplay="autoplayConfig"
+        :effect="'slide'"
         class="projects__slider"
         aria-label="Project showcase slider"
+        role="region"
       >
         <swiper-slide
           v-for="(project, index) in projects"
           :key="`slide-${index}`"
           class="projects__slide"
+          :aria-label="`Project ${index + 1} of ${projects.length}: ${
+            project.title
+          }`"
         >
           <article class="projects__card">
             <img
               :src="project.image"
-              :alt="project.title"
+              :alt="`Screenshot of ${project.title} project`"
               class="projects__image"
               loading="lazy"
-              :width="800"
-              :height="500"
+              width="800"
+              height="500"
+              @error="handleImageError"
             />
             <div class="projects__overlay" />
             <div class="projects__content">
-              <h3 class="projects__title">
-                {{ project.title }}
-              </h3>
-              <div class="projects__tech-stack">
-                <span
-                  v-for="tech in project.technologies"
-                  :key="tech"
-                  class="projects__tech-tag"
-                  :class="techColorMap[tech] || 'projects__tech-tag--default'"
+              <header class="projects__header">
+                <h3 class="projects__title">
+                  {{ project.title }}
+                </h3>
+                <div
+                  class="projects__tech-stack"
+                  role="list"
+                  aria-label="Technologies used"
                 >
-                  {{ tech }}
-                </span>
-              </div>
+                  <span
+                    v-for="tech in project.technologies"
+                    :key="tech"
+                    class="projects__tech-tag"
+                    :class="getTechColorClass(tech)"
+                    role="listitem"
+                    :aria-label="`Technology: ${tech}`"
+                  >
+                    {{ tech }}
+                  </span>
+                </div>
+              </header>
+
               <p class="projects__description">
                 {{ project.description }}
               </p>
-              <div class="projects__actions">
+
+              <footer class="projects__actions">
                 <a
                   :href="project.website"
                   target="_blank"
                   rel="noopener noreferrer"
                   class="projects__link"
+                  :aria-label="`Visit ${project.title} project (opens in new tab)`"
+                  @click="trackProjectClick(project.title)"
                 >
-                  <span class="projects__link-text">Visit</span>
+                  <span class="projects__link-text">Visit Project</span>
                   <svg
                     class="projects__link-icon"
                     fill="none"
@@ -70,13 +91,27 @@
                     />
                   </svg>
                 </a>
-              </div>
+
+                <button
+                  v-if="project.github"
+                  class="projects__link projects__link--secondary"
+                  @click="openGithub(project.github)"
+                  :aria-label="`View ${project.title} source code on GitHub`"
+                >
+                  <span class="projects__link-text">Source</span>
+                </button>
+              </footer>
             </div>
           </article>
         </swiper-slide>
       </swiper-container>
+
       <template #fallback>
-        <div class="projects__fallback">
+        <div
+          class="projects__fallback"
+          role="region"
+          aria-label="Projects gallery"
+        >
           <div
             class="grid grid-cols-1 gap-6 mt-8 md:grid-cols-2 lg:grid-cols-3"
           >
@@ -145,6 +180,16 @@
 </template>
 
 <script lang="ts" setup>
+interface Project {
+  image: string
+  title: string
+  description: string
+  technologies: string[]
+  website: string
+  github?: string
+  featured?: boolean
+}
+
 const techColorMap: Record<string, string> = {
   JavaScript: 'bg-yellow-300 text-black',
   TypeScript: 'bg-blue-500 text-white',
@@ -162,14 +207,22 @@ const techColorMap: Record<string, string> = {
   Lottie: 'bg-indigo-400 text-white',
 }
 
-const projects = [
+const autoplayConfig = {
+  delay: 5000,
+  disableOnInteraction: false,
+  pauseOnMouseEnter: true,
+}
+
+const projects: Project[] = [
   {
     image: 'https://picsum.photos/id/1015/800/500',
-    title: 'test 1',
+    title: 'E-Commerce Platform',
     description:
-      "It's only a legend until you discover it. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque euismod, nisi eu consectetur consectetur, nisl nisi consectetur nisi, euismod euismod nisi nisi euismod.",
+      'A modern e-commerce platform built with Vue 3 and Nuxt, featuring real-time inventory management and seamless payment integration.',
     technologies: ['Vue', 'Nuxt', 'Tailwind', 'Swiper'],
-    website: 'https://example.com/fountain',
+    website: 'https://example.com/ecommerce',
+    github: 'https://github.com/user/ecommerce',
+    featured: true,
   },
   {
     image: 'https://picsum.photos/id/1016/800/500',
@@ -222,6 +275,30 @@ const breakpoints = {
     centeredSlides: true,
   },
 }
+
+// Enhanced methods
+const getTechColorClass = (tech: string): string => {
+  return techColorMap[tech] || 'projects__tech-tag--default'
+}
+
+const handleImageError = (event: Event) => {
+  const img = event.target as HTMLImageElement
+  img.src = '/images/project-placeholder.jpg' // Add a fallback image
+  console.warn(`Failed to load project image: ${img.src}`)
+}
+
+const trackProjectClick = (projectTitle: string) => {
+  // Analytics tracking
+  if (typeof gtag !== 'undefined') {
+    gtag('event', 'project_visit', {
+      project_name: projectTitle,
+    })
+  }
+}
+
+const openGithub = (githubUrl: string) => {
+  window.open(githubUrl, '_blank', 'noopener,noreferrer')
+}
 </script>
 
 <style scoped>
@@ -236,7 +313,7 @@ const breakpoints = {
 }
 
 .projects__slide {
-  @apply transition-all duration-500 opacity-50 blur-[2px] grayscale-[30%] scale-[0.9] will-change-transform;
+  @apply transition-all duration-500 opacity-60 blur-[1px] grayscale-[20%] scale-[0.92] will-change-transform;
 }
 
 .projects__slide.swiper-slide-active {
@@ -245,7 +322,7 @@ const breakpoints = {
 
 .projects__slide.swiper-slide-next,
 .projects__slide.swiper-slide-prev {
-  @apply opacity-70 blur-[1px] grayscale-[10%] scale-[0.95] z-[1];
+  @apply opacity-80 blur-[0.5px] grayscale-[5%] scale-[0.96] z-[1];
 }
 
 .projects__card {
@@ -253,11 +330,40 @@ const breakpoints = {
 }
 
 .projects__image {
-  @apply absolute inset-0 z-0 object-cover object-center w-full h-full transition-all duration-500 will-change-transform;
+  @apply absolute inset-0 z-0 object-cover object-center w-full h-full will-change-transform;
+  transform: scale(1);
+  transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1),
+    filter 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .projects__card:hover .projects__image {
-  @apply scale-105 brightness-90;
+  transform: scale(1.05) !important;
+  filter: brightness(0.9);
+  transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1),
+    filter 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.projects__slide.swiper-slide-active .projects__card:hover .projects__image {
+  transform: scale(1.1) !important;
+  filter: brightness(0.75);
+  transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1),
+    filter 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Ensure hover works on all slides */
+.projects__slide:hover .projects__card .projects__image {
+  transform: scale(1.05) !important;
+  filter: brightness(0.9);
+  transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1),
+    filter 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Enhanced hover for active slide */
+.projects__slide.swiper-slide-active:hover .projects__card .projects__image {
+  transform: scale(1.1) !important;
+  filter: brightness(0.75);
+  transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1),
+    filter 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .projects__overlay {
@@ -270,6 +376,10 @@ const breakpoints = {
 
 .projects__slide.swiper-slide-active .projects__content {
   @apply translate-y-0 opacity-100;
+}
+
+.projects__header {
+  @apply mb-4;
 }
 
 .projects__title {
@@ -382,7 +492,56 @@ const breakpoints = {
   @apply translate-x-1 scale-110;
 }
 
+.projects__link--secondary {
+  @apply bg-transparent border-gray-500 text-gray-300 hover:border-gray-400 hover:text-white;
+  background: transparent !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.projects__link--secondary:hover {
+  @apply scale-105;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+}
+
 .projects__fallback {
   @apply mt-8;
+}
+
+/* Enhanced responsive design */
+@media (max-width: 640px) {
+  .projects__content {
+    @apply p-6 gap-3;
+  }
+
+  .projects__title {
+    @apply text-sm;
+  }
+
+  .projects__description {
+    @apply text-sm leading-relaxed;
+  }
+
+  .projects__tech-tag {
+    @apply px-2 py-1 text-sm;
+  }
+
+  .projects__link {
+    @apply px-6 py-2 text-sm;
+  }
+}
+
+/* Loading states */
+.projects__image {
+  @apply transition-opacity duration-300;
+}
+
+.projects__image[data-loading='true'] {
+  @apply opacity-50;
+}
+
+/* Focus states for accessibility */
+.projects__link:focus,
+.projects__tech-tag:focus {
+  @apply outline-none ring-2 ring-primary-2 ring-offset-2 ring-offset-gray-900;
 }
 </style>
