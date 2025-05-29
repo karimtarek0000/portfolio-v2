@@ -38,7 +38,7 @@
                 height="500"
               />
               <div class="projects__overlay" />
-              <div class="projects__content">
+              <div class="mb-5 projects__content">
                 <header class="projects__header">
                   <h3 class="projects__title">
                     {{ project.title }}
