@@ -93,7 +93,6 @@
                   <button
                     v-if="project.github"
                     class="projects__link projects__link--secondary"
-                    @click="openGithub(project.github)"
                     :aria-label="`View ${project.title} source code on GitHub`"
                   >
                     <span class="projects__link-text">Source</span>
@@ -222,10 +221,6 @@ const handleImageError = (event: Event) => {
   const img = event.target as HTMLImageElement
   img.src = '/images/project-placeholder.jpg' // Add a fallback image
   console.warn(`Failed to load project image: ${img.src}`)
-}
-
-const openGithub = (githubUrl: string) => {
-  window.open(githubUrl, '_blank', 'noopener,noreferrer')
 }
 </script>
 
