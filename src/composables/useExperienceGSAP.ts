@@ -49,20 +49,20 @@ export const useExperienceGSAP = (
   // Default configuration
   const animationConfig = {
     header: {
-      triggerStart: 'top 70%',
+      triggerStart: 'top 75%', // Moved up slightly to start earlier
       duration: 0.7,
       staggerDelay: 0.12,
       ease: 'power2.out',
       ...config.header,
     },
     timeline: {
-      start: 'top 95%',
+      start: 'top 70%', // Changed to trigger after header has time to complete
       animationType: 'fadeUp' as const,
       once: true,
       ...config.timeline,
     },
     timelineLines: {
-      start: 'top 90%',
+      start: 'top 80%', // Adjusted to sequence after timeline items
       duration: 0.8,
       ease: 'power2.out',
       staggerDelay: 0.15,
