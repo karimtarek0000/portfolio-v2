@@ -1,5 +1,17 @@
 <script lang="ts" setup>
-const experience = shallowRef([
+// ============================================================================
+// DATA LAYER - Experience data and related utilities
+// ============================================================================
+
+interface ExperienceItem {
+  company: string
+  position: string
+  startDate: string
+  endDate: string
+  description: string
+}
+
+const experience = shallowRef<ExperienceItem[]>([
   {
     company: 'HectarApp',
     position: 'Frontend Engineer',
@@ -23,8 +35,11 @@ const experience = shallowRef([
   },
 ])
 
-// Add function to format dates nicely
-const formatDate = (date: string) => {
+// ============================================================================
+// UTILITIES - Pure functions for data transformation
+// ============================================================================
+
+const formatDate = (date: string): string => {
   if (date === 'Present') return date
   const d = new Date(date)
   return new Intl.DateTimeFormat('en', {
@@ -33,49 +48,245 @@ const formatDate = (date: string) => {
   }).format(d)
 }
 
-// Simple animation refs
+const createExperienceKey = (item: ExperienceItem, index: number): string =>
+  `${item.company}-${item.position}-${index}`
+
+// ============================================================================
+// ANIMATION CONFIGURATION - Centralized animation constants
+// ============================================================================
+
+const ANIMATION_CONFIG = {
+  header: {
+    triggerStart: 'top 70%',
+    duration: 0.7,
+    staggerDelay: 0.12,
+    ease: 'power2.out',
+  },
+  timeline: {
+    start: 'top 95%',
+    animationType: 'fadeUp' as const,
+    once: true,
+  },
+  timing: {
+    headerCompletion: {
+      start: 'top 65%',
+      duration: 700, // ms
+      staggerDelay: 120, // ms
+      buffer: 100, // ms
+    },
+  },
+  styles: {
+    initial: {
+      opacity: '0',
+      transform: 'translateY(30px)',
+      willChange: 'transform, opacity',
+    },
+  },
+} as const
+
+// ============================================================================
+// STATE MANAGEMENT - Reactive state for animations and DOM refs
+// ============================================================================
+
+// DOM References
 const timelineItemsRef = ref<HTMLElement[]>([])
 const sharedHeaderRef = ref<HTMLElement | null>(null)
+const scrollTriggers = ref<ScrollTrigger[]>([])
+const documentElementRef = ref<HTMLElement | null>(null)
 
-// Use the simpler scroll animation composable instead
-const { animateOnScroll, cleanup } = useScrollAnimation()
+// Animation State
+const isHeaderVisible = ref(false)
+const isHeaderAnimationComplete = ref(false)
+const shouldAnimateTimeline = computed(
+  () => isHeaderVisible.value && isHeaderAnimationComplete.value,
+)
 
-onMounted(() => {
-  if (import.meta.client) {
-    // Add .js class for CSS targeting
-    document.documentElement.classList.add('js')
+// JavaScript enabled state for CSS targeting
+const isJavaScriptEnabled = ref(false)
+const documentElementClasses = computed(() => ({
+  js: isJavaScriptEnabled.value,
+}))
 
-    // Wait for DOM to be ready then animate each timeline item
-    nextTick(() => {
-      // Use SharedHeader as trigger for timeline items to ensure proper sequencing
-      if (sharedHeaderRef.value) {
-        // Create a scroll trigger that uses the SharedHeader as reference
-        // and triggers timeline items only after header animation completes
-        const { $ScrollTrigger } = useNuxtApp()
+// ============================================================================
+// SIDE EFFECTS - DOM manipulation and external integrations
+// ============================================================================
 
-        $ScrollTrigger.create({
-          trigger: sharedHeaderRef.value,
-          start: 'top 60%', // Earlier than header's 70% to ensure we're ready
-          once: true,
-          onEnter: () => {
-            // Add delay to ensure header animation starts and progresses
-            setTimeout(() => {
-              animateOnScroll(timelineItemsRef, 'fadeUp', {
-                start: 'top 95%', // Very late trigger for individual items
-                once: true,
-              })
-            }, 600) // Longer delay to ensure header animation completes
-          },
-        })
+// External dependencies
+const { animateOnScroll, cleanup: cleanupScrollAnimations } =
+  useScrollAnimation()
+
+/**
+ * Utility function to check client-side execution
+ */
+const isClient = (): boolean => import.meta.client
+
+/**
+ * Apply initial styles to prevent SSR flash
+ */
+const applyInitialStyles = (elements: HTMLElement[]): void => {
+  if (!isClient()) return
+
+  elements.forEach(element => {
+    if (element) {
+      Object.assign(element.style, ANIMATION_CONFIG.styles.initial)
+    }
+  })
+}
+
+/**
+ * Create scroll trigger with common configuration
+ */
+const createScrollTrigger = (options: {
+  trigger: HTMLElement
+  start: string
+  once?: boolean
+  onEnter: () => void
+}): ScrollTrigger => {
+  const { $ScrollTrigger } = useNuxtApp()
+
+  return $ScrollTrigger.create({
+    trigger: options.trigger,
+    start: options.start,
+    once: options.once ?? true,
+    onEnter: options.onEnter,
+  })
+}
+
+/**
+ * Create animation timing using requestAnimationFrame
+ */
+const createAnimationTimer = (duration: number, callback: () => void): void => {
+  requestAnimationFrame(() => {
+    let startTime: number
+
+    const tick = (currentTime: number) => {
+      if (!startTime) startTime = currentTime
+
+      if (currentTime - startTime >= duration) {
+        callback()
+      } else {
+        requestAnimationFrame(tick)
       }
+    }
+
+    requestAnimationFrame(tick)
+  })
+}
+
+/**
+ * Initialize header animation tracking
+ */
+const initializeHeaderTracking = (): void => {
+  if (!isClient() || !sharedHeaderRef.value) return
+
+  // Track header visibility
+  const visibilityTrigger = createScrollTrigger({
+    trigger: sharedHeaderRef.value,
+    start: ANIMATION_CONFIG.header.triggerStart,
+    onEnter: () => {
+      isHeaderVisible.value = true
+    },
+  })
+
+  // Track header animation completion
+  const completionTrigger = createScrollTrigger({
+    trigger: sharedHeaderRef.value,
+    start: ANIMATION_CONFIG.timing.headerCompletion.start,
+    onEnter: () => {
+      const { duration, staggerDelay, buffer } =
+        ANIMATION_CONFIG.timing.headerCompletion
+      const totalDuration = duration + staggerDelay + buffer
+
+      createAnimationTimer(totalDuration, () => {
+        isHeaderAnimationComplete.value = true
+      })
+    },
+  })
+
+  scrollTriggers.value.push(visibilityTrigger, completionTrigger)
+}
+
+/**
+ * Initialize timeline animations
+ */
+const initializeTimelineAnimation = (): void => {
+  if (!isClient() || !timelineItemsRef.value.length) return
+
+  animateOnScroll(timelineItemsRef, ANIMATION_CONFIG.timeline.animationType, {
+    start: ANIMATION_CONFIG.timeline.start,
+    once: ANIMATION_CONFIG.timeline.once,
+  })
+}
+
+/**
+ * Hide timeline items immediately on client
+ */
+const hideTimelineItems = (): void => {
+  applyInitialStyles(timelineItemsRef.value)
+}
+
+/**
+ * Cleanup all scroll triggers and animations
+ */
+const cleanupAll = (): void => {
+  cleanupScrollAnimations()
+
+  if (isClient()) {
+    scrollTriggers.value.forEach(trigger => trigger.kill())
+    scrollTriggers.value = []
+  }
+}
+
+// ============================================================================
+// LIFECYCLE MANAGEMENT - Vue lifecycle hooks and watchers
+// ============================================================================
+
+// Watch for timeline animation trigger condition
+watch(
+  shouldAnimateTimeline,
+  shouldAnimate => {
+    if (shouldAnimate) {
+      nextTick(initializeTimelineAnimation)
+    }
+  },
+  { immediate: false },
+)
+
+// Watch for timeline items changes
+watch(
+  timelineItemsRef,
+  () => {
+    nextTick(hideTimelineItems)
+  },
+  { deep: true },
+)
+
+// Component lifecycle
+onMounted(() => {
+  if (isClient()) {
+    // Store reference to document element
+    documentElementRef.value = document.documentElement
+    isJavaScriptEnabled.value = true
+
+    nextTick(() => {
+      hideTimelineItems()
+      initializeHeaderTracking()
     })
   }
 })
 
-// Cleanup on unmount
-onUnmounted(() => {
-  cleanup()
-})
+// Watch for JavaScript enabled state to apply to document element using ref
+watch(
+  isJavaScriptEnabled,
+  enabled => {
+    if (isClient() && enabled && documentElementRef.value) {
+      documentElementRef.value.classList.add('js')
+    }
+  },
+  { immediate: true },
+)
+
+onUnmounted(cleanupAll)
 </script>
 
 <template>
@@ -83,19 +294,14 @@ onUnmounted(() => {
     <div ref="sharedHeaderRef">
       <SharedHeader
         title="experience"
-        :animation-options="{
-          triggerStart: 'top 70%',
-          duration: 0.7,
-          staggerDelay: 0.12,
-          ease: 'power2.out',
-        }"
+        :animation-options="ANIMATION_CONFIG.header"
       />
     </div>
 
-    <div ref="timelineRef" class="timeline">
+    <div class="timeline">
       <div
         v-for="(item, index) in experience"
-        :key="`${item.company}-${index}`"
+        :key="createExperienceKey(item, index)"
         :ref="(el) => { if (el) timelineItemsRef[index] = el as HTMLElement }"
         class="timeline__item group"
       >
