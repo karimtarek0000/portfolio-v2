@@ -52,241 +52,32 @@ const createExperienceKey = (item: ExperienceItem, index: number): string =>
   `${item.company}-${item.position}-${index}`
 
 // ============================================================================
-// ANIMATION CONFIGURATION - Centralized animation constants
+// STATE MANAGEMENT - DOM refs only
 // ============================================================================
 
-const ANIMATION_CONFIG = {
-  header: {
-    triggerStart: 'top 70%',
-    duration: 0.7,
-    staggerDelay: 0.12,
-    ease: 'power2.out',
-  },
-  timeline: {
-    start: 'top 95%',
-    animationType: 'fadeUp' as const,
-    once: true,
-  },
-  timing: {
-    headerCompletion: {
-      start: 'top 65%',
-      duration: 700, // ms
-      staggerDelay: 120, // ms
-      buffer: 100, // ms
-    },
-  },
-  styles: {
-    initial: {
-      opacity: '0',
-      transform: 'translateY(30px)',
-      willChange: 'transform, opacity',
-    },
-  },
-} as const
-
-// ============================================================================
-// STATE MANAGEMENT - Reactive state for animations and DOM refs
-// ============================================================================
-
-// DOM References
 const timelineItemsRef = ref<HTMLElement[]>([])
 const sharedHeaderRef = ref<HTMLElement | null>(null)
-const scrollTriggers = ref<ScrollTrigger[]>([])
 const documentElementRef = ref<HTMLElement | null>(null)
 
-// Animation State
-const isHeaderVisible = ref(false)
-const isHeaderAnimationComplete = ref(false)
-const shouldAnimateTimeline = computed(
-  () => isHeaderVisible.value && isHeaderAnimationComplete.value,
-)
-
-// JavaScript enabled state for CSS targeting
-const isJavaScriptEnabled = ref(false)
-const documentElementClasses = computed(() => ({
-  js: isJavaScriptEnabled.value,
-}))
-
 // ============================================================================
-// SIDE EFFECTS - DOM manipulation and external integrations
+// EXTERNAL DEPENDENCIES - Composables integration
 // ============================================================================
 
-// External dependencies
-const { animateOnScroll, cleanup: cleanupScrollAnimations } =
-  useScrollAnimation()
+const { animateOnScroll } = useScrollAnimation()
 
-/**
- * Utility function to check client-side execution
- */
-const isClient = (): boolean => import.meta.client
-
-/**
- * Apply initial styles to prevent SSR flash
- */
-const applyInitialStyles = (elements: HTMLElement[]): void => {
-  if (!isClient()) return
-
-  elements.forEach(element => {
-    if (element) {
-      Object.assign(element.style, ANIMATION_CONFIG.styles.initial)
-    }
-  })
-}
-
-/**
- * Create scroll trigger with common configuration
- */
-const createScrollTrigger = (options: {
-  trigger: HTMLElement
-  start: string
-  once?: boolean
-  onEnter: () => void
-}): ScrollTrigger => {
-  const { $ScrollTrigger } = useNuxtApp()
-
-  return $ScrollTrigger.create({
-    trigger: options.trigger,
-    start: options.start,
-    once: options.once ?? true,
-    onEnter: options.onEnter,
-  })
-}
-
-/**
- * Create animation timing using requestAnimationFrame
- */
-const createAnimationTimer = (duration: number, callback: () => void): void => {
-  requestAnimationFrame(() => {
-    let startTime: number
-
-    const tick = (currentTime: number) => {
-      if (!startTime) startTime = currentTime
-
-      if (currentTime - startTime >= duration) {
-        callback()
-      } else {
-        requestAnimationFrame(tick)
-      }
-    }
-
-    requestAnimationFrame(tick)
-  })
-}
-
-/**
- * Initialize header animation tracking
- */
-const initializeHeaderTracking = (): void => {
-  if (!isClient() || !sharedHeaderRef.value) return
-
-  // Track header visibility
-  const visibilityTrigger = createScrollTrigger({
-    trigger: sharedHeaderRef.value,
-    start: ANIMATION_CONFIG.header.triggerStart,
-    onEnter: () => {
-      isHeaderVisible.value = true
-    },
-  })
-
-  // Track header animation completion
-  const completionTrigger = createScrollTrigger({
-    trigger: sharedHeaderRef.value,
-    start: ANIMATION_CONFIG.timing.headerCompletion.start,
-    onEnter: () => {
-      const { duration, staggerDelay, buffer } =
-        ANIMATION_CONFIG.timing.headerCompletion
-      const totalDuration = duration + staggerDelay + buffer
-
-      createAnimationTimer(totalDuration, () => {
-        isHeaderAnimationComplete.value = true
-      })
-    },
-  })
-
-  scrollTriggers.value.push(visibilityTrigger, completionTrigger)
-}
-
-/**
- * Initialize timeline animations
- */
-const initializeTimelineAnimation = (): void => {
-  if (!isClient() || !timelineItemsRef.value.length) return
-
-  animateOnScroll(timelineItemsRef, ANIMATION_CONFIG.timeline.animationType, {
-    start: ANIMATION_CONFIG.timeline.start,
-    once: ANIMATION_CONFIG.timeline.once,
-  })
-}
-
-/**
- * Hide timeline items immediately on client
- */
-const hideTimelineItems = (): void => {
-  applyInitialStyles(timelineItemsRef.value)
-}
-
-/**
- * Cleanup all scroll triggers and animations
- */
-const cleanupAll = (): void => {
-  cleanupScrollAnimations()
-
-  if (isClient()) {
-    scrollTriggers.value.forEach(trigger => trigger.kill())
-    scrollTriggers.value = []
-  }
-}
-
-// ============================================================================
-// LIFECYCLE MANAGEMENT - Vue lifecycle hooks and watchers
-// ============================================================================
-
-// Watch for timeline animation trigger condition
-watch(
-  shouldAnimateTimeline,
-  shouldAnimate => {
-    if (shouldAnimate) {
-      nextTick(initializeTimelineAnimation)
-    }
+const { animationConfig } = useExperienceGSAP(
+  {}, // Use default configuration
+  {
+    onHeaderVisible: () => {},
+    onHeaderAnimationComplete: () => {},
   },
-  { immediate: false },
-)
-
-// Watch for timeline items changes
-watch(
-  timelineItemsRef,
-  () => {
-    nextTick(hideTimelineItems)
+  {
+    timelineItemsRef,
+    sharedHeaderRef,
+    documentElementRef,
   },
-  { deep: true },
+  animateOnScroll,
 )
-
-// Component lifecycle
-onMounted(() => {
-  if (isClient()) {
-    // Store reference to document element
-    documentElementRef.value = document.documentElement
-    isJavaScriptEnabled.value = true
-
-    nextTick(() => {
-      hideTimelineItems()
-      initializeHeaderTracking()
-    })
-  }
-})
-
-// Watch for JavaScript enabled state to apply to document element using ref
-watch(
-  isJavaScriptEnabled,
-  enabled => {
-    if (isClient() && enabled && documentElementRef.value) {
-      documentElementRef.value.classList.add('js')
-    }
-  },
-  { immediate: true },
-)
-
-onUnmounted(cleanupAll)
 </script>
 
 <template>
@@ -294,7 +85,7 @@ onUnmounted(cleanupAll)
     <div ref="sharedHeaderRef">
       <SharedHeader
         title="experience"
-        :animation-options="ANIMATION_CONFIG.header"
+        :animation-options="animationConfig.header"
       />
     </div>
 
