@@ -12,6 +12,14 @@ interface ExperienceAnimationConfig {
     animationType: 'fadeUp' | 'fadeIn' | 'slideLeft' | 'slideRight'
     once: boolean
   }
+  // Add line animation configuration
+  timelineLines: {
+    start: string
+    duration: number
+    ease: string
+    staggerDelay: number
+    scaleDirection: 'bottom-to-top' | 'top-to-bottom'
+  }
   timing: {
     headerCompletion: {
       start: string
@@ -31,6 +39,10 @@ interface ExperienceGSAPRefs {
   timelineItemsRef: Ref<HTMLElement[]>
   sharedHeaderRef: Ref<HTMLElement | null>
   documentElementRef: Ref<HTMLElement | null>
+  // Add timeline lines ref
+  timelineLinesRef: Ref<HTMLElement[]>
+  // Add timeline dots ref
+  timelineDotsRef: Ref<HTMLElement[]>
 }
 
 /**
@@ -47,6 +59,14 @@ const DEFAULT_ANIMATION_CONFIG: ExperienceAnimationConfig = {
     start: 'top 95%',
     animationType: 'fadeUp',
     once: true,
+  },
+  // Add default line animation config
+  timelineLines: {
+    start: 'top 90%',
+    duration: 0.8,
+    ease: 'power2.out',
+    staggerDelay: 0.15,
+    scaleDirection: 'bottom-to-top',
   },
   timing: {
     headerCompletion: {
@@ -78,6 +98,7 @@ export const useExperienceGSAP = (
   const { validateContainer, getValidElements } = useElementValidation()
   const { createTimer } = useAnimationTimer()
   const { debounce } = useDebounce()
+  const { $gsap } = useNuxtApp()
 
   // Merge provided config with defaults (shallow merge for performance)
   const animationConfig = Object.assign({}, DEFAULT_ANIMATION_CONFIG, config)
@@ -143,12 +164,109 @@ export const useExperienceGSAP = (
   }
 
   /**
+   * Initialize timeline line scaling animations
+   */
+  const initializeTimelineLineAnimations = (): void => {
+    const timelineLines = getValidElements(refs.timelineLinesRef)
+    if (!timelineLines.length) return
+
+    console.log(
+      'Initializing timeline line animations for',
+      timelineLines.length,
+      'lines',
+    )
+
+    // Apply initial styles for lines
+    applyStyles(timelineLines, {
+      scaleY: '0',
+      transformOrigin: 'bottom center',
+      willChange: 'transform',
+    })
+
+    // Set initial GSAP state
+    $gsap.set(timelineLines, {
+      scaleY: 0,
+      transformOrigin: 'bottom center',
+      willChange: 'transform',
+    })
+
+    // Create scroll-triggered animations for each line individually
+    timelineLines.forEach((line, index) => {
+      console.log(`Setting up animation for line ${index}`)
+
+      createTrigger({
+        trigger: line,
+        start: 'top 80%',
+        once: true,
+        onEnter: () => {
+          console.log(`Animating line ${index}`)
+          $gsap.to(line, {
+            scaleY: 1,
+            duration: 0.6,
+            ease: 'power2.out',
+            delay: index * 0.1,
+            onComplete: () => {
+              // Clear will-change after animation for performance
+              line.style.willChange = 'auto'
+              console.log(`Line ${index} animation complete`)
+            },
+          })
+        },
+      })
+    })
+  }
+
+  /**
+   * Initialize timeline dot scaling animations
+   */
+  const initializeTimelineDotAnimations = (): void => {
+    const timelineDots = getValidElements(refs.timelineDotsRef)
+    if (!timelineDots.length) {
+      console.log('No timeline dots found')
+      return
+    }
+
+    console.log(
+      'Initializing timeline dot animations for',
+      timelineDots.length,
+      'dots',
+    )
+
+    // Set initial GSAP state immediately
+    $gsap.set(timelineDots, {
+      scale: 0,
+      transformOrigin: 'center center',
+    })
+
+    // Create scroll-triggered animations for each dot individually
+    timelineDots.forEach((dot, index) => {
+      console.log(`Setting up animation for dot ${index}`, dot)
+
+      createTrigger({
+        trigger: dot,
+        start: 'top 90%',
+        once: true,
+        onEnter: () => {
+          console.log(`Animating dot ${index}`)
+          $gsap.to(dot, {
+            scale: 1,
+            duration: 0.6,
+            ease: 'back.out(1.4)',
+            delay: index * 0.15,
+          })
+        },
+      })
+    })
+  }
+
+  /**
    * Timeline animation initialization with validation using shared utilities
    */
   const initializeTimelineAnimation = (): void => {
     const timelineItems = getValidElements(refs.timelineItemsRef)
     if (!timelineItems.length) return
 
+    // Initialize main timeline item animations
     animateOnScrollFn(
       refs.timelineItemsRef,
       animationConfig.timeline.animationType,
@@ -157,6 +275,12 @@ export const useExperienceGSAP = (
         once: animationConfig.timeline.once,
       },
     )
+
+    // Initialize timeline line animations
+    initializeTimelineLineAnimations()
+
+    // Initialize timeline dot animations
+    initializeTimelineDotAnimations()
   }
 
   /**
@@ -167,6 +291,29 @@ export const useExperienceGSAP = (
     if (!items.length) return
 
     applyInitialStyles(items)
+
+    // Also hide timeline lines initially
+    const timelineLines = getValidElements(refs.timelineLinesRef)
+    if (timelineLines.length) {
+      applyStyles(timelineLines, {
+        scaleY: '0',
+        transformOrigin:
+          animationConfig.timelineLines.scaleDirection === 'bottom-to-top'
+            ? 'bottom center'
+            : 'top center',
+        willChange: 'transform',
+      })
+    }
+
+    // Also hide timeline dots initially
+    const timelineDots = getValidElements(refs.timelineDotsRef)
+    if (timelineDots.length) {
+      applyStyles(timelineDots, {
+        scale: '0',
+        transformOrigin: 'center center',
+        willChange: 'transform',
+      })
+    }
   }
 
   /**
@@ -178,6 +325,12 @@ export const useExperienceGSAP = (
     nextTick(() => {
       // Batch DOM operations
       hideTimelineItems()
+
+      // Initialize timeline line animations immediately (don't wait for header)
+      initializeTimelineLineAnimations()
+
+      // Initialize timeline dot animations immediately (don't wait for header)
+      initializeTimelineDotAnimations()
 
       if (validateContainer(refs.sharedHeaderRef)) {
         initializeHeaderTracking(refs.sharedHeaderRef.value!)
@@ -265,5 +418,7 @@ export const useExperienceGSAP = (
 
     // Utilities (exposed for testing/debugging)
     applyInitialStyles,
+    initializeTimelineLineAnimations,
+    initializeTimelineDotAnimations,
   }
 }

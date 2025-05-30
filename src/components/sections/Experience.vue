@@ -56,6 +56,8 @@ const createExperienceKey = (item: ExperienceItem, index: number): string =>
 // ============================================================================
 
 const timelineItemsRef = ref<HTMLElement[]>([])
+const timelineLinesRef = ref<HTMLElement[]>([])
+const timelineDotsRef = ref<HTMLElement[]>([])
 const sharedHeaderRef = ref<HTMLElement | null>(null)
 const documentElementRef = ref<HTMLElement | null>(null)
 
@@ -73,6 +75,8 @@ const { animationConfig } = useExperienceGSAP(
   },
   {
     timelineItemsRef,
+    timelineLinesRef,
+    timelineDotsRef,
     sharedHeaderRef,
     documentElementRef,
   },
@@ -99,10 +103,19 @@ const { animationConfig } = useExperienceGSAP(
         <div class="timeline__container">
           <!-- Timeline dot and line -->
           <div class="timeline__dot-wrapper">
-            <div class="timeline__dot timeline__element--ssr-safe">
+            <div
+              :ref="(el) => { if (el) timelineDotsRef[index] = el as HTMLElement }"
+              class="timeline__dot timeline__element--ssr-safe"
+            >
               <div class="timeline__inner-dot"></div>
             </div>
-            <div class="timeline__line timeline__element--ssr-safe"></div>
+            <div
+              :ref="(el) => { if (el) timelineLinesRef[index] = el as HTMLElement }"
+              class="timeline__line timeline__element--ssr-safe"
+              :class="{
+                'timeline__line--last': index === experience.length - 1,
+              }"
+            ></div>
           </div>
 
           <!-- Content section -->
@@ -150,7 +163,9 @@ const { animationConfig } = useExperienceGSAP(
          group-hover:shadow-lg group-hover:shadow-blue-500/10;
   /* Enhanced animation support */
   transform-origin: center center;
-  transition: transform 0.3s ease-out, box-shadow 0.3s ease-out;
+  transform: scale(0); /* Start hidden for GSAP animation */
+  will-change: transform;
+  transition: none; /* Disable CSS transitions to let GSAP handle animation */
 }
 
 .timeline__inner-dot {
@@ -160,9 +175,23 @@ const { animationConfig } = useExperienceGSAP(
 
 .timeline__line {
   @apply w-[2px] h-24 my-2 bg-gradient-to-b from-blue-400/30 via-gray-700 to-transparent;
-  /* Enhanced animation support */
-  transform-origin: top center;
-  transition: transform 0.3s ease-out;
+  /* Enhanced animation support - ensure proper scaling */
+  transform-origin: bottom center;
+  transform: scaleY(0);
+  will-change: transform;
+  transition: none; /* Disable CSS transitions to let GSAP handle animation */
+}
+
+.timeline__line--last {
+  /* Keep same height as other lines for consistent scaling */
+  @apply h-24;
+  /* Make the gradient shorter to create visual endpoint effect */
+  background: linear-gradient(
+    to bottom,
+    rgb(96 165 250 / 0.3) 0%,
+    rgb(55 65 81) 50%,
+    transparent 100%
+  );
 }
 
 .timeline__content {
