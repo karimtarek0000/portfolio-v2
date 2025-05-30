@@ -1,8 +1,8 @@
 import type { Ref } from 'vue'
-import { 
-  type AboutAnimationOptions, 
+import {
+  type AboutAnimationOptions,
   type TextAnimationOptions,
-  SECTION_DEFAULTS 
+  SECTION_DEFAULTS,
 } from './animation.config'
 
 /**
@@ -16,7 +16,7 @@ export const useAboutAnimations = () => {
    */
   const initializeAnimations = (
     refs: { textContainerRef: Ref<HTMLElement | null> },
-    options: AboutAnimationOptions = {}
+    options: AboutAnimationOptions = {},
   ) => {
     if (!import.meta.client) return
 

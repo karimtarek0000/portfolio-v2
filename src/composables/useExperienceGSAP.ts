@@ -1,7 +1,7 @@
 import type { Ref } from 'vue'
 import {
-  type ExperienceAnimationConfig,
   type AnimationType,
+  type ExperienceAnimationConfig,
   SECTION_DEFAULTS,
 } from './animation.config'
 
@@ -108,15 +108,80 @@ export const useExperienceGSAP = (
   }
 
   /**
-   * Initialize timeline lines and dots with enhanced sequencing
+   * Initialize timeline lines and dots with synchronized animation
    */
   const initializeTimelineElements = (): void => {
     try {
       const hasLines = refs.timelineLinesRef.value.length > 0
       const hasDots = refs.timelineDotsRef.value.length > 0
 
-      if (hasLines || hasDots) {
-        animateTimeline(refs.timelineLinesRef, refs.timelineDotsRef, {
+      if (hasLines && hasDots) {
+        const { $gsap } = useNuxtApp()
+        const lines = refs.timelineLinesRef.value.filter(Boolean)
+        const dots = refs.timelineDotsRef.value.filter(Boolean)
+
+        // Set initial styles for lines
+        lines.forEach(line => {
+          $gsap.set(line, {
+            scaleY: 0,
+            transformOrigin:
+              animationConfig.timelineLines.scaleDirection === 'top-to-bottom'
+                ? 'top center'
+                : 'bottom center',
+            willChange: 'transform',
+          })
+        })
+
+        // Set initial styles for dots
+        dots.forEach(dot => {
+          $gsap.set(dot, {
+            scale: 0,
+            transformOrigin: 'center center',
+            willChange: 'transform',
+          })
+        })
+
+        // Create synchronized animations for each line-dot pair
+        lines.forEach((line, index) => {
+          const correspondingDot = dots[index]
+
+          const { createScrollTrigger } = useAnimations()
+          createScrollTrigger({
+            trigger: line,
+            start: 'top 80%',
+            once: true,
+            callbacks: {
+              onEnter: () => {
+                // Start line animation
+                $gsap.to(line, {
+                  scaleY: 1,
+                  duration: animationConfig.timelineLines.duration,
+                  ease: animationConfig.timelineLines.ease,
+                  delay: index * animationConfig.timelineLines.stagger,
+                  onComplete: () => {
+                    line.style.willChange = 'auto'
+                  },
+                })
+
+                // Start dot animation simultaneously (or with small delay)
+                if (correspondingDot) {
+                  $gsap.to(correspondingDot, {
+                    scale: 1,
+                    duration: 0.6,
+                    ease: 'back.out(1.4)',
+                    delay: index * animationConfig.timelineLines.stagger, // Same timing as line
+                    onComplete: () => {
+                      correspondingDot.style.willChange = 'auto'
+                    },
+                  })
+                }
+              },
+            },
+          })
+        })
+      } else if (hasLines) {
+        // Fallback to original line-only animation
+        animateTimeline(refs.timelineLinesRef, ref([]), {
           scaleDirection: animationConfig.timelineLines.scaleDirection,
           once: true,
           duration: animationConfig.timelineLines.duration,
@@ -135,7 +200,8 @@ export const useExperienceGSAP = (
   const enableJavaScript = (): void => {
     try {
       if (refs.documentElementRef.value || document?.documentElement) {
-        const docElement = refs.documentElementRef.value || document.documentElement
+        const docElement =
+          refs.documentElementRef.value || document.documentElement
         docElement.classList.add('js')
         state.isJavaScriptEnabled = true
       }
@@ -169,7 +235,7 @@ export const useExperienceGSAP = (
       if (!refs.documentElementRef.value) {
         refs.documentElementRef.value = document.documentElement
       }
-      
+
       initializeAnimations()
     }
   })
@@ -195,7 +261,9 @@ export const useExperienceGSAP = (
 
     // Animation state (readonly for external access)
     isHeaderVisible: readonly(toRef(state, 'isHeaderVisible')),
-    isHeaderAnimationComplete: readonly(toRef(state, 'isHeaderAnimationComplete')),
+    isHeaderAnimationComplete: readonly(
+      toRef(state, 'isHeaderAnimationComplete'),
+    ),
     isJavaScriptEnabled: readonly(toRef(state, 'isJavaScriptEnabled')),
     isTimelineComplete: readonly(toRef(state, 'isTimelineComplete')),
 
@@ -216,7 +284,10 @@ export const useExperienceGSAP = (
       Object.assign(animationConfig, {
         header: { ...animationConfig.header, ...newConfig.header },
         timeline: { ...animationConfig.timeline, ...newConfig.timeline },
-        timelineLines: { ...animationConfig.timelineLines, ...newConfig.timelineLines },
+        timelineLines: {
+          ...animationConfig.timelineLines,
+          ...newConfig.timelineLines,
+        },
       })
     },
   }

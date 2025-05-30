@@ -1,13 +1,13 @@
 import { useNuxtApp } from '#app'
 import type { Ref } from 'vue'
 import {
+  type AnimationCallbacks,
   type AnimationType,
   type BaseAnimationOptions,
+  type ElementInput,
   type ScrollAnimationOptions,
   type TextAnimationOptions,
   type TimelineAnimationOptions,
-  type ElementInput,
-  type AnimationCallbacks,
   ANIMATION_PRESETS,
   DEFAULT_OPTIONS,
   PERFORMANCE_CONFIG,
@@ -32,9 +32,15 @@ class AnimationCache {
     return AnimationCache.instance
   }
 
-  getStyleCache() { return this.styleCache }
-  getDeviceCache() { return this.deviceCache }
-  getScrollTriggers() { return this.scrollTriggers }
+  getStyleCache() {
+    return this.styleCache
+  }
+  getDeviceCache() {
+    return this.deviceCache
+  }
+  getScrollTriggers() {
+    return this.scrollTriggers
+  }
 
   addScrollTrigger(trigger: ScrollTrigger) {
     this.scrollTriggers.push(trigger)
@@ -58,7 +64,7 @@ class AnimationCache {
   startPeriodicCleanup() {
     // Only start cleanup on client side to avoid SSR issues
     if (this.cleanupTimer || !process.client) return
-    
+
     this.cleanupTimer = setInterval(() => {
       this.deviceCache.clear()
     }, PERFORMANCE_CONFIG.CACHE_CLEAR_INTERVAL)
@@ -68,7 +74,7 @@ class AnimationCache {
 // Device detection utility with improved caching
 const createDeviceDetector = () => {
   const cache = AnimationCache.getInstance().getDeviceCache()
-  
+
   const getCachedValue = <T>(key: string, calculator: () => T): T => {
     if (cache.has(key)) return cache.get(key)
     const value = calculator()
@@ -77,19 +83,23 @@ const createDeviceDetector = () => {
   }
 
   return {
-    isMobile: () => getCachedValue(
-      'isMobile',
-      () => process.client && typeof window !== 'undefined' && window.innerWidth < 768
-    ),
-    prefersReducedMotion: () => getCachedValue(
-      'reducedMotion',
-      () => process.client && typeof window !== 'undefined' &&
-        window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    ),
-    isClient: () => getCachedValue(
-      'isClient',
-      () => process.client
-    ),
+    isMobile: () =>
+      getCachedValue(
+        'isMobile',
+        () =>
+          process.client &&
+          typeof window !== 'undefined' &&
+          window.innerWidth < 768,
+      ),
+    prefersReducedMotion: () =>
+      getCachedValue(
+        'reducedMotion',
+        () =>
+          process.client &&
+          typeof window !== 'undefined' &&
+          window.matchMedia('(prefers-reduced-motion: reduce)').matches,
+      ),
+    isClient: () => getCachedValue('isClient', () => process.client),
     clearCache: () => cache.clear(),
   }
 }
@@ -97,7 +107,7 @@ const createDeviceDetector = () => {
 // Simple debounce function to avoid external dependency
 const debounce = <T extends (...args: any[]) => any>(
   func: T,
-  wait: number
+  wait: number,
 ): ((...args: Parameters<T>) => void) => {
   let timeout: ReturnType<typeof setTimeout> | undefined
 
@@ -140,10 +150,11 @@ export const useAnimations = () => {
       elements = Array.isArray(value) ? value : value ? [value] : []
     }
 
-    return elements.filter((el): el is HTMLElement => 
-      el instanceof HTMLElement && 
-      el.isConnected && // Check if element is still in DOM
-      typeof el.getBoundingClientRect === 'function'
+    return elements.filter(
+      (el): el is HTMLElement =>
+        el instanceof HTMLElement &&
+        el.isConnected && // Check if element is still in DOM
+        typeof el.getBoundingClientRect === 'function',
     )
   }
 
@@ -157,7 +168,7 @@ export const useAnimations = () => {
       const value = container.value
       return Array.isArray(value) ? value[0] || null : value
     }
-    return container as HTMLElement || null
+    return (container as HTMLElement) || null
   }
 
   /**
@@ -165,7 +176,7 @@ export const useAnimations = () => {
    */
   const applyStyles = (
     elements: HTMLElement[],
-    styles: Record<string, string>
+    styles: Record<string, string>,
   ): void => {
     if (!device.isClient()) return
 
@@ -176,7 +187,7 @@ export const useAnimations = () => {
       requestAnimationFrame(() => {
         elements.forEach(element => {
           if (!element || styleCache.has(element)) return
-          
+
           Object.assign(element.style, styles)
           styleCache.set(element, true)
         })
@@ -188,7 +199,7 @@ export const useAnimations = () => {
    * Smart configuration merging with device-specific optimizations
    */
   const getOptimizedConfig = (
-    options: Partial<BaseAnimationOptions>
+    options: Partial<BaseAnimationOptions>,
   ): Required<BaseAnimationOptions> => {
     const isMobile = device.isMobile()
     const isReducedMotion = device.prefersReducedMotion()
@@ -199,14 +210,18 @@ export const useAnimations = () => {
     if (isReducedMotion) {
       config = {
         ...config,
-        duration: Math.min(config.duration, PERFORMANCE_CONFIG.REDUCED_MOTION_MAX_DURATION),
+        duration: Math.min(
+          config.duration,
+          PERFORMANCE_CONFIG.REDUCED_MOTION_MAX_DURATION,
+        ),
         stagger: 0,
         delay: 0,
       }
     } else if (isMobile) {
       config = {
         ...config,
-        duration: config.duration * PERFORMANCE_CONFIG.MOBILE_DURATION_MULTIPLIER,
+        duration:
+          config.duration * PERFORMANCE_CONFIG.MOBILE_DURATION_MULTIPLIER,
         stagger: config.stagger * PERFORMANCE_CONFIG.MOBILE_STAGGER_MULTIPLIER,
       }
     }
@@ -258,7 +273,7 @@ export const useAnimations = () => {
   const animateOnScroll = (
     elements: ElementInput,
     type: AnimationType = 'fadeUp',
-    options: Partial<ScrollAnimationOptions> = {}
+    options: Partial<ScrollAnimationOptions> = {},
   ): void => {
     if (!device.isClient()) return
 
@@ -287,7 +302,8 @@ export const useAnimations = () => {
     // Create optimized animations
     validElements.forEach((element, index) => {
       createScrollTrigger({
-        trigger: options.trigger instanceof HTMLElement ? options.trigger : element,
+        trigger:
+          options.trigger instanceof HTMLElement ? options.trigger : element,
         start: config.start,
         end: config.end,
         once: config.once,
@@ -316,7 +332,7 @@ export const useAnimations = () => {
    */
   const animateTextLines = (
     container: ElementInput,
-    options: Partial<TextAnimationOptions> = {}
+    options: Partial<TextAnimationOptions> = {},
   ): void => {
     if (!device.isClient()) return
 
@@ -328,9 +344,9 @@ export const useAnimations = () => {
     }
 
     const lines = Array.from(
-      containerElement.querySelectorAll('p, span, .animate-line')
+      containerElement.querySelectorAll('p, span, .animate-line'),
     ) as HTMLElement[]
-    
+
     if (!lines.length) return
 
     const config = getOptimizedConfig(options)
@@ -359,14 +375,17 @@ export const useAnimations = () => {
       end: config.end,
       once: config.once,
       callbacks: {
-        onUpdate: (self) => {
+        onUpdate: self => {
           const progress = self.progress
           const lineCount = lines.length
           const opacityRange = options.opacity?.range ?? 0.6
 
           // Batch updates for better performance
           const updates = lines.map((line, index) => {
-            const lineProgress = Math.max(0, Math.min(1, progress * lineCount - index))
+            const lineProgress = Math.max(
+              0,
+              Math.min(1, progress * lineCount - index),
+            )
             const opacity = baseOpacity + lineProgress * opacityRange
 
             const updateObj: any = { opacity }
@@ -400,7 +419,7 @@ export const useAnimations = () => {
    */
   const animateHeader = (
     headerRef: Ref<HTMLElement | null>,
-    options: Partial<ScrollAnimationOptions> = {}
+    options: Partial<ScrollAnimationOptions> = {},
   ): void => {
     if (!device.isClient() || !headerRef.value) return
 
@@ -445,14 +464,18 @@ export const useAnimations = () => {
         ? { opacity: 1 }
         : { opacity: 1, y: 0, scale: 1 }
 
-      tl.to(element, {
-        ...finalState,
-        delay: index * config.stagger,
-        onComplete: () => {
-          element.style.willChange = 'auto'
-          cache.getStyleCache().delete(element)
+      tl.to(
+        element,
+        {
+          ...finalState,
+          delay: index * config.stagger,
+          onComplete: () => {
+            element.style.willChange = 'auto'
+            cache.getStyleCache().delete(element)
+          },
         },
-      }, index === 0 ? 0 : '<')
+        index === 0 ? 0 : '<',
+      )
     })
 
     createScrollTrigger({
@@ -470,7 +493,7 @@ export const useAnimations = () => {
    */
   const animateSkills = (
     skillsRef: Ref<HTMLElement[]>,
-    options: Partial<TimelineAnimationOptions> = {}
+    options: Partial<TimelineAnimationOptions> = {},
   ): void => {
     if (!device.isClient()) return
 
@@ -503,7 +526,8 @@ export const useAnimations = () => {
         once: config.once,
         callbacks: {
           onEnter: () => {
-            $gsap.fromTo(rowItems, 
+            $gsap.fromTo(
+              rowItems,
               {
                 opacity: 0,
                 y: 30,
@@ -523,7 +547,7 @@ export const useAnimations = () => {
                     cache.getStyleCache().delete(item)
                   })
                 },
-              }
+              },
             )
           },
         },
@@ -537,7 +561,7 @@ export const useAnimations = () => {
   const animateTimeline = (
     linesRef: Ref<HTMLElement[]>,
     dotsRef: Ref<HTMLElement[]>,
-    options: Partial<TimelineAnimationOptions> = {}
+    options: Partial<TimelineAnimationOptions> = {},
   ): void => {
     if (!device.isClient()) return
 
@@ -547,9 +571,10 @@ export const useAnimations = () => {
 
     // Animate timeline lines with optimized transforms
     if (lines.length) {
-      const transformOrigin = options.scaleDirection === 'top-to-bottom'
-        ? 'top center'
-        : 'bottom center'
+      const transformOrigin =
+        options.scaleDirection === 'top-to-bottom'
+          ? 'top center'
+          : 'bottom center'
 
       applyStyles(lines, {
         scaleY: '0',
@@ -645,7 +670,7 @@ export const useAnimations = () => {
     onMounted(() => {
       window.addEventListener('beforeunload', cleanup)
     })
-    
+
     onBeforeUnmount(() => {
       if (typeof window !== 'undefined') {
         window.removeEventListener('beforeunload', cleanup)

@@ -1,13 +1,13 @@
-import type { Ref, ComponentPublicInstance } from 'vue'
-import { 
+import type { ComponentPublicInstance, Ref } from 'vue'
+import {
   type SkillsAnimationOptions,
-  SECTION_DEFAULTS 
+  SECTION_DEFAULTS,
 } from './animation.config'
 
 // Simple debounce utility
 const debounce = <T extends (...args: any[]) => any>(
   func: T,
-  wait: number
+  wait: number,
 ): ((...args: Parameters<T>) => void) => {
   let timeout: ReturnType<typeof setTimeout> | undefined
 
@@ -42,9 +42,10 @@ export const useSkillsAnimation = (options: SkillsAnimationOptions = {}) => {
   ): void => {
     if (!el) return
 
-    const element = el instanceof HTMLElement 
-      ? el 
-      : (el as ComponentPublicInstance)?.$el as HTMLElement
+    const element =
+      el instanceof HTMLElement
+        ? el
+        : ((el as ComponentPublicInstance)?.$el as HTMLElement)
 
     if (element && element instanceof HTMLElement) {
       // Efficiently manage array size
@@ -52,7 +53,7 @@ export const useSkillsAnimation = (options: SkillsAnimationOptions = {}) => {
       if (index >= currentLength) {
         skillItems.value = [
           ...skillItems.value,
-          ...new Array(index - currentLength + 1).fill(null)
+          ...new Array(index - currentLength + 1).fill(null),
         ]
       }
       skillItems.value[index] = element
@@ -82,12 +83,12 @@ export const useSkillsAnimation = (options: SkillsAnimationOptions = {}) => {
 
   watch(
     () => skillItems.value.filter(Boolean).length,
-    (newLength) => {
+    newLength => {
       if (newLength > 0) {
         nextTick(debouncedInitialize)
       }
     },
-    { flush: 'post' }
+    { flush: 'post' },
   )
 
   // Lifecycle management
