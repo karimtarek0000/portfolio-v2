@@ -39,26 +39,16 @@
 </template>
 
 <script lang="ts" setup>
-const { animateTextLines, animateOnScroll, cleanup } = useScrollAnimation()
+const { initializeAnimations, cleanup } = useAboutAnimations()
 
 // Template refs
 const sectionRef = ref<HTMLElement | null>(null)
-const headerRef = ref<HTMLElement | null>(null)
 const textContainerRef = ref<HTMLElement | null>(null)
 
 onMounted(() => {
-  // Animate header on scroll with fade up effect
-  animateOnScroll(headerRef, 'fadeUp', {
-    start: 'top 70%',
-    once: true,
-  })
-
-  // Animate text lines with progressive opacity
-  animateTextLines(textContainerRef, {
-    start: 'top 75%',
-    end: 'bottom 25%',
-    scrub: 1,
-    once: false,
+  // Initialize only text animations, no header animation
+  initializeAnimations({
+    textContainerRef,
   })
 })
 
