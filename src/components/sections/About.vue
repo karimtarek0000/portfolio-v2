@@ -1,6 +1,9 @@
 <template>
   <section ref="sectionRef" class="py-10 mt-20 glassmorphism">
-    <SharedHeader ref="headerRef" title="about" />
+    <!-- Header with direct DOM ref for animation -->
+    <header ref="headerRef" class="header">
+      <h2 class="header__title graident">about</h2>
+    </header>
 
     <!-- Text content broken into lines for animation -->
     <div
@@ -44,21 +47,18 @@ const headerRef = ref<HTMLElement | null>(null)
 const textContainerRef = ref<HTMLElement | null>(null)
 
 onMounted(() => {
-  // Wait for next tick to ensure refs are populated
-  nextTick(() => {
-    // Animate header on scroll with fade up effect
-    animateOnScroll(headerRef, 'fadeUp', {
-      start: 'top 90%',
-      once: true,
-    })
+  // Animate header on scroll with fade up effect
+  animateOnScroll(headerRef, 'fadeUp', {
+    start: 'top 70%',
+    once: true,
+  })
 
-    // Animate text lines with progressive opacity
-    animateTextLines(textContainerRef, {
-      start: 'top 75%',
-      end: 'bottom 25%',
-      scrub: 1,
-      once: false,
-    })
+  // Animate text lines with progressive opacity
+  animateTextLines(textContainerRef, {
+    start: 'top 75%',
+    end: 'bottom 25%',
+    scrub: 1,
+    once: false,
   })
 })
 
@@ -72,5 +72,16 @@ onUnmounted(() => {
 .animate-line {
   /* Ensure smooth transitions */
   transition: opacity 0.3s ease-out;
+}
+
+/* Header styles to match SharedHeader */
+.header {
+  @apply flex flex-col items-center;
+}
+
+.header__title {
+  @apply font-medium text-center capitalize;
+  font-size: 2.7rem; /* Using your custom text-md size */
+  letter-spacing: 2px;
 }
 </style>
