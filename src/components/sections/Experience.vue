@@ -35,6 +35,7 @@ const formatDate = (date: string) => {
 
 // Simple animation refs
 const timelineItemsRef = ref<HTMLElement[]>([])
+const sharedHeaderRef = ref<HTMLElement | null>(null)
 
 // Use the simpler scroll animation composable instead
 const { animateOnScroll, cleanup } = useScrollAnimation()
@@ -45,15 +46,28 @@ onMounted(() => {
     document.documentElement.classList.add('js')
 
     // Wait for DOM to be ready then animate each timeline item
-    // Use a much later trigger point and add delay to ensure header animates first
     nextTick(() => {
-      // Add a small delay to ensure header animation starts first
-      setTimeout(() => {
-        animateOnScroll(timelineItemsRef, 'fadeUp', {
-          start: 'top 90%', // Much later trigger - cards animate when they're closer to entering viewport
+      // Use SharedHeader as trigger for timeline items to ensure proper sequencing
+      if (sharedHeaderRef.value) {
+        // Create a scroll trigger that uses the SharedHeader as reference
+        // and triggers timeline items only after header animation completes
+        const { $ScrollTrigger } = useNuxtApp()
+
+        $ScrollTrigger.create({
+          trigger: sharedHeaderRef.value,
+          start: 'top 60%', // Earlier than header's 70% to ensure we're ready
           once: true,
+          onEnter: () => {
+            // Add delay to ensure header animation starts and progresses
+            setTimeout(() => {
+              animateOnScroll(timelineItemsRef, 'fadeUp', {
+                start: 'top 95%', // Very late trigger for individual items
+                once: true,
+              })
+            }, 600) // Longer delay to ensure header animation completes
+          },
         })
-      }, 300) // 300ms delay to let header animation begin
+      }
     })
   }
 })
@@ -66,15 +80,17 @@ onUnmounted(() => {
 
 <template>
   <section class="py-10 mt-20 glassmorphism">
-    <SharedHeader
-      title="experience"
-      :animation-options="{
-        triggerStart: 'top 70%',
-        duration: 0.7,
-        staggerDelay: 0.12,
-        ease: 'power2.out',
-      }"
-    />
+    <div ref="sharedHeaderRef">
+      <SharedHeader
+        title="experience"
+        :animation-options="{
+          triggerStart: 'top 70%',
+          duration: 0.7,
+          staggerDelay: 0.12,
+          ease: 'power2.out',
+        }"
+      />
+    </div>
 
     <div ref="timelineRef" class="timeline">
       <div
@@ -196,9 +212,10 @@ onUnmounted(() => {
  */
 @media screen {
   .timeline__item {
-    /* Let GSAP handle the initial hiding and animation */
-    opacity: 1;
-    transform: none;
+    /* Immediately hide timeline items on client-side, similar to SharedHeader */
+    opacity: 0;
+    transform: translateY(30px);
+    will-change: transform, opacity;
   }
 }
 
