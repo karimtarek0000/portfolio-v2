@@ -1,5 +1,6 @@
 @tailwind components;
 @tailwind base;
+@tailwind utilities;
 
 @layer components {
   .glassmorphism {
@@ -33,5 +34,71 @@
   }
   body[data-theme='light']::after {
     background-image: url('/images/pattern-light.svg');
+  }
+}
+
+@layer utilities {
+  /* Animation performance optimizations */
+  .will-change-transform {
+    will-change: transform;
+  }
+
+  .will-change-opacity {
+    will-change: opacity;
+  }
+
+  .will-change-auto {
+    will-change: auto;
+  }
+
+  /* Animation initial states - for preventing layout shift */
+  .animate-hidden {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  .animate-hidden-scale {
+    opacity: 0;
+    transform: translateY(30px) scale(0.9);
+  }
+
+  .animate-hidden-slide-left {
+    opacity: 0;
+    transform: translateX(50px);
+  }
+
+  .animate-hidden-slide-right {
+    opacity: 0;
+    transform: translateX(-50px);
+  }
+
+  /* Timeline-specific styles */
+  .timeline-line {
+    transform-origin: bottom center;
+    transform: scaleY(0);
+    will-change: transform;
+    transition: none; /* Let GSAP handle all animations */
+  }
+
+  .timeline-line--top {
+    transform-origin: top center;
+  }
+
+  .timeline-dot {
+    transform: scale(0);
+    transform-origin: center center;
+    will-change: transform;
+    transition: none; /* Let GSAP handle all animations */
+  }
+
+  /* Text animation utilities */
+  .text-animate-line {
+    opacity: 0.1;
+    will-change: opacity;
+  }
+
+  /* Disable CSS transitions when GSAP is handling animations */
+  .gsap-controlled {
+    transition: none !important;
   }
 }

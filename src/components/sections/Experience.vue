@@ -158,8 +158,6 @@ const setTimelineLineRef = (
 // EXTERNAL DEPENDENCIES - Composables integration
 // ============================================================================
 
-const { animateOnScroll } = useScrollAnimation()
-
 const { animationConfig } = useExperienceGSAP(
   {}, // Use default configuration
   {
@@ -173,7 +171,6 @@ const { animationConfig } = useExperienceGSAP(
     sharedHeaderRef,
     documentElementRef,
   },
-  animateOnScroll,
 )
 
 // ============================================================================
