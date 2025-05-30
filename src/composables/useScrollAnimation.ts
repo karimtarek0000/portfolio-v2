@@ -1,7 +1,7 @@
 import type { Ref } from 'vue'
 
 interface ScrollAnimationOptions {
-  trigger: string | Element
+  trigger?: string | Element
   start?: string
   end?: string
   scrub?: boolean | number
@@ -10,8 +10,128 @@ interface ScrollAnimationOptions {
   onLeave?: () => void
 }
 
+// Animation configuration constants for performance
+const ANIMATION_CONFIGS = {
+  fadeUp: {
+    initial: { opacity: 0, y: 30 },
+    final: { opacity: 1, y: 0 },
+    immediateHide: 'translateY(30px)',
+  },
+  fadeIn: {
+    initial: { opacity: 0 },
+    final: { opacity: 1 },
+    immediateHide: '',
+  },
+  slideLeft: {
+    initial: { opacity: 0, x: 50 },
+    final: { opacity: 1, x: 0 },
+    immediateHide: 'translateX(50px)',
+  },
+  slideRight: {
+    initial: { opacity: 0, x: -50 },
+    final: { opacity: 1, x: 0 },
+    immediateHide: 'translateX(-50px)',
+  },
+} as const
+
+// Cache for immediate style application to prevent reapplication (WeakMap auto-cleans)
+const styleCache = new WeakMap<HTMLElement, string>()
+
+// Centralized client check for performance
+const isClient = (): boolean => import.meta.client
+
 export const useScrollAnimation = () => {
   const { $gsap, $ScrollTrigger } = useNuxtApp()
+
+  /**
+   * Optimized immediate element hiding with caching
+   */
+  const applyImmediateHiding = (
+    elements: HTMLElement[],
+    animationType: keyof typeof ANIMATION_CONFIGS,
+  ): void => {
+    if (!isClient()) return
+
+    const config = ANIMATION_CONFIGS[animationType]
+    const transformValue = config.immediateHide
+
+    elements.forEach(element => {
+      // Skip if already styled to prevent unnecessary DOM writes
+      if (styleCache.has(element)) return
+
+      // Batch style application for performance
+      const styles = {
+        opacity: '0',
+        transform: transformValue,
+        willChange: 'transform, opacity',
+      }
+
+      Object.assign(element.style, styles)
+      styleCache.set(element, animationType)
+    })
+  }
+
+  /**
+   * Create optimized GSAP animation with shared configuration
+   */
+  const createElementAnimation = (
+    element: HTMLElement,
+    animationType: keyof typeof ANIMATION_CONFIGS,
+    index: number,
+    options: Partial<ScrollAnimationOptions>,
+  ): void => {
+    const config = ANIMATION_CONFIGS[animationType]
+
+    // Set initial GSAP state with performance optimizations
+    $gsap.set(element, {
+      ...config.initial,
+      willChange: 'transform, opacity',
+    })
+
+    $ScrollTrigger.create({
+      trigger: element,
+      start: options.start || 'top 85%',
+      end: options.end || 'bottom 20%',
+      once: options.once !== undefined ? options.once : true,
+      // Performance optimization for mobile
+      refreshPriority: -1,
+      onEnter: () => {
+        $gsap.to(element, {
+          ...config.final,
+          duration: 0.8,
+          delay: index * 0.1,
+          ease: 'power2.out',
+          onComplete: () => {
+            // Performance: clear will-change after animation
+            element.style.willChange = 'auto'
+            // Remove from cache to allow future reanimation if needed
+            styleCache.delete(element)
+          },
+        })
+        options.onEnter?.()
+      },
+      onLeave: options.onLeave,
+    })
+  }
+
+  /**
+   * Validate and filter DOM elements efficiently
+   */
+  const getValidElements = (
+    elementsRef: Ref<HTMLElement[]> | Ref<HTMLElement | null>,
+  ): HTMLElement[] => {
+    if (!elementsRef.value) return []
+
+    const elements = Array.isArray(elementsRef.value)
+      ? elementsRef.value
+      : [elementsRef.value]
+
+    return elements.filter(
+      (el): el is HTMLElement =>
+        el instanceof HTMLElement &&
+        typeof el.getBoundingClientRect === 'function',
+    )
+  }
 
   /**
    * Animate text lines with progressive opacity based on scroll position
@@ -20,51 +140,64 @@ export const useScrollAnimation = () => {
     containerRef: Ref<HTMLElement | null>,
     options: Partial<ScrollAnimationOptions> = {},
   ) => {
-    if (!import.meta.client || !containerRef.value) return
+    if (!isClient() || !containerRef.value) return
 
     const container = containerRef.value
-    const lines = container.querySelectorAll('p, span, .animate-line')
+    const lines = Array.from(
+      container.querySelectorAll('p, span, .animate-line'),
+    )
 
     if (!lines.length) return
 
-    // Immediately hide lines to prevent SSR flash
+    // Batch immediate hiding for performance
     lines.forEach(line => {
       const element = line as HTMLElement
-      element.style.opacity = '0.1'
-      element.style.willChange = 'opacity'
+      if (!styleCache.has(element)) {
+        Object.assign(element.style, {
+          opacity: '0.1',
+          willChange: 'opacity',
+        })
+        styleCache.set(element, 'textLine')
+      }
     })
 
-    // Set initial state - low opacity for all lines
+    // Set initial GSAP state efficiently
     $gsap.set(lines, {
       opacity: 0.1,
       willChange: 'opacity',
     })
 
-    // Create scroll-triggered animation
+    // Create optimized scroll animation
     $ScrollTrigger.create({
       trigger: container,
       start: options.start || 'top 80%',
       end: options.end || 'bottom 20%',
       scrub: options.scrub !== undefined ? options.scrub : 1,
       once: options.once || false,
+      refreshPriority: -1, // Performance optimization
       onUpdate: self => {
         const progress = self.progress
+        const lineCount = lines.length
 
+        // Batch DOM updates using GSAP for optimal performance
         lines.forEach((line, index) => {
-          // Calculate individual line progress based on scroll position
           const lineProgress = Math.max(
             0,
-            Math.min(1, progress * lines.length - index),
+            Math.min(1, progress * lineCount - index),
           )
-
-          // Interpolate opacity from 0.7 to 1.0
           const opacity = 0.4 + lineProgress * 0.6
 
           $gsap.set(line, { opacity })
         })
       },
       onEnter: options.onEnter,
-      onLeave: options.onLeave,
+      onLeave: () => {
+        // Performance: clear will-change for completed lines
+        lines.forEach(line => {
+          ;(line as HTMLElement).style.willChange = 'auto'
+        })
+        options.onLeave?.()
+      },
     })
   }
 
@@ -73,105 +206,35 @@ export const useScrollAnimation = () => {
    */
   const animateOnScroll = (
     elementsRef: Ref<HTMLElement[]> | Ref<HTMLElement | null>,
-    animationType: 'fadeUp' | 'fadeIn' | 'slideLeft' | 'slideRight' = 'fadeUp',
+    animationType: keyof typeof ANIMATION_CONFIGS = 'fadeUp',
     options: Partial<ScrollAnimationOptions> = {},
   ) => {
-    if (!import.meta.client) return
+    if (!isClient()) return
 
-    // Properly extract and filter DOM elements
-    let elements: HTMLElement[] = []
-
-    if (Array.isArray(elementsRef.value)) {
-      elements = elementsRef.value.filter(
-        (el): el is HTMLElement => el != null && el instanceof HTMLElement,
-      )
-    } else if (elementsRef.value && elementsRef.value instanceof HTMLElement) {
-      elements = [elementsRef.value]
-    }
+    const elements = getValidElements(elementsRef)
 
     if (!elements.length) {
       console.warn('No valid DOM elements found for animation')
       return
     }
 
+    // Batch immediate hiding for all elements
+    applyImmediateHiding(elements, animationType)
+
+    // Create animations for each element with optimized batching
     elements.forEach((element, index) => {
-      // Double-check that element is a valid DOM node
-      if (!element || typeof element.getBoundingClientRect !== 'function') {
-        console.warn('Invalid element found, skipping animation:', element)
-        return
-      }
-
-      // Immediately hide element to prevent SSR flash
-      const initialState: any = { willChange: 'transform, opacity' }
-      const animateToState: any = { opacity: 1, ease: 'power2.out' }
-
-      switch (animationType) {
-        case 'fadeUp':
-          initialState.opacity = 0
-          initialState.y = 30
-          animateToState.y = 0
-          // Apply immediate hiding
-          element.style.opacity = '0'
-          element.style.transform = 'translateY(30px)'
-          break
-        case 'fadeIn':
-          initialState.opacity = 0
-          // Apply immediate hiding
-          element.style.opacity = '0'
-          break
-        case 'slideLeft':
-          initialState.opacity = 0
-          initialState.x = 50
-          animateToState.x = 0
-          // Apply immediate hiding
-          element.style.opacity = '0'
-          element.style.transform = 'translateX(50px)'
-          break
-        case 'slideRight':
-          initialState.opacity = 0
-          initialState.x = -50
-          animateToState.x = 0
-          // Apply immediate hiding
-          element.style.opacity = '0'
-          element.style.transform = 'translateX(-50px)'
-          break
-      }
-
-      // Set will-change for performance
-      element.style.willChange = 'transform, opacity'
-
-      // Set initial state with GSAP
-      $gsap.set(element, initialState)
-
-      $ScrollTrigger.create({
-        trigger: element,
-        start: options.start || 'top 85%',
-        end: options.end || 'bottom 20%',
-        once: options.once !== undefined ? options.once : true,
-        onEnter: () => {
-          $gsap.to(element, {
-            ...animateToState,
-            duration: 0.8,
-            delay: index * 0.1,
-            onComplete: () => {
-              // Clear will-change after animation for performance
-              element.style.willChange = 'auto'
-            },
-          })
-          options.onEnter?.()
-        },
-        onLeave: options.onLeave,
-      })
+      createElementAnimation(element, animationType, index, options)
     })
   }
 
   /**
-   * Cleanup all ScrollTrigger instances
+   * Optimized cleanup - WeakMap automatically handles garbage collection
    */
   const cleanup = () => {
-    if (import.meta.client && $ScrollTrigger) {
-      $ScrollTrigger.getAll().forEach(trigger => trigger.kill())
-    }
+    if (!isClient() || !$ScrollTrigger) return
+
+    // Batch cleanup for performance
+    $ScrollTrigger.getAll().forEach(trigger => trigger.kill())
   }
 
   return {

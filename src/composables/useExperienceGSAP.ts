@@ -72,6 +72,12 @@ const DEFAULT_ANIMATION_CONFIG: ExperienceAnimationConfig = {
   },
 } as const
 
+// Centralized client-side check for performance
+const isClient = (): boolean => import.meta.client
+
+// Cache DOM style application for performance (WeakMap doesn't need clearing)
+const cachedStyleApplication = new WeakMap<HTMLElement, boolean>()
+
 /**
  * GSAP composable specifically for Experience component animations
  * Handles ScrollTrigger creation, animation timing, lifecycle management, and cleanup
@@ -88,42 +94,41 @@ export const useExperienceGSAP = (
 ) => {
   const { $ScrollTrigger } = useNuxtApp()
 
-  // Merge provided config with defaults
-  const animationConfig = { ...DEFAULT_ANIMATION_CONFIG, ...config }
+  // Merge provided config with defaults (shallow merge for performance)
+  const animationConfig = Object.assign({}, DEFAULT_ANIMATION_CONFIG, config)
 
-  // State management for scroll triggers
-  const scrollTriggers = ref<ScrollTrigger[]>([])
+  // Consolidated state management
+  const state = reactive({
+    scrollTriggers: [] as ScrollTrigger[],
+    isHeaderVisible: false,
+    isHeaderAnimationComplete: false,
+    isJavaScriptEnabled: false,
+  })
 
-  // Animation state
-  const isHeaderVisible = ref(false)
-  const isHeaderAnimationComplete = ref(false)
+  // Performance-optimized computed property
   const shouldAnimateTimeline = computed(
-    () => isHeaderVisible.value && isHeaderAnimationComplete.value,
+    () => state.isHeaderVisible && state.isHeaderAnimationComplete,
   )
 
-  // JavaScript enabled state for CSS targeting
-  const isJavaScriptEnabled = ref(false)
-
   /**
-   * Utility function to check client-side execution
-   */
-  const isClient = (): boolean => import.meta.client
-
-  /**
-   * Apply initial styles to prevent SSR flash
+   * Optimized style application with caching
    */
   const applyInitialStyles = (elements: HTMLElement[]): void => {
     if (!isClient()) return
 
+    const { initial } = animationConfig.styles
+
     elements.forEach(element => {
-      if (element) {
-        Object.assign(element.style, animationConfig.styles.initial)
-      }
+      if (!element || cachedStyleApplication.has(element)) return
+
+      // Batch DOM writes for performance
+      Object.assign(element.style, initial)
+      cachedStyleApplication.set(element, true)
     })
   }
 
   /**
-   * Create scroll trigger with common configuration
+   * Reusable scroll trigger factory with common configuration
    */
   const createScrollTrigger = (options: {
     trigger: HTMLElement
@@ -131,78 +136,90 @@ export const useExperienceGSAP = (
     once?: boolean
     onEnter: () => void
   }): ScrollTrigger => {
-    return $ScrollTrigger.create({
+    const trigger = $ScrollTrigger.create({
       trigger: options.trigger,
       start: options.start,
       once: options.once ?? true,
       onEnter: options.onEnter,
+      // Performance optimization: reduce refresh rate
+      refreshPriority: -1,
     })
+
+    state.scrollTriggers.push(trigger)
+    return trigger
   }
 
   /**
-   * Create animation timing using requestAnimationFrame
+   * High-performance animation timer using requestAnimationFrame
    */
   const createAnimationTimer = (
     duration: number,
     callback: () => void,
   ): void => {
-    requestAnimationFrame(() => {
-      let startTime: number
+    if (!isClient()) return
 
-      const tick = (currentTime: number) => {
-        if (!startTime) startTime = currentTime
+    let startTime = 0
 
-        if (currentTime - startTime >= duration) {
-          callback()
-        } else {
-          requestAnimationFrame(tick)
-        }
+    const tick = (currentTime: number) => {
+      if (!startTime) startTime = currentTime
+
+      if (currentTime - startTime >= duration) {
+        callback()
+      } else {
+        requestAnimationFrame(tick)
       }
+    }
 
-      requestAnimationFrame(tick)
-    })
+    requestAnimationFrame(tick)
   }
 
   /**
-   * Initialize header animation tracking
+   * Consolidated header tracking with reduced DOM queries
    */
   const initializeHeaderTracking = (headerElement: HTMLElement): void => {
     if (!isClient() || !headerElement) return
 
-    // Track header visibility
-    const visibilityTrigger = createScrollTrigger({
-      trigger: headerElement,
-      start: animationConfig.header.triggerStart,
-      onEnter: () => {
-        isHeaderVisible.value = true
-        callbacks.onHeaderVisible()
+    // Batch scroll trigger creation for performance
+    const triggers = [
+      // Header visibility trigger
+      {
+        start: animationConfig.header.triggerStart,
+        onEnter: () => {
+          state.isHeaderVisible = true
+          callbacks.onHeaderVisible()
+        },
       },
-    })
+      // Header completion trigger
+      {
+        start: animationConfig.timing.headerCompletion.start,
+        onEnter: () => {
+          const { duration, staggerDelay, buffer } =
+            animationConfig.timing.headerCompletion
+          const totalDuration = duration + staggerDelay + buffer
 
-    // Track header animation completion
-    const completionTrigger = createScrollTrigger({
-      trigger: headerElement,
-      start: animationConfig.timing.headerCompletion.start,
-      onEnter: () => {
-        const { duration, staggerDelay, buffer } =
-          animationConfig.timing.headerCompletion
-        const totalDuration = duration + staggerDelay + buffer
-
-        createAnimationTimer(totalDuration, () => {
-          isHeaderAnimationComplete.value = true
-          callbacks.onHeaderAnimationComplete()
-        })
+          createAnimationTimer(totalDuration, () => {
+            state.isHeaderAnimationComplete = true
+            callbacks.onHeaderAnimationComplete()
+          })
+        },
       },
-    })
+    ]
 
-    scrollTriggers.value.push(visibilityTrigger, completionTrigger)
+    triggers.forEach(triggerConfig => {
+      createScrollTrigger({
+        trigger: headerElement,
+        start: triggerConfig.start,
+        onEnter: triggerConfig.onEnter,
+      })
+    })
   }
 
   /**
-   * Initialize timeline animations using external scroll animation composable
+   * Timeline animation initialization with validation
    */
   const initializeTimelineAnimation = (): void => {
-    if (!isClient() || !refs.timelineItemsRef.value.length) return
+    const timelineItems = refs.timelineItemsRef.value
+    if (!isClient() || !timelineItems?.length) return
 
     animateOnScrollFn(
       refs.timelineItemsRef,
@@ -215,53 +232,76 @@ export const useExperienceGSAP = (
   }
 
   /**
-   * Hide timeline items immediately on client
+   * Optimized element hiding with batch operations
    */
   const hideTimelineItems = (): void => {
-    applyInitialStyles(refs.timelineItemsRef.value)
+    const items = refs.timelineItemsRef.value
+    if (!items?.length) return
+
+    applyInitialStyles(items)
   }
 
   /**
-   * Initialize all animations and setup lifecycle
+   * Main initialization with optimized execution order
    */
   const initializeAnimations = (): void => {
     if (!isClient()) return
 
     nextTick(() => {
+      // Batch DOM operations
       hideTimelineItems()
-      if (refs.sharedHeaderRef.value) {
-        initializeHeaderTracking(refs.sharedHeaderRef.value)
+
+      const headerElement = refs.sharedHeaderRef.value
+      if (headerElement) {
+        initializeHeaderTracking(headerElement)
       }
     })
   }
 
   /**
-   * Setup lifecycle watchers and event handlers
+   * Optimized cleanup with batch operations
+   */
+  const cleanup = (): void => {
+    if (!isClient()) return
+
+    // Batch cleanup for performance
+    state.scrollTriggers.forEach(trigger => trigger.kill())
+    state.scrollTriggers.length = 0
+  }
+
+  /**
+   * Lifecycle setup with optimized watchers
    */
   const setupLifecycle = (): void => {
-    // Watch for timeline animation trigger condition
-    watch(
+    // Single watcher for timeline animation trigger
+    const stopTimelineWatcher = watch(
       shouldAnimateTimeline,
       shouldAnimate => {
         if (shouldAnimate) {
           nextTick(initializeTimelineAnimation)
+          // Stop watching after first trigger for performance
+          stopTimelineWatcher()
         }
       },
       { immediate: false },
     )
 
-    // Watch for timeline items changes
+    // Optimized timeline items watcher with debouncing
+    let timelineWatcherTimeout: ReturnType<typeof setTimeout>
     watch(
-      refs.timelineItemsRef,
+      () => refs.timelineItemsRef.value,
       () => {
-        nextTick(hideTimelineItems)
+        clearTimeout(timelineWatcherTimeout)
+        timelineWatcherTimeout = setTimeout(() => {
+          nextTick(hideTimelineItems)
+        }, 16) // RAF-aligned debouncing
       },
-      { deep: true },
+      { deep: true, flush: 'post' },
     )
 
-    // Watch for JavaScript enabled state to apply to document element using ref
+    // Document element setup (runs once)
     watch(
-      isJavaScriptEnabled,
+      () => state.isJavaScriptEnabled,
       enabled => {
         if (isClient() && enabled && refs.documentElementRef.value) {
           refs.documentElementRef.value.classList.add('js')
@@ -270,49 +310,43 @@ export const useExperienceGSAP = (
       { immediate: true },
     )
 
-    // Component lifecycle
+    // Optimized lifecycle hooks
     onMounted(() => {
       if (isClient()) {
-        // Store reference to document element
+        // Cache document element reference
         refs.documentElementRef.value = document.documentElement
-        isJavaScriptEnabled.value = true
+        state.isJavaScriptEnabled = true
         initializeAnimations()
       }
     })
 
     onUnmounted(() => {
       cleanup()
+      clearTimeout(timelineWatcherTimeout)
     })
-  }
-
-  /**
-   * Cleanup all scroll triggers
-   */
-  const cleanup = (): void => {
-    if (isClient()) {
-      scrollTriggers.value.forEach(trigger => trigger.kill())
-      scrollTriggers.value = []
-    }
   }
 
   // Initialize lifecycle setup
   setupLifecycle()
 
+  // Return optimized API with readonly state
   return {
-    // Animation configuration (read-only)
+    // Animation configuration (readonly for immutability)
     animationConfig: readonly(animationConfig),
 
-    // Animation state (read-only)
-    isHeaderVisible: readonly(isHeaderVisible),
-    isHeaderAnimationComplete: readonly(isHeaderAnimationComplete),
+    // Animation state (readonly for external access)
+    isHeaderVisible: readonly(toRef(state, 'isHeaderVisible')),
+    isHeaderAnimationComplete: readonly(
+      toRef(state, 'isHeaderAnimationComplete'),
+    ),
     shouldAnimateTimeline: readonly(shouldAnimateTimeline),
-    isJavaScriptEnabled: readonly(isJavaScriptEnabled),
+    isJavaScriptEnabled: readonly(toRef(state, 'isJavaScriptEnabled')),
 
-    // Core animation functions
+    // Core functions
     initializeAnimations,
     cleanup,
 
-    // Utility functions (exposed for testing/debugging)
+    // Utilities (exposed for testing/debugging)
     applyInitialStyles,
     createScrollTrigger,
     createAnimationTimer,

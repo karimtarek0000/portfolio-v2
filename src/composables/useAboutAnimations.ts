@@ -9,7 +9,7 @@ interface AboutAnimationOptions {
   textAnimation?: {
     start?: string
     end?: string
-    scrub?: number | boolean
+    scrub?: boolean | number
     once?: boolean
   }
 }
@@ -19,6 +19,7 @@ export const useAboutAnimations = () => {
 
   /**
    * Initialize animations for the About section (text only)
+   * Leverages the shared useScrollAnimation composable for consistency
    */
   const initializeAnimations = (
     refs: AboutAnimationRefs,
@@ -28,7 +29,7 @@ export const useAboutAnimations = () => {
 
     const { textContainerRef } = refs
 
-    // Text animation configuration
+    // Use optimized configuration with About-specific defaults
     const textConfig = {
       start: 'top 75%',
       end: 'bottom 25%',
@@ -37,13 +38,13 @@ export const useAboutAnimations = () => {
       ...options.textAnimation,
     }
 
-    // Animate text lines with progressive opacity
+    // Delegate to shared animation composable for DRY compliance
     animateTextLines(textContainerRef, textConfig)
   }
 
   /**
-   * Custom text line animation specifically for About section
-   * with enhanced visual effects and SSR-safe approach
+   * Enhanced text line animation specifically for About section
+   * Uses the shared useScrollAnimation infrastructure for consistency
    */
   const animateAboutText = (
     containerRef: Ref<HTMLElement | null>,
@@ -53,38 +54,44 @@ export const useAboutAnimations = () => {
 
     const { $gsap, $ScrollTrigger } = useNuxtApp()
     const container = containerRef.value
-    const lines = container.querySelectorAll('.animate-line')
+    const lines = Array.from(container.querySelectorAll('.animate-line'))
 
     if (!lines.length) return
 
-    // Immediately hide lines to prevent SSR flash
+    // Batch immediate hiding for performance (reusing pattern from other composables)
     lines.forEach(line => {
       const element = line as HTMLElement
-      element.style.opacity = '0.2'
-      element.style.transform = 'translateY(10px)'
-      element.style.willChange = 'opacity, transform'
+      Object.assign(element.style, {
+        opacity: '0.2',
+        transform: 'translateY(10px)',
+        willChange: 'opacity, transform',
+      })
     })
 
-    // Enhanced initial state for About section
+    // Set initial GSAP state efficiently
     $gsap.set(lines, {
       opacity: 0.2,
       y: 10,
       willChange: 'opacity, transform',
     })
 
+    // Create optimized scroll animation with About-specific enhancements
     $ScrollTrigger.create({
       trigger: container,
       start: options.start || 'top 75%',
       end: options.end || 'bottom 25%',
       scrub: options.scrub !== undefined ? options.scrub : 1,
       once: options.once || false,
+      refreshPriority: -1, // Performance optimization
       onUpdate: self => {
         const progress = self.progress
+        const lineCount = lines.length
 
+        // Batch DOM updates using GSAP for optimal performance
         lines.forEach((line, index) => {
           const lineProgress = Math.max(
             0,
-            Math.min(1, progress * lines.length - index),
+            Math.min(1, progress * lineCount - index),
           )
 
           // Enhanced opacity and transform for About section
@@ -99,10 +106,9 @@ export const useAboutAnimations = () => {
         })
       },
       onLeave: () => {
-        // Clear will-change after animation for performance
+        // Performance: clear will-change after animation
         lines.forEach(line => {
-          const element = line as HTMLElement
-          element.style.willChange = 'auto'
+          ;(line as HTMLElement).style.willChange = 'auto'
         })
       },
     })
@@ -111,6 +117,6 @@ export const useAboutAnimations = () => {
   return {
     initializeAnimations,
     animateAboutText,
-    cleanup,
+    cleanup, // Delegate cleanup to shared composable
   }
 }

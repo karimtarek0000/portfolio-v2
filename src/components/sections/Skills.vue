@@ -4,11 +4,10 @@
       title="skills"
       subTitle="Languages and technologies"
       :animation-options="{
-        triggerStart: 'top 80%',
-        duration: 0.9,
-        staggerDelay: 0.1,
-        ease: 'power3.out',
-        enableParallax: true,
+        triggerStart: 'top 75%',
+        duration: 1.0,
+        staggerDelay: 0.2,
+        ease: 'back.out(1.2)',
       }"
     />
 

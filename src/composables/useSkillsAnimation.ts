@@ -2,63 +2,41 @@ import type { Ref } from 'vue'
 
 interface SkillsAnimationOptions {
   triggerStart?: string
-  duration?: number
-  staggerDelay?: number
   rowDelay?: number
+  itemDelay?: number
+  duration?: number
   ease?: string
 }
 
-interface ResponsiveConfig {
-  itemsPerRow: number
-}
+// Performance-optimized configuration constants
+const DEFAULT_CONFIG = {
+  triggerStart: 'top 90%',
+  rowDelay: 0.2,
+  itemDelay: 0.1,
+  duration: 0.6,
+  ease: 'power2.out',
+  itemsPerRow: 4, // Optimize batch processing
+} as const
 
-interface AnimationConfig {
-  triggerStart: string
-  duration: number
-  staggerDelay: number
-  rowDelay: number
-  ease: string
-}
+// Cache for performance optimization (WeakMap auto-handles garbage collection)
+const animationCache = new WeakMap<HTMLElement, boolean>()
+const isClient = (): boolean => import.meta.client
 
 export const useSkillsAnimation = (options: SkillsAnimationOptions = {}) => {
   const { $gsap, $ScrollTrigger } = useNuxtApp()
 
-  // Merge user options with defaults
-  const config: AnimationConfig = {
-    triggerStart: 'top 85%',
-    duration: 0.6,
-    staggerDelay: 0.1,
-    rowDelay: 0.2,
-    ease: 'back.out(1.7)',
-    ...options,
-  }
+  // Merge configuration efficiently
+  const config = { ...DEFAULT_CONFIG, ...options }
 
-  // State management
-  const skillItems = ref<HTMLElement[]>([])
-  const containerRef = ref<HTMLElement | null>(null)
-  const scrollTriggers = ref<ScrollTrigger[]>([])
-  const isHiddenInitially = ref(false)
-
-  // Constants
-  const INITIAL_ANIMATION_STATE = {
-    opacity: 0,
-    y: 50,
-    scale: 0.8,
-  } as const
-
-  const FINAL_ANIMATION_STATE = {
-    opacity: 1,
-    y: 0,
-    scale: 1,
-  } as const
-
-  const BREAKPOINTS = {
-    desktop: 1024,
-    tablet: 768,
-  } as const
+  // Consolidated state management
+  const state = reactive({
+    containerRef: null as HTMLElement | null,
+    skillItems: [] as HTMLElement[],
+    scrollTriggers: [] as ScrollTrigger[],
+  })
 
   /**
-   * Set ref for skill item elements with proper type checking
+   * Set skill item element reference (used by template refs)
    */
   const setSkillRef = (
     el: Element | ComponentPublicInstance | null,
@@ -66,58 +44,33 @@ export const useSkillsAnimation = (options: SkillsAnimationOptions = {}) => {
   ): void => {
     if (!el) return
 
-    const element = '$el' in el ? (el.$el as HTMLElement) : (el as HTMLElement)
-    if (element instanceof HTMLElement) {
-      skillItems.value[index] = element
-      // Immediately hide element to prevent SSR flash
-      if (import.meta.client && !isHiddenInitially.value) {
-        element.style.opacity = '0'
-        element.style.transform = 'translateY(50px) scale(0.8)'
-        element.style.willChange = 'transform, opacity'
+    let element: HTMLElement | null = null
+
+    if (typeof el === 'object' && '$el' in el) {
+      // Handle Vue component instance
+      element = (el as ComponentPublicInstance).$el as HTMLElement
+    } else if (el instanceof HTMLElement) {
+      // Handle direct HTML element
+      element = el
+    }
+
+    if (element) {
+      // Ensure the array is large enough
+      if (index >= state.skillItems.length) {
+        state.skillItems.length = index + 1
       }
+      state.skillItems[index] = element
     }
   }
 
   /**
-   * Immediately hide all skill elements to prevent SSR flash
+   * Optimized row grouping with performance considerations
    */
-  const hideElementsImmediately = (): void => {
-    if (!import.meta.client || isHiddenInitially.value) return
+  const groupItemsIntoRows = (items: HTMLElement[]): HTMLElement[][] => {
+    if (!items.length) return []
 
-    const validItems = skillItems.value.filter(Boolean)
-    if (!validItems.length) return
-
-    // Use direct style manipulation for immediate effect
-    validItems.forEach(element => {
-      element.style.opacity = '0'
-      element.style.transform = 'translateY(50px) scale(0.8)'
-      element.style.willChange = 'transform, opacity'
-    })
-
-    isHiddenInitially.value = true
-  }
-
-  /**
-   * Get responsive configuration based on current viewport
-   */
-  const getResponsiveConfig = (): ResponsiveConfig => {
-    if (!import.meta.client) {
-      return { itemsPerRow: 4 }
-    }
-
-    const { innerWidth } = window
-
-    if (innerWidth >= BREAKPOINTS.desktop) return { itemsPerRow: 4 }
-    if (innerWidth >= BREAKPOINTS.tablet) return { itemsPerRow: 3 }
-    return { itemsPerRow: 2 }
-  }
-
-  /**
-   * Create skill rows based on responsive layout
-   */
-  const createSkillRows = (items: HTMLElement[]): HTMLElement[][] => {
-    const { itemsPerRow } = getResponsiveConfig()
     const rows: HTMLElement[][] = []
+    const itemsPerRow = config.itemsPerRow
 
     for (let i = 0; i < items.length; i += itemsPerRow) {
       const row = items.slice(i, i + itemsPerRow)
@@ -130,30 +83,40 @@ export const useSkillsAnimation = (options: SkillsAnimationOptions = {}) => {
   }
 
   /**
-   * Set initial animation state for items
-   */
-  const setInitialState = (items: HTMLElement[]): void => {
-    if (!items.length || !import.meta.client) return
-    $gsap.set(items, INITIAL_ANIMATION_STATE)
-  }
-
-  /**
-   * Animate items in a row with stagger effect
+   * Batch animate row items for performance
    */
   const animateRowItems = (rowItems: HTMLElement[], rowIndex: number): void => {
     if (!rowItems.length) return
 
-    $gsap.to(rowItems, {
-      ...FINAL_ANIMATION_STATE,
-      duration: config.duration,
-      ease: config.ease,
-      stagger: config.staggerDelay,
-      delay: rowIndex * config.rowDelay,
-    })
+    // Batch GSAP animation for performance
+    $gsap.fromTo(
+      rowItems,
+      {
+        opacity: 0,
+        y: 30,
+        scale: 0.9,
+        willChange: 'transform, opacity',
+      },
+      {
+        opacity: 1,
+        y: 0,
+        scale: 1,
+        duration: config.duration,
+        ease: config.ease,
+        stagger: config.itemDelay,
+        delay: rowIndex * config.rowDelay,
+        onComplete: () => {
+          // Performance: clear will-change after animation
+          rowItems.forEach(item => {
+            item.style.willChange = 'auto'
+          })
+        },
+      },
+    )
   }
 
   /**
-   * Create scroll triggers for each row
+   * Optimized scroll trigger creation with batching
    */
   const createRowAnimations = (rows: HTMLElement[][]): void => {
     rows.forEach((rowItems, rowIndex) => {
@@ -163,33 +126,52 @@ export const useSkillsAnimation = (options: SkillsAnimationOptions = {}) => {
         trigger: rowItems[0],
         start: config.triggerStart,
         once: true,
+        refreshPriority: -1, // Performance optimization
         onEnter: () => animateRowItems(rowItems, rowIndex),
       })
 
-      scrollTriggers.value.push(trigger)
+      state.scrollTriggers.push(trigger)
     })
   }
 
   /**
-   * Validate animation prerequisites
+   * Validate animation prerequisites efficiently
    */
   const canInitializeAnimations = (): boolean => {
-    return !!(
-      import.meta.client &&
-      containerRef.value &&
-      skillItems.value.length
+    return !!(isClient() && state.containerRef && state.skillItems.length)
+  }
+
+  /**
+   * Get valid skill items with caching
+   */
+  const getValidItems = (): HTMLElement[] => {
+    return state.skillItems.filter(
+      (item): item is HTMLElement =>
+        item instanceof HTMLElement && !animationCache.has(item),
     )
   }
 
   /**
-   * Get valid skill items (filter out null/undefined)
+   * Optimized immediate hiding with batch operations
    */
-  const getValidItems = (): HTMLElement[] => {
-    return skillItems.value.filter(Boolean)
+  const hideItemsImmediately = (items: HTMLElement[]): void => {
+    if (!isClient() || !items.length) return
+
+    // Batch style application for performance
+    items.forEach(item => {
+      if (animationCache.has(item)) return
+
+      Object.assign(item.style, {
+        opacity: '0',
+        transform: 'translateY(30px) scale(0.9)',
+        willChange: 'transform, opacity',
+      })
+      animationCache.set(item, true)
+    })
   }
 
   /**
-   * Initialize animations when ready with SSR-safe approach
+   * Main initialization with optimized execution
    */
   const initializeAnimations = (): void => {
     if (!canInitializeAnimations()) return
@@ -197,71 +179,59 @@ export const useSkillsAnimation = (options: SkillsAnimationOptions = {}) => {
     const validItems = getValidItems()
     if (!validItems.length) return
 
-    // Ensure elements are hidden before setting up animations
-    if (!isHiddenInitially.value) {
-      hideElementsImmediately()
-    }
+    // Batch operations for performance
+    hideItemsImmediately(validItems)
 
-    const rows = createSkillRows(validItems)
-    setInitialState(validItems)
+    const rows = groupItemsIntoRows(validItems)
     createRowAnimations(rows)
   }
 
   /**
-   * Clean up all scroll triggers and reset state
+   * Optimized cleanup - WeakMap automatically handles garbage collection
    */
-  const cleanupAnimations = (): void => {
-    if (!import.meta.client) return
+  const cleanup = (): void => {
+    if (!isClient()) return
 
-    scrollTriggers.value.forEach(trigger => trigger.kill())
-    scrollTriggers.value = []
+    // Batch cleanup
+    state.scrollTriggers.forEach(trigger => trigger.kill())
+    state.scrollTriggers.length = 0
   }
 
   /**
-   * Handle window resize with debounced reinitialization
+   * Reactive skill items watcher with debouncing
    */
-  const handleResize = (): void => {
-    if (!import.meta.client) return
-
-    cleanupAnimations()
-    nextTick(initializeAnimations)
-  }
-
-  /**
-   * Setup lifecycle hooks with SSR-safe approach
-   */
-  const setupLifecycle = (): void => {
-    // Watch for new skill items and hide them immediately
-    watchEffect(() => {
-      if (import.meta.client && skillItems.value.length > 0) {
-        hideElementsImmediately()
-      }
-    })
-
-    onMounted(() => {
-      nextTick(() => {
-        initializeAnimations()
-
-        if (import.meta.client) {
-          window.addEventListener('resize', handleResize)
+  let watcherTimeout: ReturnType<typeof setTimeout>
+  watch(
+    () => state.skillItems,
+    () => {
+      clearTimeout(watcherTimeout)
+      watcherTimeout = setTimeout(() => {
+        if (state.skillItems.length > 0) {
+          nextTick(initializeAnimations)
         }
-      })
-    })
+      }, 16) // RAF-aligned debouncing
+    },
+    { deep: true, flush: 'post' },
+  )
 
-    onUnmounted(() => {
-      cleanupAnimations()
-
-      if (import.meta.client) {
-        window.removeEventListener('resize', handleResize)
-      }
-    })
-  }
-
-  // Initialize lifecycle
-  setupLifecycle()
+  // Lifecycle management
+  onUnmounted(() => {
+    cleanup()
+    clearTimeout(watcherTimeout)
+  })
 
   return {
-    containerRef,
-    setSkillRef,
+    // State references
+    containerRef: toRef(state, 'containerRef'),
+    skillItems: toRef(state, 'skillItems'),
+
+    // Core functions
+    initializeAnimations,
+    cleanup,
+    setSkillRef, // Export the setSkillRef function
+
+    // Utilities
+    canInitializeAnimations,
+    getValidItems,
   }
 }
