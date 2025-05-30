@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@nuxtjs/tailwindcss": "^6.12.1",
+    "gsap": "^3.13.0",
     "hex-rgb": "^5.0.0",
     "nuxt": "^3.13.0",
     "nuxt-swiper": "^2.0.1",
