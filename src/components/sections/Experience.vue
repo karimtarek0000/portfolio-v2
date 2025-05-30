@@ -36,7 +36,7 @@ const formatDate = (date: string) => {
 
 <template>
   <section class="py-10 mt-20 glassmorphism">
-    <!-- <SharedHeader title="experience" /> -->
+    <SharedHeader title="experience" />
 
     <div class="timeline">
       <div

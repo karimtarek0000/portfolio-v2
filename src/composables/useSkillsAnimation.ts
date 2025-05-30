@@ -8,122 +8,222 @@ interface SkillsAnimationOptions {
   ease?: string
 }
 
-export const useSkillsAnimation = () => {
+interface ResponsiveConfig {
+  itemsPerRow: number
+}
+
+interface AnimationConfig {
+  triggerStart: string
+  duration: number
+  staggerDelay: number
+  rowDelay: number
+  ease: string
+}
+
+export const useSkillsAnimation = (options: SkillsAnimationOptions = {}) => {
   const { $gsap, $ScrollTrigger } = useNuxtApp()
 
+  // Merge user options with defaults
+  const config: AnimationConfig = {
+    triggerStart: 'top 85%',
+    duration: 0.6,
+    staggerDelay: 0.1,
+    rowDelay: 0.2,
+    ease: 'back.out(1.7)',
+    ...options,
+  }
+
+  // State management
   const skillItems = ref<HTMLElement[]>([])
+  const containerRef = ref<HTMLElement | null>(null)
+  const scrollTriggers = ref<ScrollTrigger[]>([])
+
+  // Constants
+  const INITIAL_ANIMATION_STATE = {
+    opacity: 0,
+    y: 50,
+    scale: 0.8,
+  } as const
+
+  const FINAL_ANIMATION_STATE = {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+  } as const
+
+  const BREAKPOINTS = {
+    desktop: 1024,
+    tablet: 768,
+  } as const
 
   /**
-   * Set ref for skill item elements
+   * Set ref for skill item elements with proper type checking
    */
   const setSkillRef = (
     el: Element | ComponentPublicInstance | null,
     index: number,
-  ) => {
-    if (el && '$el' in el) {
-      skillItems.value[index] = el.$el as HTMLElement
-    } else if (el instanceof HTMLElement) {
-      skillItems.value[index] = el
+  ): void => {
+    if (!el) return
+
+    const element = '$el' in el ? (el.$el as HTMLElement) : (el as HTMLElement)
+    if (element instanceof HTMLElement) {
+      skillItems.value[index] = element
     }
   }
 
   /**
-   * Get number of items per row based on screen size
+   * Get responsive configuration based on current viewport
    */
-  const getItemsPerRow = (): number => {
-    if (!import.meta.client) return 4
+  const getResponsiveConfig = (): ResponsiveConfig => {
+    if (!import.meta.client) {
+      return { itemsPerRow: 4 }
+    }
 
-    const width = window.innerWidth
-    if (width >= 1024) return 4 // lg breakpoint
-    if (width >= 768) return 3 // md breakpoint
-    return 2 // mobile
+    const { innerWidth } = window
+
+    if (innerWidth >= BREAKPOINTS.desktop) return { itemsPerRow: 4 }
+    if (innerWidth >= BREAKPOINTS.tablet) return { itemsPerRow: 3 }
+    return { itemsPerRow: 2 }
   }
 
   /**
-   * Group skills into rows based on screen size
+   * Create skill rows based on responsive layout
    */
-  const groupSkillsIntoRows = (items: HTMLElement[]): HTMLElement[][] => {
-    const itemsPerRow = getItemsPerRow()
+  const createSkillRows = (items: HTMLElement[]): HTMLElement[][] => {
+    const { itemsPerRow } = getResponsiveConfig()
     const rows: HTMLElement[][] = []
 
     for (let i = 0; i < items.length; i += itemsPerRow) {
-      rows.push(items.slice(i, i + itemsPerRow))
+      const row = items.slice(i, i + itemsPerRow)
+      if (row.length > 0) {
+        rows.push(row)
+      }
     }
 
     return rows
   }
 
   /**
-   * Initialize staggered row animation for skills
+   * Set initial animation state for items
    */
-  const initStaggeredAnimation = (
-    containerRef: Ref<HTMLElement | null>,
-    options: SkillsAnimationOptions = {},
-  ) => {
-    if (
-      !import.meta.client ||
-      !containerRef.value ||
-      !skillItems.value.length
-    ) {
-      return
-    }
+  const setInitialState = (items: HTMLElement[]): void => {
+    if (!items.length) return
+    $gsap.set(items, INITIAL_ANIMATION_STATE)
+  }
 
-    const {
-      triggerStart = 'top 85%',
-      duration = 0.6,
-      staggerDelay = 0.1,
-      rowDelay = 0.2,
-      ease = 'back.out(1.7)',
-    } = options
+  /**
+   * Animate items in a row with stagger effect
+   */
+  const animateRowItems = (rowItems: HTMLElement[], rowIndex: number): void => {
+    if (!rowItems.length) return
 
-    // Group skills into rows
-    const rows = groupSkillsIntoRows(skillItems.value)
-
-    // Set initial state for all items
-    $gsap.set(skillItems.value, {
-      opacity: 0,
-      y: 50,
-      scale: 0.8,
-    })
-
-    // Animate each row with stagger
-    rows.forEach((rowItems, rowIndex) => {
-      $ScrollTrigger.create({
-        trigger: rowItems[0],
-        start: triggerStart,
-        once: true,
-        onEnter: () => {
-          $gsap.to(rowItems, {
-            opacity: 1,
-            y: 0,
-            scale: 1,
-            duration,
-            ease,
-            stagger: staggerDelay,
-            delay: rowIndex * rowDelay,
-          })
-        },
-      })
+    $gsap.to(rowItems, {
+      ...FINAL_ANIMATION_STATE,
+      duration: config.duration,
+      ease: config.ease,
+      stagger: config.staggerDelay,
+      delay: rowIndex * config.rowDelay,
     })
   }
 
   /**
-   * Cleanup animation triggers
+   * Create scroll triggers for each row
    */
-  const cleanup = (containerRef: Ref<HTMLElement | null>) => {
-    if (import.meta.client && $ScrollTrigger) {
-      $ScrollTrigger.getAll().forEach(trigger => {
-        if (trigger.trigger === containerRef.value) {
-          trigger.kill()
-        }
+  const createRowAnimations = (rows: HTMLElement[][]): void => {
+    rows.forEach((rowItems, rowIndex) => {
+      if (!rowItems.length) return
+
+      const trigger = $ScrollTrigger.create({
+        trigger: rowItems[0],
+        start: config.triggerStart,
+        once: true,
+        onEnter: () => animateRowItems(rowItems, rowIndex),
       })
-    }
+
+      scrollTriggers.value.push(trigger)
+    })
   }
 
+  /**
+   * Validate animation prerequisites
+   */
+  const canInitializeAnimations = (): boolean => {
+    return !!(
+      import.meta.client &&
+      containerRef.value &&
+      skillItems.value.length
+    )
+  }
+
+  /**
+   * Get valid skill items (filter out null/undefined)
+   */
+  const getValidItems = (): HTMLElement[] => {
+    return skillItems.value.filter(Boolean)
+  }
+
+  /**
+   * Initialize animations when ready
+   */
+  const initializeAnimations = (): void => {
+    if (!canInitializeAnimations()) return
+
+    const validItems = getValidItems()
+    if (!validItems.length) return
+
+    const rows = createSkillRows(validItems)
+    setInitialState(validItems)
+    createRowAnimations(rows)
+  }
+
+  /**
+   * Clean up all scroll triggers and reset state
+   */
+  const cleanupAnimations = (): void => {
+    if (!import.meta.client) return
+
+    scrollTriggers.value.forEach(trigger => trigger.kill())
+    scrollTriggers.value = []
+  }
+
+  /**
+   * Handle window resize with debounced reinitialization
+   */
+  const handleResize = (): void => {
+    if (!import.meta.client) return
+
+    cleanupAnimations()
+    nextTick(initializeAnimations)
+  }
+
+  /**
+   * Setup lifecycle hooks
+   */
+  const setupLifecycle = (): void => {
+    onMounted(() => {
+      nextTick(() => {
+        initializeAnimations()
+
+        if (import.meta.client) {
+          window.addEventListener('resize', handleResize)
+        }
+      })
+    })
+
+    onUnmounted(() => {
+      cleanupAnimations()
+
+      if (import.meta.client) {
+        window.removeEventListener('resize', handleResize)
+      }
+    })
+  }
+
+  // Initialize lifecycle
+  setupLifecycle()
+
   return {
-    skillItems,
+    containerRef,
     setSkillRef,
-    initStaggeredAnimation,
-    cleanup,
   }
 }

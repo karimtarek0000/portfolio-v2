@@ -1,5 +1,5 @@
 <template>
-  <section ref="skillsSection" class="skills-section glassmorphism">
+  <section ref="containerRef" class="skills-section glassmorphism">
     <SharedHeader title="skills" subTitle="Languages and technologies" />
 
     <!-- Body -->
@@ -20,20 +20,8 @@ import { skillsData } from '@/data/skills'
 // Data
 const skills = skillsData
 
-// Animation setup
-const skillsSection = ref<HTMLElement | null>(null)
-const { setSkillRef, initStaggeredAnimation, cleanup } = useSkillsAnimation()
-
-// Lifecycle
-onMounted(() => {
-  nextTick(() => {
-    initStaggeredAnimation(skillsSection)
-  })
-})
-
-onUnmounted(() => {
-  cleanup(skillsSection)
-})
+// Animation setup with internal lifecycle management
+const { containerRef, setSkillRef } = useSkillsAnimation()
 </script>
 
 <style scoped>
