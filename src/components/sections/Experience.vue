@@ -36,7 +36,15 @@ const formatDate = (date: string) => {
 
 <template>
   <section class="py-10 mt-20 glassmorphism">
-    <SharedHeader title="experience" />
+    <SharedHeader
+      title="experience"
+      :animation-options="{
+        triggerStart: 'top 70%',
+        duration: 0.7,
+        staggerDelay: 0.12,
+        ease: 'power2.out',
+      }"
+    />
 
     <div class="timeline">
       <div

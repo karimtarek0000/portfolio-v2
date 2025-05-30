@@ -43,7 +43,7 @@ export const useAboutAnimations = () => {
 
   /**
    * Custom text line animation specifically for About section
-   * with enhanced visual effects
+   * with enhanced visual effects and SSR-safe approach
    */
   const animateAboutText = (
     containerRef: Ref<HTMLElement | null>,
@@ -56,6 +56,14 @@ export const useAboutAnimations = () => {
     const lines = container.querySelectorAll('.animate-line')
 
     if (!lines.length) return
+
+    // Immediately hide lines to prevent SSR flash
+    lines.forEach(line => {
+      const element = line as HTMLElement
+      element.style.opacity = '0.2'
+      element.style.transform = 'translateY(10px)'
+      element.style.willChange = 'opacity, transform'
+    })
 
     // Enhanced initial state for About section
     $gsap.set(lines, {
@@ -88,6 +96,13 @@ export const useAboutAnimations = () => {
             y,
             scale: 0.98 + lineProgress * 0.02,
           })
+        })
+      },
+      onLeave: () => {
+        // Clear will-change after animation for performance
+        lines.forEach(line => {
+          const element = line as HTMLElement
+          element.style.willChange = 'auto'
         })
       },
     })

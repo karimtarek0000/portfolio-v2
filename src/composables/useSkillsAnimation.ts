@@ -37,6 +37,7 @@ export const useSkillsAnimation = (options: SkillsAnimationOptions = {}) => {
   const skillItems = ref<HTMLElement[]>([])
   const containerRef = ref<HTMLElement | null>(null)
   const scrollTriggers = ref<ScrollTrigger[]>([])
+  const isHiddenInitially = ref(false)
 
   // Constants
   const INITIAL_ANIMATION_STATE = {
@@ -68,7 +69,32 @@ export const useSkillsAnimation = (options: SkillsAnimationOptions = {}) => {
     const element = '$el' in el ? (el.$el as HTMLElement) : (el as HTMLElement)
     if (element instanceof HTMLElement) {
       skillItems.value[index] = element
+      // Immediately hide element to prevent SSR flash
+      if (import.meta.client && !isHiddenInitially.value) {
+        element.style.opacity = '0'
+        element.style.transform = 'translateY(50px) scale(0.8)'
+        element.style.willChange = 'transform, opacity'
+      }
     }
+  }
+
+  /**
+   * Immediately hide all skill elements to prevent SSR flash
+   */
+  const hideElementsImmediately = (): void => {
+    if (!import.meta.client || isHiddenInitially.value) return
+
+    const validItems = skillItems.value.filter(Boolean)
+    if (!validItems.length) return
+
+    // Use direct style manipulation for immediate effect
+    validItems.forEach(element => {
+      element.style.opacity = '0'
+      element.style.transform = 'translateY(50px) scale(0.8)'
+      element.style.willChange = 'transform, opacity'
+    })
+
+    isHiddenInitially.value = true
   }
 
   /**
@@ -107,7 +133,7 @@ export const useSkillsAnimation = (options: SkillsAnimationOptions = {}) => {
    * Set initial animation state for items
    */
   const setInitialState = (items: HTMLElement[]): void => {
-    if (!items.length) return
+    if (!items.length || !import.meta.client) return
     $gsap.set(items, INITIAL_ANIMATION_STATE)
   }
 
@@ -163,13 +189,18 @@ export const useSkillsAnimation = (options: SkillsAnimationOptions = {}) => {
   }
 
   /**
-   * Initialize animations when ready
+   * Initialize animations when ready with SSR-safe approach
    */
   const initializeAnimations = (): void => {
     if (!canInitializeAnimations()) return
 
     const validItems = getValidItems()
     if (!validItems.length) return
+
+    // Ensure elements are hidden before setting up animations
+    if (!isHiddenInitially.value) {
+      hideElementsImmediately()
+    }
 
     const rows = createSkillRows(validItems)
     setInitialState(validItems)
@@ -197,9 +228,16 @@ export const useSkillsAnimation = (options: SkillsAnimationOptions = {}) => {
   }
 
   /**
-   * Setup lifecycle hooks
+   * Setup lifecycle hooks with SSR-safe approach
    */
   const setupLifecycle = (): void => {
+    // Watch for new skill items and hide them immediately
+    watchEffect(() => {
+      if (import.meta.client && skillItems.value.length > 0) {
+        hideElementsImmediately()
+      }
+    })
+
     onMounted(() => {
       nextTick(() => {
         initializeAnimations()

@@ -1,6 +1,14 @@
 <template>
   <section class="py-10 mt-20 projects glassmorphism">
-    <SharedHeader title="projects" />
+    <SharedHeader
+      title="projects"
+      :animation-options="{
+        triggerStart: 'top 85%',
+        duration: 1.2,
+        staggerDelay: 0.25,
+        ease: 'elastic.out(1, 0.3)',
+      }"
+    />
 
     <ClientOnly>
       <div class="projects__slider-container">

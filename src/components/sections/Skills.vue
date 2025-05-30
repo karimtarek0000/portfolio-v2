@@ -1,6 +1,16 @@
 <template>
   <section ref="containerRef" class="skills-section glassmorphism">
-    <SharedHeader title="skills" subTitle="Languages and technologies" />
+    <SharedHeader
+      title="skills"
+      subTitle="Languages and technologies"
+      :animation-options="{
+        triggerStart: 'top 80%',
+        duration: 0.9,
+        staggerDelay: 0.1,
+        ease: 'power3.out',
+        enableParallax: true,
+      }"
+    />
 
     <!-- Body -->
     <figure class="skills-section__body">

@@ -1,5 +1,5 @@
 <template>
-  <figcaption class="skill-item">
+  <figcaption class="skill-item skill-item--ssr-safe">
     <div class="skill-item__icon">
       <div class="skill-item__inner">
         <SharedRenderSVG :iconName="skill.iconName" sizes="h-[4rem] w-[4rem]" />
@@ -38,5 +38,30 @@ defineProps<{
 
 .skill-item__title {
   @apply mb-2 mt-3 capitalize text-sm font-medium;
+}
+
+/* SSR-safe hiding for skill items */
+@media screen {
+  .skill-item--ssr-safe {
+    opacity: 0;
+    transform: translateY(50px) scale(0.8);
+    will-change: transform, opacity;
+  }
+}
+
+/* Ensure elements remain visible during SSR and print */
+@media print {
+  .skill-item--ssr-safe {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+
+/* Respect reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .skill-item--ssr-safe {
+    opacity: 0;
+    transform: none;
+  }
 }
 </style>

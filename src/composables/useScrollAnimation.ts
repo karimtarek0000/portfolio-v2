@@ -27,6 +27,13 @@ export const useScrollAnimation = () => {
 
     if (!lines.length) return
 
+    // Immediately hide lines to prevent SSR flash
+    lines.forEach(line => {
+      const element = line as HTMLElement
+      element.style.opacity = '0.1'
+      element.style.willChange = 'opacity'
+    })
+
     // Set initial state - low opacity for all lines
     $gsap.set(lines, {
       opacity: 0.1,
@@ -94,7 +101,7 @@ export const useScrollAnimation = () => {
         return
       }
 
-      // Set initial state based on animation type
+      // Immediately hide element to prevent SSR flash
       const initialState: any = { willChange: 'transform, opacity' }
       const animateToState: any = { opacity: 1, ease: 'power2.out' }
 
@@ -103,22 +110,37 @@ export const useScrollAnimation = () => {
           initialState.opacity = 0
           initialState.y = 30
           animateToState.y = 0
+          // Apply immediate hiding
+          element.style.opacity = '0'
+          element.style.transform = 'translateY(30px)'
           break
         case 'fadeIn':
           initialState.opacity = 0
+          // Apply immediate hiding
+          element.style.opacity = '0'
           break
         case 'slideLeft':
           initialState.opacity = 0
           initialState.x = 50
           animateToState.x = 0
+          // Apply immediate hiding
+          element.style.opacity = '0'
+          element.style.transform = 'translateX(50px)'
           break
         case 'slideRight':
           initialState.opacity = 0
           initialState.x = -50
           animateToState.x = 0
+          // Apply immediate hiding
+          element.style.opacity = '0'
+          element.style.transform = 'translateX(-50px)'
           break
       }
 
+      // Set will-change for performance
+      element.style.willChange = 'transform, opacity'
+
+      // Set initial state with GSAP
       $gsap.set(element, initialState)
 
       $ScrollTrigger.create({
@@ -131,6 +153,10 @@ export const useScrollAnimation = () => {
             ...animateToState,
             duration: 0.8,
             delay: index * 0.1,
+            onComplete: () => {
+              // Clear will-change after animation for performance
+              element.style.willChange = 'auto'
+            },
           })
           options.onEnter?.()
         },
