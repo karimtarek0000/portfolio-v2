@@ -16,6 +16,14 @@ interface HeaderElements {
 export const useHeaderAnimations = (options: HeaderAnimationOptions = {}) => {
   const { $gsap, $ScrollTrigger } = useNuxtApp()
 
+  // Use shared utilities for consistency and performance
+  const { isMobile, prefersReducedMotion } = useDeviceDetection()
+  const { applyStyles } = useBatchStyleApplication()
+  const { createTrigger, cleanup: cleanupTriggers } = useScrollTriggerFactory()
+  const { validateContainer } = useElementValidation()
+  const { setWillChange, clearWillChange } = useWillChangeManager()
+  const { debounce } = useDebounce()
+
   // Configuration with performance-optimized defaults
   const config = {
     triggerStart: 'top 85%',
@@ -28,10 +36,9 @@ export const useHeaderAnimations = (options: HeaderAnimationOptions = {}) => {
 
   // State management
   const headerRef = ref<HTMLElement | null>(null)
-  const scrollTriggers = ref<ScrollTrigger[]>([])
   const isHiddenInitially = ref(false)
 
-  // Animation constants optimized for mobile
+  // Animation constants optimized for performance
   const ANIMATION_CONFIG = {
     initial: {
       opacity: 0,
@@ -43,7 +50,7 @@ export const useHeaderAnimations = (options: HeaderAnimationOptions = {}) => {
       y: 0,
       scale: 1,
     },
-    // Reduce motion for mobile devices
+    // Reduced motion for mobile devices
     mobile: {
       initial: {
         opacity: 0,
@@ -57,34 +64,13 @@ export const useHeaderAnimations = (options: HeaderAnimationOptions = {}) => {
   } as const
 
   /**
-   * Check if device prefers reduced motion for accessibility
-   */
-  const prefersReducedMotion = (): boolean => {
-    if (!import.meta.client) return false
-    return window.matchMedia('(prefers-reduced-motion: reduce)').matches
-  }
-
-  /**
-   * Check if device is mobile for performance optimization
-   */
-  const isMobileDevice = (): boolean => {
-    if (!import.meta.client) return false
-    return (
-      window.innerWidth < 768 ||
-      /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-        navigator.userAgent,
-      )
-    )
-  }
-
-  /**
-   * Get animation configuration based on device capabilities
+   * Get animation configuration based on device capabilities using shared utilities
    */
   const getAnimationConfig = () => {
-    const isMobile = isMobileDevice()
-    const reducedMotion = prefersReducedMotion()
+    const isReducedMotion = prefersReducedMotion()
+    const isMobileDevice = isMobile()
 
-    if (reducedMotion) {
+    if (isReducedMotion) {
       return {
         initial: { opacity: 0 },
         final: { opacity: 1 },
@@ -92,7 +78,7 @@ export const useHeaderAnimations = (options: HeaderAnimationOptions = {}) => {
       }
     }
 
-    return isMobile
+    return isMobileDevice
       ? { ...ANIMATION_CONFIG.mobile, duration: config.duration * 0.7 }
       : { ...ANIMATION_CONFIG, duration: config.duration }
   }
@@ -108,12 +94,10 @@ export const useHeaderAnimations = (options: HeaderAnimationOptions = {}) => {
   }
 
   /**
-   * Immediately hide elements on client-side to prevent SSR flash
-   * This runs synchronously as soon as the component is mounted
+   * Immediately hide elements using shared utilities for consistency
    */
   const hideElementsImmediately = (): void => {
-    if (!import.meta.client || !headerRef.value || isHiddenInitially.value)
-      return
+    if (!isClientSide() || !headerRef.value || isHiddenInitially.value) return
 
     const elements = getHeaderElements(headerRef.value)
     const animationElements = [elements.title, elements.subtitle].filter(
@@ -122,21 +106,21 @@ export const useHeaderAnimations = (options: HeaderAnimationOptions = {}) => {
 
     if (!animationElements.length) return
 
-    // Use direct style manipulation for immediate effect (faster than GSAP)
-    animationElements.forEach(element => {
-      element.style.opacity = '0'
-      element.style.transform = 'translateY(20px) scale(0.98)'
-      element.style.willChange = 'transform, opacity'
+    // Use shared style application for consistency and performance
+    applyStyles(animationElements, {
+      opacity: '0',
+      transform: 'translateY(20px) scale(0.98)',
+      willChange: 'transform, opacity',
     })
 
     isHiddenInitially.value = true
   }
 
   /**
-   * Set initial animation state with GSAP (called after immediate hiding)
+   * Set initial animation state with GSAP using shared utilities
    */
   const setInitialState = (elements: HTMLElement[]): void => {
-    if (!elements.length || !import.meta.client) return
+    if (!elements.length || !isClientSide()) return
 
     const animConfig = getAnimationConfig()
 
@@ -147,13 +131,16 @@ export const useHeaderAnimations = (options: HeaderAnimationOptions = {}) => {
   }
 
   /**
-   * Create the main header animation
+   * Create the main header animation with optimized performance
    */
   const createHeaderAnimation = (elements: HTMLElement[]): void => {
     if (!elements.length) return
 
     const animConfig = getAnimationConfig()
-    const isMobile = isMobileDevice()
+    const isMobileDevice = isMobile()
+
+    // Set will-change for performance
+    setWillChange(elements)
 
     // Create timeline for smooth sequencing
     const tl = $gsap.timeline({
@@ -174,40 +161,35 @@ export const useHeaderAnimations = (options: HeaderAnimationOptions = {}) => {
           ...animConfig.final,
           delay,
           onComplete: () => {
-            // Clear will-change after animation for performance
-            $gsap.set(element, { willChange: 'auto' })
+            // Clear will-change after animation using shared utility
+            clearWillChange([element])
           },
         },
         index === 0 ? 0 : '<',
       )
     })
 
-    // Create scroll trigger
-    const trigger = $ScrollTrigger.create({
-      trigger: headerRef.value,
+    // Create scroll trigger using shared factory
+    createTrigger({
+      trigger: headerRef.value!,
       start: config.triggerStart,
-      once: true, // Fire only once for performance
-      onEnter: () => {
-        tl.play()
-      },
-      // Reduced refresh rate on mobile for performance
-      refreshPriority: isMobile ? -1 : 0,
+      once: true,
+      onEnter: () => tl.play(),
     })
-
-    scrollTriggers.value.push(trigger)
   }
 
   /**
-   * Add subtle parallax effect for desktop (performance-conscious)
+   * Add subtle parallax effect for desktop using shared utilities
    */
   const createParallaxEffect = (titleElement: HTMLElement): void => {
-    if (!titleElement || !config.enableParallax || isMobileDevice()) return
+    if (!titleElement || !config.enableParallax || isMobile()) return
 
-    const trigger = $ScrollTrigger.create({
-      trigger: headerRef.value,
+    createTrigger({
+      trigger: headerRef.value!,
       start: 'top bottom',
       end: 'bottom top',
-      scrub: 1, // Smooth scrubbing
+      scrub: 1,
+      once: false,
       onUpdate: self => {
         const progress = self.progress
         const yTransform = progress * 20 // Subtle movement
@@ -221,17 +203,15 @@ export const useHeaderAnimations = (options: HeaderAnimationOptions = {}) => {
         $gsap.set(titleElement, { willChange: 'auto' })
       },
     })
-
-    scrollTriggers.value.push(trigger)
   }
 
   /**
    * Initialize all header animations with SSR-safe approach
    */
   const initializeAnimations = (): void => {
-    if (!import.meta.client || !headerRef.value) return
+    if (!validateContainer(headerRef)) return
 
-    const elements = getHeaderElements(headerRef.value)
+    const elements = getHeaderElements(headerRef.value!)
     const animationElements = [elements.title, elements.subtitle].filter(
       Boolean,
     ) as HTMLElement[]
@@ -251,28 +231,19 @@ export const useHeaderAnimations = (options: HeaderAnimationOptions = {}) => {
   }
 
   /**
-   * Clean up all animations and scroll triggers
+   * Clean up all animations using shared utilities
    */
   const cleanup = (): void => {
-    if (!import.meta.client) return
-
-    scrollTriggers.value.forEach(trigger => trigger.kill())
-    scrollTriggers.value = []
+    cleanupTriggers()
   }
 
   /**
-   * Handle resize with debounced reinitialization
+   * Handle resize with debounced reinitialization using shared utility
    */
-  let resizeTimeout: NodeJS.Timeout
-  const handleResize = (): void => {
-    if (!import.meta.client) return
-
-    clearTimeout(resizeTimeout)
-    resizeTimeout = setTimeout(() => {
-      cleanup()
-      nextTick(initializeAnimations)
-    }, 150) // Debounce for performance
-  }
+  const handleResize = debounce(() => {
+    cleanup()
+    nextTick(initializeAnimations)
+  }, 150)
 
   /**
    * Setup lifecycle management with SSR-safe approach
@@ -280,7 +251,7 @@ export const useHeaderAnimations = (options: HeaderAnimationOptions = {}) => {
   const setupLifecycle = (): void => {
     // Watch for headerRef changes and immediately hide elements
     watchEffect(() => {
-      if (headerRef.value && import.meta.client) {
+      if (headerRef.value && isClientSide()) {
         // Hide elements immediately to prevent SSR flash
         hideElementsImmediately()
       }
@@ -291,7 +262,7 @@ export const useHeaderAnimations = (options: HeaderAnimationOptions = {}) => {
       nextTick(() => {
         initializeAnimations()
 
-        if (import.meta.client) {
+        if (isClientSide()) {
           window.addEventListener('resize', handleResize, { passive: true })
         }
       })
@@ -300,8 +271,7 @@ export const useHeaderAnimations = (options: HeaderAnimationOptions = {}) => {
     onUnmounted(() => {
       cleanup()
 
-      if (import.meta.client) {
-        clearTimeout(resizeTimeout)
+      if (isClientSide()) {
         window.removeEventListener('resize', handleResize)
       }
     })

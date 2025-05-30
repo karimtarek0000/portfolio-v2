@@ -11,15 +11,40 @@ interface AboutAnimationOptions {
     end?: string
     scrub?: boolean | number
     once?: boolean
+    opacity?: {
+      base: number
+      range: number
+    }
+    transform?: {
+      yOffset: number
+      scale: number
+    }
   }
 }
 
+// Performance-optimized defaults for About section
+const ABOUT_ANIMATION_DEFAULTS = {
+  start: 'top 75%',
+  end: 'bottom 25%',
+  scrub: 1,
+  once: false,
+  opacity: {
+    base: 0.3,
+    range: 0.7,
+  },
+  transform: {
+    yOffset: 10,
+    scale: 0.02,
+  },
+} as const
+
 export const useAboutAnimations = () => {
   const { animateTextLines, cleanup } = useScrollAnimation()
+  const { $gsap, $ScrollTrigger } = useNuxtApp()
 
   /**
-   * Initialize animations for the About section (text only)
-   * Leverages the shared useScrollAnimation composable for consistency
+   * Initialize animations for the About section using shared infrastructure
+   * Leverages useScrollAnimation for DRY compliance and performance optimization
    */
   const initializeAnimations = (
     refs: AboutAnimationRefs,
@@ -29,59 +54,96 @@ export const useAboutAnimations = () => {
 
     const { textContainerRef } = refs
 
-    // Use optimized configuration with About-specific defaults
-    const textConfig = {
-      start: 'top 75%',
-      end: 'bottom 25%',
-      scrub: 1,
-      once: false,
-      ...options.textAnimation,
+    // Merge with optimized defaults - create compatible config
+    const config = {
+      start: options.textAnimation?.start ?? ABOUT_ANIMATION_DEFAULTS.start,
+      end: options.textAnimation?.end ?? ABOUT_ANIMATION_DEFAULTS.end,
+      scrub: options.textAnimation?.scrub ?? ABOUT_ANIMATION_DEFAULTS.scrub,
+      once: options.textAnimation?.once ?? ABOUT_ANIMATION_DEFAULTS.once,
+      opacity: {
+        base:
+          options.textAnimation?.opacity?.base ??
+          ABOUT_ANIMATION_DEFAULTS.opacity.base,
+        range:
+          options.textAnimation?.opacity?.range ??
+          ABOUT_ANIMATION_DEFAULTS.opacity.range,
+      },
+      transform: {
+        yOffset:
+          options.textAnimation?.transform?.yOffset ??
+          ABOUT_ANIMATION_DEFAULTS.transform.yOffset,
+        scale:
+          options.textAnimation?.transform?.scale ??
+          ABOUT_ANIMATION_DEFAULTS.transform.scale,
+      },
     }
 
-    // Delegate to shared animation composable for DRY compliance
-    animateTextLines(textContainerRef, textConfig)
+    // Check if enhanced animations are needed
+    const needsEnhancedAnimation =
+      options.textAnimation?.transform || options.textAnimation?.opacity
+
+    if (needsEnhancedAnimation) {
+      // Use enhanced animation for About-specific effects
+      animateAboutTextEnhanced(textContainerRef, config)
+    } else {
+      // Delegate to shared animation composable for standard text animation
+      animateTextLines(textContainerRef, {
+        start: config.start,
+        end: config.end,
+        scrub: config.scrub,
+        once: config.once,
+      })
+    }
   }
 
   /**
-   * Enhanced text line animation specifically for About section
-   * Uses the shared useScrollAnimation infrastructure for consistency
+   * Enhanced text animation with About-specific effects (scale + custom opacity)
+   * Only used when enhanced features are explicitly requested for performance
    */
-  const animateAboutText = (
+  const animateAboutTextEnhanced = (
     containerRef: Ref<HTMLElement | null>,
-    options: AboutAnimationOptions['textAnimation'] = {},
+    options: {
+      start: string
+      end: string
+      scrub: boolean | number
+      once: boolean
+      opacity: { base: number; range: number }
+      transform: { yOffset: number; scale: number }
+    },
   ) => {
     if (!import.meta.client || !containerRef.value) return
 
-    const { $gsap, $ScrollTrigger } = useNuxtApp()
     const container = containerRef.value
     const lines = Array.from(container.querySelectorAll('.animate-line'))
 
     if (!lines.length) return
 
-    // Batch immediate hiding for performance (reusing pattern from other composables)
+    // Use shared style cache pattern for performance
+    const initialStyles = {
+      opacity: options.opacity.base.toString(),
+      transform: `translateY(${options.transform.yOffset}px)`,
+      willChange: 'opacity, transform',
+    }
+
+    // Batch initial state application
     lines.forEach(line => {
-      const element = line as HTMLElement
-      Object.assign(element.style, {
-        opacity: '0.2',
-        transform: 'translateY(10px)',
-        willChange: 'opacity, transform',
-      })
+      Object.assign((line as HTMLElement).style, initialStyles)
     })
 
-    // Set initial GSAP state efficiently
+    // Set GSAP initial state efficiently
     $gsap.set(lines, {
-      opacity: 0.2,
-      y: 10,
+      opacity: options.opacity.base,
+      y: options.transform.yOffset,
       willChange: 'opacity, transform',
     })
 
-    // Create optimized scroll animation with About-specific enhancements
+    // Create optimized scroll animation with enhanced effects
     $ScrollTrigger.create({
       trigger: container,
-      start: options.start || 'top 75%',
-      end: options.end || 'bottom 25%',
-      scrub: options.scrub !== undefined ? options.scrub : 1,
-      once: options.once || false,
+      start: options.start,
+      end: options.end,
+      scrub: options.scrub,
+      once: options.once,
       refreshPriority: -1, // Performance optimization
       onUpdate: self => {
         const progress = self.progress
@@ -94,15 +156,13 @@ export const useAboutAnimations = () => {
             Math.min(1, progress * lineCount - index),
           )
 
-          // Enhanced opacity and transform for About section
-          const opacity = 0.3 + lineProgress * 0.7
-          const y = (1 - lineProgress) * 10
+          // Calculate enhanced effects
+          const opacity =
+            options.opacity.base + lineProgress * options.opacity.range
+          const y = (1 - lineProgress) * options.transform.yOffset
+          const scale = 0.98 + lineProgress * options.transform.scale
 
-          $gsap.set(line, {
-            opacity,
-            y,
-            scale: 0.98 + lineProgress * 0.02,
-          })
+          $gsap.set(line, { opacity, y, scale })
         })
       },
       onLeave: () => {
@@ -116,7 +176,6 @@ export const useAboutAnimations = () => {
 
   return {
     initializeAnimations,
-    animateAboutText,
     cleanup, // Delegate cleanup to shared composable
   }
 }
