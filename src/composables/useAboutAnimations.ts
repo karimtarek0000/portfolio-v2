@@ -1,58 +1,35 @@
 import type { Ref } from 'vue'
-
-interface AboutAnimationRefs {
-  textContainerRef: Ref<HTMLElement | null>
-}
-
-interface AboutAnimationOptions {
-  textAnimation?: {
-    start?: string
-    end?: string
-    scrub?: boolean | number
-    once?: boolean
-    opacity?: {
-      base: number
-      range: number
-    }
-    transform?: {
-      yOffset: number
-      scale: number
-    }
-  }
-}
+import { 
+  type AboutAnimationOptions, 
+  type TextAnimationOptions,
+  SECTION_DEFAULTS 
+} from './animation.config'
 
 /**
- * Simplified About animations using the unified animation system
+ * Enhanced About animations composable with improved performance and DRY principles
  */
 export const useAboutAnimations = () => {
   const { animateTextLines, cleanup } = useAnimations()
 
   /**
-   * Initialize animations for the About section
+   * Initialize animations for the About section with smart defaults
    */
   const initializeAnimations = (
-    refs: AboutAnimationRefs,
-    options: AboutAnimationOptions = {},
+    refs: { textContainerRef: Ref<HTMLElement | null> },
+    options: AboutAnimationOptions = {}
   ) => {
     if (!import.meta.client) return
 
     const { textContainerRef } = refs
 
+    // Merge with section-specific defaults for consistency
+    const textConfig: TextAnimationOptions = {
+      ...SECTION_DEFAULTS.about.textAnimation,
+      ...options.textAnimation,
+    }
+
     // Use the unified animation system for text animations
-    animateTextLines(textContainerRef, {
-      start: options.textAnimation?.start ?? 'top 75%',
-      end: options.textAnimation?.end ?? 'bottom 25%',
-      scrub: options.textAnimation?.scrub ?? 1,
-      once: options.textAnimation?.once ?? false,
-      opacity: options.textAnimation?.opacity ?? {
-        base: 0.3,
-        range: 0.7,
-      },
-      transform: options.textAnimation?.transform ?? {
-        yOffset: 10,
-        scale: 0.02,
-      },
-    })
+    animateTextLines(textContainerRef, textConfig)
   }
 
   return {

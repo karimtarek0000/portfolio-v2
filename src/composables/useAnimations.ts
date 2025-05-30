@@ -1,136 +1,109 @@
 import { useNuxtApp } from '#app'
 import type { Ref } from 'vue'
-
-// ============================================================================
-// TYPES & INTERFACES
-// ============================================================================
-
-type AnimationType =
-  | 'fadeUp'
-  | 'fadeIn'
-  | 'slideLeft'
-  | 'slideRight'
-  | 'scaleUp'
-  | 'textReveal'
-
-interface BaseAnimationOptions {
-  start?: string
-  end?: string
-  duration?: number
-  delay?: number
-  ease?: string
-  once?: boolean
-  scrub?: boolean | number
-  stagger?: number
-}
-
-interface ScrollAnimationOptions extends BaseAnimationOptions {
-  trigger?: HTMLElement | string
-  onEnter?: () => void
-  onLeave?: () => void
-  onUpdate?: (self: ScrollTrigger) => void
-}
-
-interface TextAnimationOptions extends BaseAnimationOptions {
-  opacity?: {
-    base: number
-    range: number
-  }
-  transform?: {
-    yOffset: number
-    scale: number
-  }
-}
-
-interface TimelineAnimationOptions extends BaseAnimationOptions {
-  scaleDirection?: 'bottom-to-top' | 'top-to-bottom'
-  itemsPerRow?: number
-  rowDelay?: number
-}
-
-// ============================================================================
-// ANIMATION CONFIGURATIONS
-// ============================================================================
-
-const ANIMATION_PRESETS = {
-  fadeUp: {
-    initial: { opacity: 0, y: 30 },
-    final: { opacity: 1, y: 0 },
-    transform: 'translateY(30px)',
-  },
-  fadeIn: {
-    initial: { opacity: 0 },
-    final: { opacity: 1 },
-    transform: '',
-  },
-  slideLeft: {
-    initial: { opacity: 0, x: 50 },
-    final: { opacity: 1, x: 0 },
-    transform: 'translateX(50px)',
-  },
-  slideRight: {
-    initial: { opacity: 0, x: -50 },
-    final: { opacity: 1, x: 0 },
-    transform: 'translateX(-50px)',
-  },
-  scaleUp: {
-    initial: { opacity: 0, scale: 0.9 },
-    final: { opacity: 1, scale: 1 },
-    transform: 'scale(0.9)',
-  },
-  textReveal: {
-    initial: { opacity: 0.1 },
-    final: { opacity: 1 },
-    transform: '',
-  },
-} as const
-
-const DEFAULT_OPTIONS: Required<BaseAnimationOptions> = {
-  start: 'top 85%',
-  end: 'bottom 20%',
-  duration: 0.8,
-  delay: 0,
-  ease: 'power2.out',
-  once: true,
-  scrub: false,
-  stagger: 0.1,
-}
+import {
+  type AnimationType,
+  type BaseAnimationOptions,
+  type ScrollAnimationOptions,
+  type TextAnimationOptions,
+  type TimelineAnimationOptions,
+  type ElementInput,
+  type AnimationCallbacks,
+  ANIMATION_PRESETS,
+  DEFAULT_OPTIONS,
+  PERFORMANCE_CONFIG,
+} from './animation.config'
 
 // ============================================================================
 // PERFORMANCE UTILITIES
 // ============================================================================
 
-// Global caches for performance optimization
-const styleCache = new WeakMap<HTMLElement, boolean>()
-const deviceCache = new Map<string, any>()
-const scrollTriggers: ScrollTrigger[] = []
+// Singleton caches for performance optimization
+class AnimationCache {
+  private static instance: AnimationCache
+  private styleCache = new WeakMap<HTMLElement, boolean>()
+  private deviceCache = new Map<string, any>()
+  private scrollTriggers: ScrollTrigger[] = []
+  private cleanupTimer?: ReturnType<typeof setInterval>
 
-// Client-side check
-const isClient = (): boolean => import.meta.client
+  static getInstance(): AnimationCache {
+    if (!AnimationCache.instance) {
+      AnimationCache.instance = new AnimationCache()
+    }
+    return AnimationCache.instance
+  }
 
-// Device detection with caching
-const getDeviceInfo = () => {
-  const getCachedValue = (key: string, calculator: () => any) => {
-    if (deviceCache.has(key)) return deviceCache.get(key)
+  getStyleCache() { return this.styleCache }
+  getDeviceCache() { return this.deviceCache }
+  getScrollTriggers() { return this.scrollTriggers }
+
+  addScrollTrigger(trigger: ScrollTrigger) {
+    this.scrollTriggers.push(trigger)
+  }
+
+  clearCaches() {
+    this.styleCache = new WeakMap()
+    this.deviceCache.clear()
+  }
+
+  cleanup() {
+    this.scrollTriggers.forEach(trigger => trigger.kill())
+    this.scrollTriggers.length = 0
+    this.clearCaches()
+    if (this.cleanupTimer) {
+      clearInterval(this.cleanupTimer)
+      this.cleanupTimer = undefined
+    }
+  }
+
+  startPeriodicCleanup() {
+    // Only start cleanup on client side to avoid SSR issues
+    if (this.cleanupTimer || !process.client) return
+    
+    this.cleanupTimer = setInterval(() => {
+      this.deviceCache.clear()
+    }, PERFORMANCE_CONFIG.CACHE_CLEAR_INTERVAL)
+  }
+}
+
+// Device detection utility with improved caching
+const createDeviceDetector = () => {
+  const cache = AnimationCache.getInstance().getDeviceCache()
+  
+  const getCachedValue = <T>(key: string, calculator: () => T): T => {
+    if (cache.has(key)) return cache.get(key)
     const value = calculator()
-    deviceCache.set(key, value)
+    cache.set(key, value)
     return value
   }
 
   return {
-    isMobile: () =>
-      getCachedValue(
-        'isMobile',
-        () => typeof window !== 'undefined' && window.innerWidth < 768,
-      ),
-    prefersReducedMotion: () =>
-      getCachedValue(
-        'reducedMotion',
-        () =>
-          typeof window !== 'undefined' &&
-          window.matchMedia('(prefers-reduced-motion: reduce)').matches,
-      ),
-    clearCache: () => deviceCache.clear(),
+    isMobile: () => getCachedValue(
+      'isMobile',
+      () => process.client && typeof window !== 'undefined' && window.innerWidth < 768
+    ),
+    prefersReducedMotion: () => getCachedValue(
+      'reducedMotion',
+      () => process.client && typeof window !== 'undefined' &&
+        window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    ),
+    isClient: () => getCachedValue(
+      'isClient',
+      () => process.client
+    ),
+    clearCache: () => cache.clear(),
+  }
+}
+
+// Simple debounce function to avoid external dependency
+const debounce = <T extends (...args: any[]) => any>(
+  func: T,
+  wait: number
+): ((...args: Parameters<T>) => void) => {
+  let timeout: ReturnType<typeof setTimeout> | undefined
+
+  return (...args: Parameters<T>) => {
+    if (timeout) clearTimeout(timeout)
+    timeout = setTimeout(() => func(...args), wait)
   }
 }
 
@@ -140,78 +113,109 @@ const getDeviceInfo = () => {
 
 export const useAnimations = () => {
   const { $gsap, $ScrollTrigger } = useNuxtApp()
-  const device = getDeviceInfo()
+  const device = createDeviceDetector()
+  const cache = AnimationCache.getInstance()
+
+  // Start periodic cleanup only on client side
+  onMounted(() => {
+    if (process.client) {
+      cache.startPeriodicCleanup()
+    }
+  })
 
   // ============================================================================
   // UTILITY FUNCTIONS
   // ============================================================================
 
   /**
-   * Get valid DOM elements from various ref types
+   * Enhanced element validation with better type checking
    */
-  const getValidElements = (
-    elementsRef: Ref<HTMLElement[]> | Ref<HTMLElement | null> | HTMLElement[],
-  ): HTMLElement[] => {
+  const getValidElements = (elementsRef: ElementInput): HTMLElement[] => {
     let elements: HTMLElement[] = []
 
     if (Array.isArray(elementsRef)) {
       elements = elementsRef
     } else if (elementsRef && 'value' in elementsRef) {
-      elements = Array.isArray(elementsRef.value)
-        ? elementsRef.value
-        : elementsRef.value
-        ? [elementsRef.value]
-        : []
+      const value = elementsRef.value
+      elements = Array.isArray(value) ? value : value ? [value] : []
     }
 
-    return elements.filter(
-      (el): el is HTMLElement =>
-        el instanceof HTMLElement &&
-        typeof el.getBoundingClientRect === 'function',
+    return elements.filter((el): el is HTMLElement => 
+      el instanceof HTMLElement && 
+      el.isConnected && // Check if element is still in DOM
+      typeof el.getBoundingClientRect === 'function'
     )
   }
 
   /**
-   * Apply styles with caching to prevent duplicate DOM writes
+   * Get single container element from ElementInput
    */
-  const applyStyles = (
-    elements: HTMLElement[],
-    styles: Record<string, string>,
-  ): void => {
-    if (!isClient()) return
-
-    elements.forEach(element => {
-      if (!element || styleCache.has(element)) return
-
-      Object.assign(element.style, styles)
-      styleCache.set(element, true)
-    })
+  const getContainerElement = (container: ElementInput): HTMLElement | null => {
+    if (Array.isArray(container)) {
+      return container[0] || null
+    } else if (container && 'value' in container) {
+      const value = container.value
+      return Array.isArray(value) ? value[0] || null : value
+    }
+    return container as HTMLElement || null
   }
 
   /**
-   * Get optimized animation config based on device capabilities
+   * Optimized style application with batching
+   */
+  const applyStyles = (
+    elements: HTMLElement[],
+    styles: Record<string, string>
+  ): void => {
+    if (!device.isClient()) return
+
+    const styleCache = cache.getStyleCache()
+
+    // Batch DOM writes for better performance
+    if (process.client) {
+      requestAnimationFrame(() => {
+        elements.forEach(element => {
+          if (!element || styleCache.has(element)) return
+          
+          Object.assign(element.style, styles)
+          styleCache.set(element, true)
+        })
+      })
+    }
+  }
+
+  /**
+   * Smart configuration merging with device-specific optimizations
    */
   const getOptimizedConfig = (
-    options: Partial<BaseAnimationOptions>,
+    options: Partial<BaseAnimationOptions>
   ): Required<BaseAnimationOptions> => {
     const isMobile = device.isMobile()
     const isReducedMotion = device.prefersReducedMotion()
 
-    const config = { ...DEFAULT_OPTIONS, ...options }
+    let config = { ...DEFAULT_OPTIONS, ...options }
 
+    // Apply device-specific optimizations
     if (isReducedMotion) {
-      config.duration = Math.min(config.duration, 0.3)
-      config.stagger = 0
+      config = {
+        ...config,
+        duration: Math.min(config.duration, PERFORMANCE_CONFIG.REDUCED_MOTION_MAX_DURATION),
+        stagger: 0,
+        delay: 0,
+      }
     } else if (isMobile) {
-      config.duration *= 0.8
-      config.stagger *= 0.5
+      config = {
+        ...config,
+        duration: config.duration * PERFORMANCE_CONFIG.MOBILE_DURATION_MULTIPLIER,
+        stagger: config.stagger * PERFORMANCE_CONFIG.MOBILE_STAGGER_MULTIPLIER,
+      }
     }
 
     return config
   }
 
   /**
-   * Create and track scroll trigger
+   * Enhanced ScrollTrigger creation with better error handling
    */
   const createScrollTrigger = (options: {
     trigger: HTMLElement
@@ -219,53 +223,60 @@ export const useAnimations = () => {
     end?: string
     once?: boolean
     scrub?: boolean | number
-    onEnter?: () => void
-    onUpdate?: (self: any) => void
-    onLeave?: () => void
-  }): ScrollTrigger => {
-    const trigger = $ScrollTrigger.create({
-      trigger: options.trigger,
-      start: options.start || DEFAULT_OPTIONS.start,
-      end: options.end,
-      once: options.once ?? DEFAULT_OPTIONS.once,
-      scrub: options.scrub ?? DEFAULT_OPTIONS.scrub,
-      refreshPriority: -1, // Performance optimization
-      onEnter: options.onEnter,
-      onUpdate: options.onUpdate,
-      onLeave: options.onLeave,
-    })
+    callbacks?: AnimationCallbacks
+  }): ScrollTrigger | null => {
+    if (!device.isClient()) return null
 
-    scrollTriggers.push(trigger)
-    return trigger
+    try {
+      const trigger = $ScrollTrigger.create({
+        trigger: options.trigger,
+        start: options.start || DEFAULT_OPTIONS.start,
+        end: options.end,
+        once: options.once ?? DEFAULT_OPTIONS.once,
+        scrub: options.scrub ?? DEFAULT_OPTIONS.scrub,
+        refreshPriority: PERFORMANCE_CONFIG.REFRESH_PRIORITY,
+        onEnter: options.callbacks?.onEnter,
+        onUpdate: options.callbacks?.onUpdate,
+        onLeave: options.callbacks?.onLeave,
+      })
+
+      cache.addScrollTrigger(trigger)
+      return trigger
+    } catch (error) {
+      console.warn('Failed to create ScrollTrigger:', error)
+      return null
+    }
   }
 
   // ============================================================================
-  // ANIMATION METHODS
+  // ENHANCED ANIMATION METHODS
   // ============================================================================
 
   /**
-   * Animate elements on scroll with various animation types
+   * Universal animation method with improved error handling and performance
    */
   const animateOnScroll = (
-    elements: Ref<HTMLElement[]> | Ref<HTMLElement | null> | HTMLElement[],
+    elements: ElementInput,
     type: AnimationType = 'fadeUp',
-    options: Partial<ScrollAnimationOptions> = {},
+    options: Partial<ScrollAnimationOptions> = {}
   ): void => {
-    if (!isClient()) return
+    if (!device.isClient()) return
 
     const validElements = getValidElements(elements)
-    if (!validElements.length) return
+    if (!validElements.length) {
+      console.warn('No valid elements found for animation')
+      return
+    }
 
     const config = getOptimizedConfig(options)
     const preset = ANIMATION_PRESETS[type]
 
-    // Apply initial hiding styles
-    const initialStyles = {
+    // Apply initial styles with batching
+    applyStyles(validElements, {
       opacity: '0',
       transform: preset.transform,
       willChange: 'transform, opacity',
-    }
-    applyStyles(validElements, initialStyles)
+    })
 
     // Set GSAP initial state
     $gsap.set(validElements, {
@@ -273,120 +284,125 @@ export const useAnimations = () => {
       willChange: 'transform, opacity',
     })
 
-    // Create animations for each element
+    // Create optimized animations
     validElements.forEach((element, index) => {
       createScrollTrigger({
-        trigger:
-          options.trigger instanceof HTMLElement ? options.trigger : element,
+        trigger: options.trigger instanceof HTMLElement ? options.trigger : element,
         start: config.start,
         end: config.end,
         once: config.once,
-        onEnter: () => {
-          $gsap.to(element, {
-            ...preset.final,
-            duration: config.duration,
-            delay: config.delay + index * config.stagger,
-            ease: config.ease,
-            onComplete: () => {
-              element.style.willChange = 'auto'
-              styleCache.delete(element)
-            },
-          })
-          options.onEnter?.()
+        callbacks: {
+          onEnter: () => {
+            $gsap.to(element, {
+              ...preset.final,
+              duration: config.duration,
+              delay: config.delay + index * config.stagger,
+              ease: config.ease,
+              onComplete: () => {
+                element.style.willChange = 'auto'
+                cache.getStyleCache().delete(element)
+                options.onEnter?.()
+              },
+            })
+          },
+          onLeave: options.onLeave,
         },
-        onLeave: options.onLeave,
       })
     })
   }
 
   /**
-   * Animate text lines with progressive reveal
+   * Enhanced text animation with better performance and accessibility
    */
   const animateTextLines = (
-    container: Ref<HTMLElement | null> | HTMLElement,
-    options: Partial<TextAnimationOptions> = {},
+    container: ElementInput,
+    options: Partial<TextAnimationOptions> = {}
   ): void => {
-    if (!isClient()) return
+    if (!device.isClient()) return
 
-    const containerElement =
-      container instanceof HTMLElement ? container : container?.value
+    const containerElement = getContainerElement(container)
 
-    if (!containerElement) return
+    if (!containerElement) {
+      console.warn('No valid container found for text animation')
+      return
+    }
 
     const lines = Array.from(
-      containerElement.querySelectorAll('p, span, .animate-line'),
-    )
+      containerElement.querySelectorAll('p, span, .animate-line')
+    ) as HTMLElement[]
+    
     if (!lines.length) return
 
     const config = getOptimizedConfig(options)
+    const baseOpacity = options.opacity?.base ?? 0.1
 
-    // Apply initial styles
+    // Apply initial styles efficiently
     lines.forEach(line => {
-      const element = line as HTMLElement
-      if (!styleCache.has(element)) {
-        const opacity = options.opacity?.base ?? 0.1
-        Object.assign(element.style, {
-          opacity: opacity.toString(),
+      if (!cache.getStyleCache().has(line)) {
+        Object.assign(line.style, {
+          opacity: baseOpacity.toString(),
           willChange: 'opacity',
         })
-        styleCache.set(element, true)
+        cache.getStyleCache().set(line, true)
       }
     })
 
-    // Set GSAP initial state
     $gsap.set(lines, {
-      opacity: options.opacity?.base ?? 0.1,
+      opacity: baseOpacity,
       willChange: 'opacity',
     })
 
-    // Create scroll animation
+    // Create optimized scroll animation
     createScrollTrigger({
       trigger: containerElement,
       start: config.start,
       end: config.end,
-      scrub: config.scrub === false ? 1 : config.scrub,
       once: config.once,
-      onUpdate: self => {
-        const progress = self.progress
-        const lineCount = lines.length
-        const baseOpacity = options.opacity?.base ?? 0.4
-        const opacityRange = options.opacity?.range ?? 0.6
+      callbacks: {
+        onUpdate: (self) => {
+          const progress = self.progress
+          const lineCount = lines.length
+          const opacityRange = options.opacity?.range ?? 0.6
 
-        lines.forEach((line, index) => {
-          const lineProgress = Math.max(
-            0,
-            Math.min(1, progress * lineCount - index),
-          )
-          const opacity = baseOpacity + lineProgress * opacityRange
+          // Batch updates for better performance
+          const updates = lines.map((line, index) => {
+            const lineProgress = Math.max(0, Math.min(1, progress * lineCount - index))
+            const opacity = baseOpacity + lineProgress * opacityRange
 
-          // Apply enhanced transforms if specified
-          const updates: any = { opacity }
+            const updateObj: any = { opacity }
 
-          if (options.transform) {
-            const { yOffset = 0, scale = 0 } = options.transform
-            updates.y = (1 - lineProgress) * yOffset
-            updates.scale = 0.98 + lineProgress * scale
-          }
+            if (options.transform) {
+              const { yOffset = 0, scale = 0 } = options.transform
+              updateObj.y = (1 - lineProgress) * yOffset
+              updateObj.scale = 0.98 + lineProgress * scale
+            }
 
-          $gsap.set(line, updates)
-        })
-      },
-      onLeave: () => {
-        lines.forEach(line => {
-          ;(line as HTMLElement).style.willChange = 'auto'
-        })
+            return { element: line, updates: updateObj }
+          })
+
+          // Apply all updates in a single batch
+          updates.forEach(({ element, updates }) => {
+            $gsap.set(element, updates)
+          })
+        },
+        onLeave: () => {
+          lines.forEach(line => {
+            line.style.willChange = 'auto'
+            cache.getStyleCache().delete(line)
+          })
+        },
       },
     })
   }
 
   /**
-   * Animate header elements with staggered reveals
+   * Enhanced header animation with better performance
    */
   const animateHeader = (
     headerRef: Ref<HTMLElement | null>,
-    options: Partial<ScrollAnimationOptions> = {},
+    options: Partial<ScrollAnimationOptions> = {}
   ): void => {
-    if (!isClient() || !headerRef.value) return
+    if (!device.isClient() || !headerRef.value) return
 
     const config = getOptimizedConfig(options)
     const elements = [
@@ -397,14 +413,13 @@ export const useAnimations = () => {
     if (!elements.length) return
 
     // Apply initial styles
-    const initialStyles = {
+    applyStyles(elements, {
       opacity: '0',
       transform: 'translateY(20px) scale(0.98)',
       willChange: 'transform, opacity',
-    }
-    applyStyles(elements, initialStyles)
+    })
 
-    // Set GSAP initial state
+    // Set device-optimized initial state
     const preset = device.prefersReducedMotion()
       ? { opacity: 0 }
       : device.isMobile()
@@ -416,7 +431,7 @@ export const useAnimations = () => {
       willChange: 'transform, opacity',
     })
 
-    // Create timeline animation
+    // Create optimized timeline
     const tl = $gsap.timeline({
       paused: true,
       defaults: {
@@ -430,35 +445,34 @@ export const useAnimations = () => {
         ? { opacity: 1 }
         : { opacity: 1, y: 0, scale: 1 }
 
-      tl.to(
-        element,
-        {
-          ...finalState,
-          delay: index * config.stagger,
-          onComplete: () => {
-            element.style.willChange = 'auto'
-          },
+      tl.to(element, {
+        ...finalState,
+        delay: index * config.stagger,
+        onComplete: () => {
+          element.style.willChange = 'auto'
+          cache.getStyleCache().delete(element)
         },
-        index === 0 ? 0 : '<',
-      )
+      }, index === 0 ? 0 : '<')
     })
 
     createScrollTrigger({
       trigger: headerRef.value,
       start: config.start,
       once: config.once,
-      onEnter: () => tl.play(),
+      callbacks: {
+        onEnter: () => tl.play(),
+      },
     })
   }
 
   /**
-   * Animate skills in grouped rows
+   * Enhanced skills animation with row-based grouping
    */
   const animateSkills = (
     skillsRef: Ref<HTMLElement[]>,
-    options: Partial<TimelineAnimationOptions> = {},
+    options: Partial<TimelineAnimationOptions> = {}
   ): void => {
-    if (!isClient()) return
+    if (!device.isClient()) return
 
     const validElements = getValidElements(skillsRef)
     if (!validElements.length) return
@@ -467,10 +481,11 @@ export const useAnimations = () => {
     const itemsPerRow = options.itemsPerRow ?? 4
     const rowDelay = options.rowDelay ?? 0.2
 
-    // Group elements into rows
+    // Group elements into rows efficiently
     const rows: HTMLElement[][] = []
     for (let i = 0; i < validElements.length; i += itemsPerRow) {
-      rows.push(validElements.slice(i, i + itemsPerRow))
+      const row = validElements.slice(i, i + itemsPerRow)
+      if (row.length) rows.push(row)
     }
 
     // Apply initial styles
@@ -480,73 +495,71 @@ export const useAnimations = () => {
       willChange: 'transform, opacity',
     })
 
-    // Animate each row
+    // Animate each row with staggered timing
     rows.forEach((rowItems, rowIndex) => {
-      if (!rowItems.length) return
-
       createScrollTrigger({
         trigger: rowItems[0],
         start: config.start,
         once: config.once,
-        onEnter: () => {
-          $gsap.fromTo(
-            rowItems,
-            {
-              opacity: 0,
-              y: 30,
-              scale: 0.9,
-            },
-            {
-              opacity: 1,
-              y: 0,
-              scale: 1,
-              duration: config.duration,
-              ease: config.ease,
-              stagger: config.stagger,
-              delay: rowIndex * rowDelay,
-              onComplete: () => {
-                rowItems.forEach(item => {
-                  item.style.willChange = 'auto'
-                })
+        callbacks: {
+          onEnter: () => {
+            $gsap.fromTo(rowItems, 
+              {
+                opacity: 0,
+                y: 30,
+                scale: 0.9,
               },
-            },
-          )
+              {
+                opacity: 1,
+                y: 0,
+                scale: 1,
+                duration: config.duration,
+                ease: config.ease,
+                stagger: config.stagger,
+                delay: rowIndex * rowDelay,
+                onComplete: () => {
+                  rowItems.forEach(item => {
+                    item.style.willChange = 'auto'
+                    cache.getStyleCache().delete(item)
+                  })
+                },
+              }
+            )
+          },
         },
       })
     })
   }
 
   /**
-   * Animate timeline elements (lines and dots)
+   * Enhanced timeline animation with better sequencing
    */
   const animateTimeline = (
     linesRef: Ref<HTMLElement[]>,
     dotsRef: Ref<HTMLElement[]>,
-    options: Partial<TimelineAnimationOptions> = {},
+    options: Partial<TimelineAnimationOptions> = {}
   ): void => {
-    if (!isClient()) return
+    if (!device.isClient()) return
 
     const config = getOptimizedConfig(options)
     const lines = getValidElements(linesRef)
     const dots = getValidElements(dotsRef)
 
-    // Animate timeline lines
+    // Animate timeline lines with optimized transforms
     if (lines.length) {
+      const transformOrigin = options.scaleDirection === 'top-to-bottom'
+        ? 'top center'
+        : 'bottom center'
+
       applyStyles(lines, {
         scaleY: '0',
-        transformOrigin:
-          options.scaleDirection === 'top-to-bottom'
-            ? 'top center'
-            : 'bottom center',
+        transformOrigin,
         willChange: 'transform',
       })
 
       $gsap.set(lines, {
         scaleY: 0,
-        transformOrigin:
-          options.scaleDirection === 'top-to-bottom'
-            ? 'top center'
-            : 'bottom center',
+        transformOrigin,
         willChange: 'transform',
       })
 
@@ -555,22 +568,25 @@ export const useAnimations = () => {
           trigger: line,
           start: 'top 80%',
           once: config.once,
-          onEnter: () => {
-            $gsap.to(line, {
-              scaleY: 1,
-              duration: 0.6,
-              ease: config.ease,
-              delay: index * 0.1,
-              onComplete: () => {
-                line.style.willChange = 'auto'
-              },
-            })
+          callbacks: {
+            onEnter: () => {
+              $gsap.to(line, {
+                scaleY: 1,
+                duration: 0.6,
+                ease: config.ease,
+                delay: index * 0.1,
+                onComplete: () => {
+                  line.style.willChange = 'auto'
+                  cache.getStyleCache().delete(line)
+                },
+              })
+            },
           },
         })
       })
     }
 
-    // Animate timeline dots
+    // Animate timeline dots with elastic easing
     if (dots.length) {
       $gsap.set(dots, {
         scale: 0,
@@ -582,13 +598,18 @@ export const useAnimations = () => {
           trigger: dot,
           start: 'top 90%',
           once: config.once,
-          onEnter: () => {
-            $gsap.to(dot, {
-              scale: 1,
-              duration: 0.6,
-              ease: 'back.out(1.4)',
-              delay: index * 0.15,
-            })
+          callbacks: {
+            onEnter: () => {
+              $gsap.to(dot, {
+                scale: 1,
+                duration: 0.6,
+                ease: 'back.out(1.4)',
+                delay: index * 0.15,
+                onComplete: () => {
+                  cache.getStyleCache().delete(dot)
+                },
+              })
+            },
           },
         })
       })
@@ -596,33 +617,41 @@ export const useAnimations = () => {
   }
 
   // ============================================================================
-  // LIFECYCLE MANAGEMENT
+  // LIFECYCLE & UTILITY METHODS
   // ============================================================================
 
   /**
-   * Clean up all animations and triggers
+   * Enhanced cleanup with proper resource management
    */
   const cleanup = (): void => {
-    if (!isClient()) return
-
-    scrollTriggers.forEach(trigger => trigger.kill())
-    scrollTriggers.length = 0
-    styleCache.clear?.()
-    device.clearCache()
+    if (!device.isClient()) return
+    cache.cleanup()
   }
 
   /**
-   * Refresh animations on resize
+   * Smart refresh with debouncing
    */
-  const refresh = (): void => {
-    if (!isClient()) return
-
+  const refresh = debounce((): void => {
+    if (!device.isClient()) return
     device.clearCache()
     $ScrollTrigger?.refresh()
-  }
+  }, 100)
 
-  // Lifecycle hooks
+  // Lifecycle management
   onUnmounted(cleanup)
+
+  // Auto-cleanup on page navigation
+  if (process.client) {
+    onMounted(() => {
+      window.addEventListener('beforeunload', cleanup)
+    })
+    
+    onBeforeUnmount(() => {
+      if (typeof window !== 'undefined') {
+        window.removeEventListener('beforeunload', cleanup)
+      }
+    })
+  }
 
   // ============================================================================
   // PUBLIC API
@@ -640,6 +669,7 @@ export const useAnimations = () => {
     getValidElements,
     applyStyles,
     createScrollTrigger,
+    getOptimizedConfig,
 
     // Lifecycle
     cleanup,
@@ -647,11 +677,14 @@ export const useAnimations = () => {
 
     // Device info
     device,
+
+    // Cache management
+    clearCache: () => cache.clearCaches(),
   }
 }
 
 // ============================================================================
-// TYPED EXPORT FOR BETTER DX
+// TYPED EXPORTS
 // ============================================================================
 
 export type AnimationsComposable = ReturnType<typeof useAnimations>

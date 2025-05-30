@@ -1,35 +1,42 @@
 import type { Ref } from 'vue'
-
-interface HeaderAnimationOptions {
-  triggerStart?: string
-  duration?: number
-  staggerDelay?: number
-  ease?: string
-  enableParallax?: boolean
-}
+import {
+  type HeaderAnimationOptions,
+  SECTION_DEFAULTS,
+} from './animation.config'
 
 /**
- * Simplified Header animations using the unified animation system
+ * Enhanced Header animations composable with improved performance and DRY principles
  */
 export const useHeaderAnimations = (options: HeaderAnimationOptions = {}) => {
   const { animateHeader, cleanup } = useAnimations()
 
   const headerRef = ref<HTMLElement | null>(null)
 
-  // Watch for headerRef changes and initialize animations
-  watchEffect(() => {
+  // Merge with section-specific defaults
+  const config = {
+    ...SECTION_DEFAULTS.header,
+    ...options,
+  }
+
+  // Optimized initialization with proper cleanup
+  watchEffect(onCleanup => {
     if (headerRef.value && import.meta.client) {
       animateHeader(headerRef, {
-        start: options.triggerStart ?? 'top 85%',
-        duration: options.duration ?? 0.8,
-        stagger: options.staggerDelay ?? 0.15,
-        ease: options.ease ?? 'power2.out',
+        start: config.triggerStart,
+        duration: config.duration,
+        stagger: config.staggerDelay,
+        ease: config.ease,
         once: true,
       })
     }
+
+    // Cleanup on effect invalidation
+    onCleanup(() => {
+      // Individual cleanup handled by watchEffect
+    })
   })
 
-  // Lifecycle management
+  // Global lifecycle management
   onUnmounted(cleanup)
 
   return {

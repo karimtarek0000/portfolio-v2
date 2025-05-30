@@ -1,26 +1,40 @@
-import type { Ref } from 'vue'
+import type { Ref, ComponentPublicInstance } from 'vue'
+import { 
+  type SkillsAnimationOptions,
+  SECTION_DEFAULTS 
+} from './animation.config'
 
-interface SkillsAnimationOptions {
-  triggerStart?: string
-  rowDelay?: number
-  itemDelay?: number
-  duration?: number
-  ease?: string
-  itemsPerRow?: number
+// Simple debounce utility
+const debounce = <T extends (...args: any[]) => any>(
+  func: T,
+  wait: number
+): ((...args: Parameters<T>) => void) => {
+  let timeout: ReturnType<typeof setTimeout> | undefined
+
+  return (...args: Parameters<T>) => {
+    if (timeout) clearTimeout(timeout)
+    timeout = setTimeout(() => func(...args), wait)
+  }
 }
 
 /**
- * Simplified Skills animations using the unified animation system
+ * Enhanced Skills animations composable with improved performance and DRY principles
  */
 export const useSkillsAnimation = (options: SkillsAnimationOptions = {}) => {
   const { animateSkills, cleanup } = useAnimations()
 
-  // State management
+  // State management with improved typing
   const containerRef = ref<HTMLElement | null>(null)
   const skillItems = ref<HTMLElement[]>([])
 
+  // Merge with section-specific defaults
+  const config = {
+    ...SECTION_DEFAULTS.skills,
+    ...options,
+  }
+
   /**
-   * Set skill item element reference (used by template refs)
+   * Enhanced skill reference setter with better performance
    */
   const setSkillRef = (
     el: Element | ComponentPublicInstance | null,
@@ -28,51 +42,52 @@ export const useSkillsAnimation = (options: SkillsAnimationOptions = {}) => {
   ): void => {
     if (!el) return
 
-    let element: HTMLElement | null = null
+    const element = el instanceof HTMLElement 
+      ? el 
+      : (el as ComponentPublicInstance)?.$el as HTMLElement
 
-    if (typeof el === 'object' && '$el' in el) {
-      // Handle Vue component instance
-      element = (el as ComponentPublicInstance).$el as HTMLElement
-    } else if (el instanceof HTMLElement) {
-      // Handle direct HTML element
-      element = el
-    }
-
-    if (element) {
-      // Ensure the array is large enough
-      if (index >= skillItems.value.length) {
-        skillItems.value.length = index + 1
+    if (element && element instanceof HTMLElement) {
+      // Efficiently manage array size
+      const currentLength = skillItems.value.length
+      if (index >= currentLength) {
+        skillItems.value = [
+          ...skillItems.value,
+          ...new Array(index - currentLength + 1).fill(null)
+        ]
       }
       skillItems.value[index] = element
     }
   }
 
   /**
-   * Initialize animations when skills are ready
+   * Optimized animation initialization
    */
   const initializeAnimations = (): void => {
-    if (!skillItems.value.length) return
+    const validItems = skillItems.value.filter(Boolean)
+    if (!validItems.length) return
 
-    // Use the unified animation system for skills
+    // Use unified animation system with merged config
     animateSkills(skillItems, {
-      start: options.triggerStart ?? 'top 90%',
-      duration: options.duration ?? 0.6,
-      stagger: options.itemDelay ?? 0.1,
-      ease: options.ease ?? 'power2.out',
-      itemsPerRow: options.itemsPerRow ?? 4,
-      rowDelay: options.rowDelay ?? 0.2,
+      start: config.triggerStart,
+      duration: config.duration,
+      stagger: config.itemDelay,
+      ease: config.ease,
+      itemsPerRow: config.itemsPerRow,
+      rowDelay: config.rowDelay,
     })
   }
 
-  // Watch for skill items changes and initialize animations
+  // Optimized watcher with debouncing for better performance
+  const debouncedInitialize = debounce(initializeAnimations, 50)
+
   watch(
-    () => skillItems.value,
-    newItems => {
-      if (newItems.length > 0) {
-        nextTick(initializeAnimations)
+    () => skillItems.value.filter(Boolean).length,
+    (newLength) => {
+      if (newLength > 0) {
+        nextTick(debouncedInitialize)
       }
     },
-    { deep: true, flush: 'post' },
+    { flush: 'post' }
   )
 
   // Lifecycle management
