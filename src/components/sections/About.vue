@@ -38,12 +38,12 @@ const headerAnimationOptions = {
 
 // Text content - moved to reactive data for better maintainability
 const paragraphs = [
-  'Lorem ipsum dolor sit amet consectetur adipisicing elit. Eum ipsam vitae nemo, commodi voluptates cumque earum consequuntur enim quia quibusdam',
-  'omnis odio possimus doloribus sapiente ut. Doloremque repellat corrupti ea totam officia assumenda. Voluptatem ducimus corporis laborum incidunt,',
-  'commodi fuga? Nemo quis iure temporibus. Repellendus aliquam ullam minima. Animi quia at illo nobis nihil cupiditate similique numquam eaque dolor',
-  'maiores possimus autem fugit officia laboriosam quam, assumenda porro natus cum repellat soluta! Similique, debitis assumenda. Ipsam fugit,',
-  'quaerat quod nemo maiores voluptate earum praesentium quo vero at molestias libero eligendi cupiditate ipsa possimus quos corporis pariatur',
-  'cum accusamus. Suscipit, eligendi.',
+  'Frontend Developer with 3+ years of experience in building high-performance, responsive,',
+  'and user-friendly web applications. Proficient in modern frontend technologies, including',
+  'JavaScript, TypeScript, and component-based architectures. Skilled in optimizing web',
+  'performance, integrating APIs, and ensuring clean, maintainable code. Continuously learning',
+  'and staying up to date with the latest industry trends and best practices. A strong team',
+  'player who thrives in solving complex problems.',
 ]
 
 // ============================================================================
