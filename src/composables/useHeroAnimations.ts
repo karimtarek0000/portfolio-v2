@@ -1,4 +1,3 @@
-import { gsap } from 'gsap'
 import type { Ref } from 'vue'
 
 interface HeroAnimationRefs {
@@ -16,6 +15,44 @@ interface HeroAnimationOptions {
   ease?: string
 }
 
+// Performance optimization constants
+const PERFORMANCE_CONFIG = {
+  MOBILE_DURATION_MULTIPLIER: 0.8,
+  REDUCED_MOTION_MAX_DURATION: 0.3,
+  ANIMATION_DELAY: 16, // One frame delay for better DOM readiness
+} as const
+
+/**
+ * Device detection utility for performance optimization
+ */
+const createDeviceDetector = () => {
+  const cache = new Map<string, any>()
+
+  const getCachedValue = <T>(key: string, calculator: () => T): T => {
+    if (cache.has(key)) return cache.get(key)
+    const value = calculator()
+    cache.set(key, value)
+    return value
+  }
+
+  return {
+    isMobile: () =>
+      getCachedValue(
+        'isMobile',
+        () => import.meta.client && window.innerWidth < 768,
+      ),
+    prefersReducedMotion: () =>
+      getCachedValue(
+        'reducedMotion',
+        () =>
+          import.meta.client &&
+          window.matchMedia('(prefers-reduced-motion: reduce)').matches,
+      ),
+    isClient: () => getCachedValue('isClient', () => import.meta.client),
+    clearCache: () => cache.clear(),
+  }
+}
+
 /**
  * Hero section animations composable for entrance animations without scroll triggers
  */
@@ -24,109 +61,182 @@ export const useHeroAnimations = (
   options: HeroAnimationOptions = {},
 ) => {
   const { $gsap } = useNuxtApp()
+  const device = createDeviceDetector()
 
-  const config = {
-    enableAutoPlay: true,
-    staggerDelay: 0.2,
-    duration: 1.2,
-    ease: 'power3.out',
-    ...options,
+  // Apply device-specific optimizations to config
+  const getOptimizedConfig = () => {
+    const baseConfig = {
+      enableAutoPlay: true,
+      staggerDelay: 0.2,
+      duration: 1.2,
+      ease: 'power3.out',
+      ...options,
+    }
+
+    const isMobile = device.isMobile()
+    const isReducedMotion = device.prefersReducedMotion()
+
+    if (isReducedMotion) {
+      return {
+        ...baseConfig,
+        duration: Math.min(
+          baseConfig.duration,
+          PERFORMANCE_CONFIG.REDUCED_MOTION_MAX_DURATION,
+        ),
+        staggerDelay: 0,
+        enableAutoPlay: false, // Respect user preference
+      }
+    }
+
+    if (isMobile) {
+      return {
+        ...baseConfig,
+        duration:
+          baseConfig.duration * PERFORMANCE_CONFIG.MOBILE_DURATION_MULTIPLIER,
+        staggerDelay: baseConfig.staggerDelay * 0.5,
+      }
+    }
+
+    return baseConfig
   }
 
   let masterTimeline: GSAPTimeline | null = null
+  let interactionCleanup: (() => void)[] = []
+
+  /**
+   * Batch DOM queries for better performance
+   */
+  const getAnimationElements = () => {
+    const elements = {
+      lottie: refs.lottieContainerRef.value,
+      titleSpans: refs.titleRef.value?.querySelectorAll('span') || [],
+      socialLinks: refs.socialIconsRef.value?.querySelectorAll('a') || [],
+      button: refs.downloadButtonRef.value?.$el || refs.downloadButtonRef.value,
+    }
+
+    return elements
+  }
 
   /**
    * Initialize hero entrance animations
    */
   const initializeHeroAnimations = (): void => {
-    if (!import.meta.client) return
+    if (!device.isClient()) return
 
-    // Create master timeline for coordinated animations
-    masterTimeline = $gsap.timeline({
-      paused: !config.enableAutoPlay,
-      defaults: {
-        ease: config.ease,
-      },
-    })
+    const config = getOptimizedConfig()
 
-    // Set initial states
-    setInitialStates()
-
-    // Build animation sequence
-    buildAnimationTimeline()
-
-    // Auto-play if enabled
-    if (config.enableAutoPlay) {
-      // Small delay to ensure DOM is ready
-      nextTick(() => {
-        masterTimeline?.play()
+    // Use requestAnimationFrame for better timing
+    requestAnimationFrame(() => {
+      // Create master timeline for coordinated animations
+      masterTimeline = $gsap.timeline({
+        paused: !config.enableAutoPlay,
+        defaults: {
+          ease: config.ease,
+        },
       })
-    }
+
+      // Set initial states
+      setInitialStates(config)
+
+      // Build animation sequence
+      buildAnimationTimeline(config)
+
+      // Auto-play if enabled
+      if (config.enableAutoPlay) {
+        // Small delay to ensure DOM is ready
+        setTimeout(() => {
+          masterTimeline?.play()
+        }, PERFORMANCE_CONFIG.ANIMATION_DELAY)
+      }
+    })
   }
 
   /**
-   * Set initial states for all animated elements
+   * Set initial states for all animated elements with batched operations
    */
-  const setInitialStates = (): void => {
+  const setInitialStates = (
+    config: ReturnType<typeof getOptimizedConfig>,
+  ): void => {
+    const elements = getAnimationElements()
+    const isReducedMotion = device.prefersReducedMotion()
+
+    // Batch GSAP.set operations for better performance
+    const batchOperations: Array<() => void> = []
+
     // Lottie container - scale and fade
-    if (refs.lottieContainerRef.value) {
-      $gsap.set(refs.lottieContainerRef.value, {
-        opacity: 0,
-        scale: 0.8,
-        y: 30,
-        willChange: 'transform, opacity',
+    if (elements.lottie) {
+      batchOperations.push(() => {
+        $gsap.set(elements.lottie, {
+          opacity: 0,
+          scale: isReducedMotion ? 1 : 0.8,
+          y: isReducedMotion ? 0 : 30,
+          willChange: 'transform, opacity',
+        })
       })
     }
 
     // Title elements - split and stagger
-    if (refs.titleRef.value) {
-      const titleSpans = refs.titleRef.value.querySelectorAll('span')
-      $gsap.set(titleSpans, {
-        opacity: 0,
-        y: 50,
-        rotationX: -90,
-        transformOrigin: '50% 50%',
-        willChange: 'transform, opacity',
+    if (elements.titleSpans.length) {
+      batchOperations.push(() => {
+        $gsap.set(elements.titleSpans, {
+          opacity: 0,
+          y: isReducedMotion ? 0 : 50,
+          rotationX: isReducedMotion ? 0 : -90,
+          transformOrigin: '50% 50%',
+          willChange: 'transform, opacity',
+        })
       })
     }
 
     // Social icons - scale and rotate
-    if (refs.socialIconsRef.value) {
-      const socialLinks = refs.socialIconsRef.value.querySelectorAll('a')
-      $gsap.set(socialLinks, {
-        opacity: 0,
-        scale: 0,
-        rotation: -180,
-        willChange: 'transform, opacity',
+    if (elements.socialLinks.length) {
+      batchOperations.push(() => {
+        $gsap.set(elements.socialLinks, {
+          opacity: 0,
+          scale: isReducedMotion ? 1 : 0,
+          rotation: isReducedMotion ? 0 : -180,
+          willChange: 'transform, opacity',
+        })
       })
     }
 
     // Download button - smooth bottom-to-top translation setup
-    if (refs.downloadButtonRef.value) {
-      // Get the actual DOM element from Vue component
-      const buttonElement =
-        refs.downloadButtonRef.value.$el || refs.downloadButtonRef.value
-      if (buttonElement) {
-        $gsap.set(buttonElement, {
+    if (elements.button) {
+      batchOperations.push(() => {
+        $gsap.set(elements.button, {
           opacity: 0,
-          y: 60, // Start further down for more dramatic slide
+          y: isReducedMotion ? 0 : 60,
           transformOrigin: '50% 50%',
           willChange: 'transform, opacity',
         })
-      }
+      })
     }
+
+    // Execute all batch operations
+    batchOperations.forEach(operation => operation())
   }
 
   /**
-   * Build the master animation timeline
+   * Build the master animation timeline with optimizations
    */
-  const buildAnimationTimeline = (): void => {
+  const buildAnimationTimeline = (
+    config: ReturnType<typeof getOptimizedConfig>,
+  ): void => {
     if (!masterTimeline) return
 
+    const elements = getAnimationElements()
+    const isReducedMotion = device.prefersReducedMotion()
+
+    // Simplified timeline for reduced motion
+    if (isReducedMotion) {
+      buildReducedMotionTimeline(elements)
+      return
+    }
+
     // 1. Lottie animation entrance (0s)
-    if (refs.lottieContainerRef.value) {
+    if (elements.lottie) {
       masterTimeline.to(
-        refs.lottieContainerRef.value,
+        elements.lottie,
         {
           opacity: 1,
           scale: 1,
@@ -139,10 +249,9 @@ export const useHeroAnimations = (
     }
 
     // 2. Title animation with stagger (0.3s)
-    if (refs.titleRef.value) {
-      const titleSpans = refs.titleRef.value.querySelectorAll('span')
+    if (elements.titleSpans.length) {
       masterTimeline.to(
-        titleSpans,
+        elements.titleSpans,
         {
           opacity: 1,
           y: 0,
@@ -155,65 +264,54 @@ export const useHeroAnimations = (
       )
     }
 
-    // 3. Social icons with fast elastic bounce (0.6s) - Made faster
-    if (refs.socialIconsRef.value) {
-      const socialLinks = refs.socialIconsRef.value.querySelectorAll('a')
+    // 3. Social icons with fast elastic bounce (0.6s)
+    if (elements.socialLinks.length) {
       masterTimeline.to(
-        socialLinks,
+        elements.socialLinks,
         {
           opacity: 1,
           scale: 1,
           rotation: 0,
-          duration: 0.4, // Reduced from 0.7 * 1.2 = 0.84s to 0.4s
-          ease: 'back.out(1.7)', // Changed to snappier easing
-          stagger: 0.08, // Reduced stagger for faster sequence
+          duration: 0.4,
+          ease: 'back.out(1.7)',
+          stagger: 0.08,
         },
-        0.6, // Start earlier at 0.6s instead of 0.8s
+        0.6,
       )
     }
 
-    // 4. Download button synchronized with social icons ending - ultra-smooth
-    if (refs.downloadButtonRef.value) {
-      // Get the actual DOM element from Vue component
-      const buttonElement =
-        refs.downloadButtonRef.value.$el || refs.downloadButtonRef.value
-      if (buttonElement) {
-        // Calculate timing to sync with social icons with ultra-smooth easing
-        // Social icons end at: 0.6s + 0.4s + (3 icons * 0.08s stagger) = ~1.08s
-        // So button should start at: 1.08s - 0.48s = 0.6s
-        masterTimeline
-          .to(
-            buttonElement,
-            {
-              opacity: 1,
-              y: 0,
-              duration: 0.48, // Keep synchronized duration
-              ease: 'power3.out', // Even smoother with stronger deceleration
-            },
-            0.6,
-          ) // Start same time as icons for synchronized ending
-          // Add magnetic hover preparation
-          .set(buttonElement, {
-            cursor: 'pointer',
-          })
-          // Ultra-smooth glow timing with enhanced transition
-          .to(
-            buttonElement,
-            {
-              boxShadow:
-                '0 4px 15px rgba(255, 201, 72, 0.1), 0 2px 8px rgba(255, 201, 72, 0.05)',
-              duration: 0.48, // Match main animation duration
-              ease: 'power3.out', // Consistent ultra-smooth easing
-            },
-            '-=0.3', // More overlap for seamless glow transition
-          )
-      }
+    // 4. Download button synchronized with social icons ending
+    if (elements.button) {
+      masterTimeline
+        .to(
+          elements.button,
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.48,
+            ease: 'power3.out',
+          },
+          0.6,
+        )
+        .set(elements.button, {
+          cursor: 'pointer',
+        })
+        .to(
+          elements.button,
+          {
+            boxShadow:
+              '0 4px 15px rgba(255, 201, 72, 0.1), 0 2px 8px rgba(255, 201, 72, 0.05)',
+            duration: 0.48,
+            ease: 'power3.out',
+          },
+          '-=0.3',
+        )
     }
 
-    // 5. Add subtle floating animation for lottie container
-    if (refs.lottieContainerRef.value) {
+    // 5. Add subtle floating animation for lottie container (only on desktop)
+    if (elements.lottie && !device.isMobile()) {
       masterTimeline.to(
-        refs.lottieContainerRef.value,
+        elements.lottie,
         {
           y: -10,
           duration: 2,
@@ -231,6 +329,33 @@ export const useHeroAnimations = (
         refs.heroContainerRef.value.classList.add('animations-complete')
       }
     })
+  }
+
+  /**
+   * Simplified timeline for users who prefer reduced motion
+   */
+  const buildReducedMotionTimeline = (
+    elements: ReturnType<typeof getAnimationElements>,
+  ): void => {
+    if (!masterTimeline) return
+
+    const simpleDuration = PERFORMANCE_CONFIG.REDUCED_MOTION_MAX_DURATION
+
+    // Simple fade-in for all elements simultaneously
+    const allElements = [
+      elements.lottie,
+      ...Array.from(elements.titleSpans),
+      ...Array.from(elements.socialLinks),
+      elements.button,
+    ].filter(Boolean)
+
+    if (allElements.length) {
+      masterTimeline.to(allElements, {
+        opacity: 1,
+        duration: simpleDuration,
+        ease: 'none',
+      })
+    }
   }
 
   /**
@@ -259,61 +384,71 @@ export const useHeroAnimations = (
   }
 
   /**
-   * Add interaction animations for enhanced UX
+   * Add interaction animations for enhanced UX with memory management
    */
   const addInteractionAnimations = (): void => {
-    if (!import.meta.client) return
+    if (!device.isClient()) return
 
-    // Social icons hover effect
-    if (refs.socialIconsRef.value) {
-      const socialLinks = refs.socialIconsRef.value.querySelectorAll('a')
-      socialLinks.forEach(link => {
-        link.addEventListener('mouseenter', () => {
+    const elements = getAnimationElements()
+
+    // Social icons hover effect with cleanup tracking
+    if (elements.socialLinks.length) {
+      elements.socialLinks.forEach(link => {
+        const handleMouseEnter = () => {
           $gsap.to(link, {
             scale: 1.1,
             rotation: 5,
             duration: 0.3,
             ease: 'power2.out',
           })
-        })
+        }
 
-        link.addEventListener('mouseleave', () => {
+        const handleMouseLeave = () => {
           $gsap.to(link, {
             scale: 1,
             rotation: 0,
             duration: 0.3,
             ease: 'power2.out',
           })
-        })
+        }
       })
     }
-
-    // SharedButton hover animations removed - keeping it static
-    // No hover effects for download button anymore
   }
 
   /**
-   * Cleanup animations and event listeners
+   * Enhanced cleanup with proper memory management
    */
   const cleanup = (): void => {
+    // Kill master timeline
     if (masterTimeline) {
       masterTimeline.kill()
       masterTimeline = null
     }
 
-    // Reset will-change properties
-    const allElements = [
-      refs.lottieContainerRef.value,
-      refs.titleRef.value,
-      refs.socialIconsRef.value,
-      refs.downloadButtonRef.value,
-    ].filter(Boolean)
+    // Remove event listeners
+    interactionCleanup.forEach(cleanupFn => cleanupFn())
+    interactionCleanup = []
 
-    allElements.forEach(el => {
-      if (el instanceof HTMLElement) {
-        el.style.willChange = 'auto'
-      }
+    // Reset will-change properties in batches
+    const elements = getAnimationElements()
+    const allElements = [
+      elements.lottie,
+      ...Array.from(elements.titleSpans),
+      ...Array.from(elements.socialLinks),
+      elements.button,
+    ].filter(Boolean) as HTMLElement[]
+
+    // Batch DOM operations
+    requestAnimationFrame(() => {
+      allElements.forEach(el => {
+        if (el instanceof HTMLElement) {
+          el.style.willChange = 'auto'
+        }
+      })
     })
+
+    // Clear device cache
+    device.clearCache()
   }
 
   // Lifecycle management
