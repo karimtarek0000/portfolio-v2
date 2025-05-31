@@ -156,24 +156,24 @@ const socialIcons = [
 .hero.animations-complete .hero__title span,
 .hero.animations-complete .hero__social-icons a,
 .hero.animations-complete .hero__download-button {
-  opacity: 1;
+  @apply opacity-100;
 }
 
 /* Smooth transitions for hover effects after animations complete */
 .hero.animations-complete .hero__social-icons a {
-  transition: transform 0.3s ease;
+  @apply transition-transform duration-300 ease-in-out;
 }
 
 .hero.animations-complete .hero__download-button {
-  transition: transform 0.3s ease;
+  @apply transition-transform duration-300 ease-in-out;
 }
 
 /* Disable default hover animations during entrance */
 .hero .hero__social-icons a:hover {
-  transform: none !important;
+  @apply transform-none !important;
 }
 
 .hero.animations-complete .hero__social-icons a:hover {
-  transform: translateY(-4px) !important;
+  @apply -translate-y-1 !important;
 }
 </style>
