@@ -713,9 +713,3 @@ export const useAnimations = () => {
 // ============================================================================
 
 export type AnimationsComposable = ReturnType<typeof useAnimations>
-export type {
-  AnimationType,
-  ScrollAnimationOptions,
-  TextAnimationOptions,
-  TimelineAnimationOptions,
-}
