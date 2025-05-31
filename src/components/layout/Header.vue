@@ -21,6 +21,7 @@
             style="transform: translate3d(0px, -70px, 0px)"
             animationLink="https://lottie.host/eca2fac4-6448-4276-8f61-783f40d33d66/n7MP5EFvxv.json"
             :loop="false"
+            :speed="2"
           />
         </client-only>
       </div>
@@ -72,26 +73,26 @@
 </template>
 
 <script lang="ts" setup>
-import { Vue3Lottie } from "vue3-lottie";
-const { isDark } = useToggleTheme();
+import { Vue3Lottie } from 'vue3-lottie'
+const { isDark } = useToggleTheme()
 
 const socialIcons = [
   {
-    title: "github",
-    iconName: "github",
-    link: "",
+    title: 'github',
+    iconName: 'github',
+    link: '',
   },
   {
-    title: "linkedin",
-    iconName: "linkedin",
-    link: "",
+    title: 'linkedin',
+    iconName: 'linkedin',
+    link: '',
   },
   {
-    title: "whatsapp",
-    iconName: "whatsapp",
-    link: "https://wa.me/12345678900",
+    title: 'whatsapp',
+    iconName: 'whatsapp',
+    link: 'https://wa.me/12345678900',
   },
-];
+]
 </script>
 
 <style scoped>
