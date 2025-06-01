@@ -48,7 +48,7 @@
         <a
           v-for="{ title, iconName, link } in socialIcons"
           :key="title"
-          class="transition-transform duration-300 hover:-translate-y-1"
+          class="transition-transform duration-300 hover:!-translate-y-1"
           :href="link"
           :alt="title"
           target="_blank"
@@ -139,41 +139,15 @@ const socialIcons = [
 
 /* Initial hidden states for animation elements */
 .hero__title span {
-  opacity: 0;
+  @apply opacity-0;
 }
 
 .hero__social-icons a {
-  opacity: 0;
+  @apply opacity-0;
 }
 
 /* Hide download button initially to prevent flash before animation */
 .hero__download-button {
-  opacity: 0;
-  transform: translateY(60px); /* Match GSAP initial position */
-}
-
-/* Show elements after animations complete */
-.hero.animations-complete .hero__title span,
-.hero.animations-complete .hero__social-icons a,
-.hero.animations-complete .hero__download-button {
-  @apply opacity-100;
-}
-
-/* Smooth transitions for hover effects after animations complete */
-.hero.animations-complete .hero__social-icons a {
-  @apply transition-transform duration-300 ease-in-out;
-}
-
-.hero.animations-complete .hero__download-button {
-  @apply transition-transform duration-300 ease-in-out;
-}
-
-/* Disable default hover animations during entrance */
-.hero .hero__social-icons a:hover {
-  @apply transform-none !important;
-}
-
-.hero.animations-complete .hero__social-icons a:hover {
-  @apply -translate-y-1 !important;
+  @apply opacity-0 translate-y-[60px];
 }
 </style>
