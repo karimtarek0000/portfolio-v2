@@ -67,7 +67,7 @@
         as="a"
         href="https://drive.google.com/uc?export=download&id=1x6uYDQssXpTFXOgMInQfElMgTmQMhlS-"
         download
-        class="flex items-center mt-10 hero__download-button gap-x-2"
+        class="hero__download-button"
       >
         Download CV
         <SharedRenderSVG
@@ -148,6 +148,6 @@ const socialIcons = [
 
 /* Hide download button initially to prevent flash before animation */
 .hero__download-button {
-  @apply opacity-0 translate-y-[60px];
+  @apply opacity-0 translate-y-[60px] flex items-center mt-10 gap-x-2;
 }
 </style>
