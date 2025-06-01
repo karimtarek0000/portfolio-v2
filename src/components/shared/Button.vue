@@ -28,14 +28,14 @@ withDefaults(defineProps<Props>(), {
 })
 
 const defaultClasses =
-  'relative capitalize inline-flex items-center justify-center gap-2 font-medium rounded-lg transition-all duration-300 ease-out   disabled:opacity-50 ring-2 focus:ring-orange-300 focus:ring-offset-2 focus:ring-offset-transparent disabled:cursor-not-allowed disabled:pointer-events-none overflow-hidden focus:outline-none group cursor-pointer select-none '
+  'relative capitalize inline-flex items-center justify-center gap-2 font-medium rounded-lg transition-all duration-300 ease-out   disabled:opacity-50 focus:ring-2 focus:ring-orange-300 focus:ring-offset-2 focus:ring-offset-transparent disabled:cursor-not-allowed disabled:pointer-events-none overflow-hidden focus:outline-none group cursor-pointer select-none '
 
 const variantClasses: Record<NonNullable<Props['variant']>, string> = {
   primary:
-    'text-primary-1 bg-primary-2 hover:bg-opacity-90  hover:shadow-xl hover:shadow-primary-2/25 border border-transparent transform-gpu',
+    'text-primary-1 bg-primary-2 hover:bg-opacity-90 hover:shadow-xl hover:shadow-primary-2/25',
 
   outline:
-    'border-2 border-primary-2 dark:border-primary-3 hover:bg-primary-2 hover:text-primary-1 text-primary-2 bg-transparent hover:scale-[1.02] active:scale-[0.98] shadow-md hover:shadow-lg hover:shadow-primary-2/20 backdrop-blur-sm transform-gpu',
+    'border-2 border-primary-2 dark:border-primary-3 hover:bg-primary-2 hover:text-primary-1 text-primary-2 bg-transparent hover:scale-[1.02] active:scale-[0.98] shadow-md hover:shadow-lg hover:shadow-primary-2/20 backdrop-blur-sm',
 }
 
 const sizeClasses: Record<NonNullable<Props['size']>, string> = {
