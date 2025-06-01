@@ -299,8 +299,6 @@ export const useHeroAnimations = (
         .to(
           elements.button,
           {
-            boxShadow:
-              '0 4px 15px rgba(255, 201, 72, 0.1), 0 2px 8px rgba(255, 201, 72, 0.05)',
             duration: 0.48,
             ease: 'power3.out',
           },
