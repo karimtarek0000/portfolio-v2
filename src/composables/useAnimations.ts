@@ -63,7 +63,7 @@ class AnimationCache {
 
   startPeriodicCleanup() {
     // Only start cleanup on client side to avoid SSR issues
-    if (this.cleanupTimer || !process.client) return
+    if (this.cleanupTimer || !import.meta.client) return
 
     this.cleanupTimer = setInterval(() => {
       this.deviceCache.clear()
@@ -87,7 +87,7 @@ const createDeviceDetector = () => {
       getCachedValue(
         'isMobile',
         () =>
-          process.client &&
+          import.meta.client &&
           typeof window !== 'undefined' &&
           window.innerWidth < 768,
       ),
@@ -95,11 +95,11 @@ const createDeviceDetector = () => {
       getCachedValue(
         'reducedMotion',
         () =>
-          process.client &&
+          import.meta.client &&
           typeof window !== 'undefined' &&
           window.matchMedia('(prefers-reduced-motion: reduce)').matches,
       ),
-    isClient: () => getCachedValue('isClient', () => process.client),
+    isClient: () => getCachedValue('isClient', () => import.meta.client),
     clearCache: () => cache.clear(),
   }
 }
@@ -126,9 +126,41 @@ export const useAnimations = () => {
   const device = createDeviceDetector()
   const cache = AnimationCache.getInstance()
 
+  // Track if animations are actively being cleaned up
+  let isCleaningUp = false
+  let downloadInProgress = false
+
+  // Listen for download events to prevent premature cleanup
+  if (import.meta.client) {
+    // Prevent cleanup during downloads
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (!downloadInProgress) {
+        cleanup()
+      }
+    }
+
+    // Track download state
+    const handleClick = (e: Event) => {
+      const target = e.target as HTMLElement
+      if (
+        target?.closest('[download]') ||
+        target?.textContent?.toLowerCase().includes('download')
+      ) {
+        downloadInProgress = true
+        // Reset flag after a reasonable timeout
+        setTimeout(() => {
+          downloadInProgress = false
+        }, 3000)
+      }
+    }
+
+    window.addEventListener('beforeunload', handleBeforeUnload)
+    document.addEventListener('click', handleClick)
+  }
+
   // Start periodic cleanup only on client side
   onMounted(() => {
-    if (process.client) {
+    if (import.meta.client) {
       cache.startPeriodicCleanup()
     }
   })
@@ -183,7 +215,7 @@ export const useAnimations = () => {
     const styleCache = cache.getStyleCache()
 
     // Batch DOM writes for better performance
-    if (process.client) {
+    if (import.meta.client) {
       requestAnimationFrame(() => {
         elements.forEach(element => {
           if (!element || styleCache.has(element)) return
@@ -649,8 +681,11 @@ export const useAnimations = () => {
    * Enhanced cleanup with proper resource management
    */
   const cleanup = (): void => {
-    if (!device.isClient()) return
+    if (!device.isClient() || isCleaningUp || downloadInProgress) return
+
+    isCleaningUp = true
     cache.cleanup()
+    isCleaningUp = false
   }
 
   /**
@@ -666,7 +701,7 @@ export const useAnimations = () => {
   onUnmounted(cleanup)
 
   // Auto-cleanup on page navigation
-  if (process.client) {
+  if (import.meta.client) {
     onMounted(() => {
       window.addEventListener('beforeunload', cleanup)
     })

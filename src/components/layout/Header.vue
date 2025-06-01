@@ -64,9 +64,8 @@
       <!-- DOWNLOAD CV -->
       <SharedButton
         ref="downloadButtonRef"
-        as="a"
-        href="https://drive.google.com/uc?export=download&id=1x6uYDQssXpTFXOgMInQfElMgTmQMhlS-"
-        download
+        as="button"
+        @click="handleDownload"
         class="hero__download-button"
       >
         Download CV
@@ -126,6 +125,17 @@ const socialIcons = [
     link: 'https://wa.me/12345678900',
   },
 ]
+
+// Handle CV download
+function handleDownload() {
+  const link = document.createElement('a')
+  link.href =
+    'https://drive.google.com/uc?export=download&id=1x6uYDQssXpTFXOgMInQfElMgTmQMhlS-'
+  link.download = 'Karim_Tarek_CV.pdf'
+  document.body.appendChild(link)
+  link.click()
+  document.body.removeChild(link)
+}
 </script>
 
 <style scoped>
