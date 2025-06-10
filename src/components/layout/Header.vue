@@ -41,24 +41,8 @@
       </h1>
 
       <!-- SOCIAL ICONS -->
-      <div
-        ref="socialIconsRef"
-        class="flex justify-center mt-5 hero__social-icons gap-x-5"
-      >
-        <a
-          v-for="{ title, iconName, link } in socialIcons"
-          :key="title"
-          class="transition-transform duration-300 hover:!-translate-y-1"
-          :href="link"
-          :alt="title"
-          target="_blank"
-        >
-          <SharedRenderSVG
-            :iconName="iconName"
-            sizes="w-[2.4rem] h-[2.4rem]"
-            :fill="isDark ? 'white' : 'black'"
-          />
-        </a>
+      <div ref="socialIconsRef" class="flex justify-center mt-5 gap-x-5">
+        <SharedSocialLinks type="header" />
       </div>
 
       <!-- DOWNLOAD CV -->
@@ -107,24 +91,6 @@ useHeroAnimations(
     ease: 'power3.out',
   },
 )
-
-const socialIcons = [
-  {
-    title: 'github',
-    iconName: 'github',
-    link: '',
-  },
-  {
-    title: 'linkedin',
-    iconName: 'linkedin',
-    link: '',
-  },
-  {
-    title: 'whatsapp',
-    iconName: 'whatsapp',
-    link: 'https://wa.me/12345678900',
-  },
-]
 
 // Handle CV download
 function handleDownload() {

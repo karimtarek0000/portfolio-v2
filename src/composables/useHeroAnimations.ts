@@ -107,11 +107,19 @@ export const useHeroAnimations = (
    * Batch DOM queries for better performance
    */
   const getAnimationElements = () => {
+    const buttonElement = refs.downloadButtonRef.value
+    const buttonEl =
+      buttonElement &&
+      typeof buttonElement === 'object' &&
+      '$el' in buttonElement
+        ? (buttonElement as any).$el
+        : buttonElement
+
     const elements = {
       lottie: refs.lottieContainerRef.value,
       titleSpans: refs.titleRef.value?.querySelectorAll('span') || [],
-      socialLinks: refs.socialIconsRef.value?.querySelectorAll('a') || [],
-      button: refs.downloadButtonRef.value?.$el || refs.downloadButtonRef.value,
+      socialLinks: refs.socialIconsRef.value?.querySelectorAll('div a') || [],
+      button: buttonEl,
     }
 
     return elements
@@ -409,6 +417,16 @@ export const useHeroAnimations = (
             ease: 'power2.out',
           })
         }
+
+        // Add event listeners
+        link.addEventListener('mouseenter', handleMouseEnter)
+        link.addEventListener('mouseleave', handleMouseLeave)
+
+        // Track cleanup functions
+        interactionCleanup.push(() => {
+          link.removeEventListener('mouseenter', handleMouseEnter)
+          link.removeEventListener('mouseleave', handleMouseLeave)
+        })
       })
     }
   }

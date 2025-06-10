@@ -2,19 +2,6 @@
 @tailwind base;
 @tailwind utilities;
 
-@layer components {
-  .glassmorphism {
-    @apply border rounded-lg shadow-2xl bg-white/5 border-white/10 shadow-primary-2/5 backdrop-blur-lg;
-  }
-  .graident {
-    @apply text-transparent bg-clip-text bg-gradient-to-t 
-  from-primary-gradient1/60 from-10% to-[rgb(var(--primary-2))];
-  }
-  .layout-container {
-    @apply container px-2 mx-auto sm:px-1;
-  }
-}
-
 @layer base {
   html {
     @apply box-border overflow-x-hidden text-[12px] md:text-[16px];
@@ -34,6 +21,19 @@
   }
   body[data-theme='light']::after {
     background-image: url('/images/pattern-light.svg');
+  }
+}
+
+@layer components {
+  .glassmorphism {
+    @apply border rounded-lg shadow-2xl bg-white/5 border-white/10 shadow-primary-2/5 backdrop-blur-lg;
+  }
+  .graident {
+    @apply text-transparent bg-clip-text bg-gradient-to-t 
+  from-primary-gradient1/60 from-10% to-[rgb(var(--primary-2))];
+  }
+  .layout-container {
+    @apply container px-2 mx-auto sm:px-1;
   }
 }
 
