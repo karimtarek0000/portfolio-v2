@@ -13,7 +13,7 @@
 
   body::after {
     content: '';
-    @apply absolute inset-0 scale-125 lg:translate-x-[100px] w-full h-full bg-center bg-no-repeat bg-cover -z-10;
+    @apply absolute inset-0 scale-125 lg:translate-x-[100px] w-full h-[2000px] bg-center bg-no-repeat bg-cover -z-10;
   }
 
   body[data-theme='dark']::after {
