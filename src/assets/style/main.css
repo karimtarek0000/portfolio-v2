@@ -26,7 +26,7 @@
 
 @layer components {
   .glassmorphism {
-    @apply border rounded-lg shadow-2xl bg-white/5 border-white/10 shadow-primary-2/5 backdrop-blur-lg;
+    @apply border rounded-lg shadow-2xl bg-white/5 border-primary-2/15 shadow-primary-2/5 backdrop-blur-lg;
   }
   .graident {
     @apply text-transparent bg-clip-text bg-gradient-to-t 
