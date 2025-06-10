@@ -134,9 +134,6 @@
 
             <!-- Social Links -->
             <div class="space-y-3">
-              <p class="text-xs tracking-wider uppercase text-primary-3">
-                Follow Me
-              </p>
               <div class="flex gap-3">
                 <a
                   v-for="social in socialLinks"
