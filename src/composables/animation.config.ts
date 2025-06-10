@@ -168,6 +168,12 @@ export const SECTION_DEFAULTS = {
       scaleDirection: 'bottom-to-top' as const,
     },
   },
+  footer: {
+    triggerStart: 'top 60%',
+    duration: 0.8,
+    ease: 'power2.out',
+    staggerDelay: 0.2,
+  },
 } as const
 
 // ============================================================================

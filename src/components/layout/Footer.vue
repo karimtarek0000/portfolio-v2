@@ -183,13 +183,6 @@
                     />
                   </svg>
 
-                  <!-- Tooltip -->
-                  <span
-                    class="absolute px-3 py-1 text-xs font-medium transition-opacity duration-300 transform -translate-x-1/2 rounded-lg shadow-lg opacity-0 pointer-events-none -top-12 left-1/2 bg-primary-2 text-primary-1 group-hover:opacity-100 whitespace-nowrap"
-                  >
-                    {{ social.name }}
-                  </span>
-
                   <!-- Glow effect on hover -->
                   <div
                     class="absolute inset-0 transition-transform duration-300 scale-0 opacity-0 rounded-xl bg-primary-2/20 group-hover:scale-100 group-hover:opacity-100 blur-sm"
@@ -216,35 +209,7 @@
 
         <!-- Footer Bottom -->
         <div ref="bottomSectionRef" class="animate-line-ssr-safe">
-          <div
-            class="flex flex-col items-center justify-between gap-6 text-sm sm:flex-row"
-          >
-            <!-- Copyright -->
-            <div
-              class="flex flex-col items-center gap-2 sm:flex-row text-primary-3"
-            >
-              <p>© {{ currentYear }} Karim Tarek.</p>
-              <p class="hidden sm:block">•</p>
-              <p>Crafted with ❤️ using Vue.js & Tailwind CSS</p>
-            </div>
-
-            <!-- Legal Links -->
-            <div class="flex items-center gap-6 text-primary-3">
-              <a
-                href="#"
-                class="text-sm transition-colors duration-300 hover:text-primary-2"
-              >
-                Privacy
-              </a>
-              <span class="text-primary-2/30">•</span>
-              <a
-                href="#"
-                class="text-sm transition-colors duration-300 hover:text-primary-2"
-              >
-                Terms
-              </a>
-            </div>
-          </div>
+          <p class="text-center">© {{ currentYear }} Karim Tarek</p>
         </div>
       </div>
     </div>
@@ -252,8 +217,6 @@
 </template>
 
 <script lang="ts" setup>
-const { isDark } = useToggleTheme()
-
 // Template refs for animations
 const footerRef = ref<HTMLElement | null>(null)
 const brandSectionRef = ref<HTMLElement | null>(null)
@@ -274,15 +237,6 @@ const currentYear = new Date().getFullYear()
 // Tech stack for visual appeal
 const techStack = ['Vue.js', 'TypeScript', 'Tailwind CSS', 'Nuxt.js', 'GSAP']
 
-// Navigation links
-const navigationLinks = [
-  { name: 'About', href: '#about' },
-  { name: 'Experience', href: '#experience' },
-  { name: 'Skills', href: '#skills' },
-  { name: 'Projects', href: '#projects' },
-  { name: 'Contact', href: '#contact' },
-]
-
 // Social media links
 const socialLinks = [
   {
@@ -302,93 +256,21 @@ const socialLinks = [
   },
 ]
 
-// Enhanced footer animations with scroll triggers
-onMounted(() => {
-  if (!process.client) return
-
-  // Wait for next tick to ensure DOM is ready
-  nextTick(() => {
-    const { $gsap, $ScrollTrigger } = useNuxtApp()
-
-    if (!$gsap || !$ScrollTrigger || !footerRef.value) {
-      console.warn('GSAP or ScrollTrigger not available, or footer ref not found')
-      return
-    }
-
-    // Debug: Log when footer animation setup starts
-    console.log('Setting up footer animations')
-
-    // Set initial states for all animated elements
-    const animatedElements = [
-      brandSectionRef.value,
-      contactSectionRef.value,
-      bottomSectionRef.value,
-    ].filter(Boolean)
-
-    if (animatedElements.length === 0) {
-      console.warn('No animated elements found in footer')
-      return
-    }
-
-    // Set initial hidden state
-    $gsap.set(animatedElements, {
-      opacity: 0,
-      y: 50,
-      willChange: 'transform, opacity',
-    })
-
-    // Create scroll trigger with better timing
-    const trigger = $ScrollTrigger.create({
-      trigger: footerRef.value,
-      start: 'top 60%', // Start when footer is more visible
-      end: 'bottom bottom',
-      once: true,
-      onEnter: () => {
-        console.log('Footer animation triggered!')
-        
-        // Create timeline for smoother coordination
-        const tl = $gsap.timeline()
-
-        // Animate brand section
-        tl.to(brandSectionRef.value, {
-          opacity: 1,
-          y: 0,
-          duration: 0.8,
-          ease: 'power2.out',
-        })
-
-        // Animate contact section
-        tl.to(contactSectionRef.value, {
-          opacity: 1,
-          y: 0,
-          duration: 0.8,
-          ease: 'power2.out',
-        }, '-=0.6')
-
-        // Animate bottom section
-        tl.to(bottomSectionRef.value, {
-          opacity: 1,
-          y: 0,
-          duration: 0.6,
-          ease: 'power2.out',
-          onComplete: () => {
-            // Clean up will-change for performance
-            animatedElements.forEach(el => {
-              if (el) el.style.willChange = 'auto'
-            })
-          }
-        }, '-=0.4')
-      }
-    })
-
-    // Cleanup function
-    onUnmounted(() => {
-      if (trigger) {
-        trigger.kill()
-      }
-    })
-  })
-})
+// Initialize footer animations using the dedicated composable
+useFooterAnimations(
+  {
+    footerRef,
+    brandSectionRef,
+    contactSectionRef,
+    bottomSectionRef,
+  },
+  {
+    triggerStart: 'top 60%',
+    duration: 0.8,
+    ease: 'power2.out',
+    staggerDelay: 0.2,
+  },
+)
 </script>
 
 <style scoped>
