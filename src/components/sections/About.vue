@@ -6,7 +6,7 @@
     <!-- Text content broken into lines for animation -->
     <div
       ref="textContainerRef"
-      class="px-5 space-y-2 text-sm font-normal select-none dark:text-gray-300"
+      class="max-w-[1000px] px-5 mx-auto space-y-2 text-sm font-normal select-none dark:text-gray-300"
     >
       <p
         v-for="(paragraph, index) in paragraphs"
