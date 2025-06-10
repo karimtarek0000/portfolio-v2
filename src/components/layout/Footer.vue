@@ -163,8 +163,6 @@
 </template>
 
 <script lang="ts" setup>
-const { isDark } = useToggleTheme()
-
 // Template refs for animations
 const footerRef = ref<HTMLElement | null>(null)
 const brandSectionRef = ref<HTMLElement | null>(null)
