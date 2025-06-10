@@ -8,7 +8,7 @@
   }
 
   body {
-    @apply relative overflow-hidden transition-colors transition-opacity text-primary-2 bg-primary-1 font-poppins;
+    @apply relative overflow-hidden transition-colors transition-opacity duration-1000 text-primary-2 bg-primary-1 font-poppins;
   }
 
   body::after {
