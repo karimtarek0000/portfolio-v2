@@ -16,16 +16,11 @@
       <!-- Main Footer Content -->
       <div class="relative z-10">
         <!-- Header Section -->
-        <div
-          ref="headerSectionRef"
-          class="mb-16 text-center animate-line-ssr-safe"
-        >
-          <h2 class="mb-4 font-bold text-md graident">Let's Connect</h2>
-          <p class="max-w-2xl mx-auto text-sm leading-relaxed text-primary-3">
-            Ready to bring your ideas to life? Let's create something amazing
-            together.
-          </p>
-        </div>
+        <SharedHeader
+          title="Let's Connect"
+          subTitle="Ready to bring your ideas to life? Let's create something amazing together."
+          :animation-options="headerAnimationOptions"
+        />
 
         <!-- Main Content Grid -->
         <div
@@ -80,13 +75,18 @@
                 class="group flex items-center gap-4 p-4 rounded-xl bg-primary-2/5 hover:bg-primary-2/10 transition-all duration-300 hover:scale-[1.02] hover:shadow-lg border border-primary-2/10"
               >
                 <div
-                  class="p-2 transition-colors duration-300 rounded-lg bg-primary-2/10 group-hover:bg-primary-2/20"
+                  class="p-3 transition-colors duration-300 rounded-xl bg-primary-2/10 group-hover:bg-primary-2/20"
                 >
-                  <SharedRenderSVG
-                    iconName="email"
-                    sizes="w-5 h-5"
-                    :fill="isDark ? '#9A9A9A' : '#181818'"
-                  />
+                  <svg
+                    class="w-6 h-6 text-primary-2"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    viewBox="0 0 24 24"
+                  >
+                    <rect x="2" y="4" width="20" height="16" rx="2" />
+                    <path d="m2 7 10 6 10-6" />
+                  </svg>
                 </div>
                 <div class="flex-1">
                   <p class="text-xs tracking-wider uppercase text-primary-3">
@@ -105,13 +105,19 @@
                 class="group flex items-center gap-4 p-4 rounded-xl bg-primary-2/5 hover:bg-primary-2/10 transition-all duration-300 hover:scale-[1.02] hover:shadow-lg border border-primary-2/10"
               >
                 <div
-                  class="p-2 transition-colors duration-300 rounded-lg bg-primary-2/10 group-hover:bg-primary-2/20"
+                  class="p-3 transition-colors duration-300 rounded-xl bg-primary-2/10 group-hover:bg-primary-2/20"
                 >
-                  <SharedRenderSVG
-                    iconName="phone"
-                    sizes="w-5 h-5"
-                    :fill="isDark ? '#9A9A9A' : '#181818'"
-                  />
+                  <svg
+                    class="w-6 h-6 text-primary-2"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"
+                    />
+                  </svg>
                 </div>
                 <div class="flex-1">
                   <p class="text-xs tracking-wider uppercase text-primary-3">
@@ -139,20 +145,55 @@
                   :aria-label="social.name"
                   target="_blank"
                   rel="noopener noreferrer"
-                  class="relative p-3 transition-all duration-300 border group rounded-xl bg-primary-2/10 hover:bg-primary-2/20 hover:scale-110 hover:-translate-y-1 border-primary-2/10 hover:border-primary-2/30"
+                  class="relative p-3 transition-all duration-300 border group rounded-xl bg-primary-2/10 hover:bg-primary-2/20 hover:scale-110 hover:-translate-y-1 border-primary-2/10 hover:border-primary-2/30 hover:shadow-lg"
                 >
-                  <SharedRenderSVG
-                    :iconName="social.icon"
-                    sizes="w-5 h-5"
-                    :fill="isDark ? 'white' : 'black'"
-                    class="relative z-10"
-                  />
+                  <!-- GitHub Icon -->
+                  <svg
+                    v-if="social.icon === 'github'"
+                    class="relative z-10 w-6 h-6 transition-transform duration-300 text-primary-2 group-hover:scale-110"
+                    fill="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      d="M12 0.297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"
+                    />
+                  </svg>
+
+                  <!-- LinkedIn Icon -->
+                  <svg
+                    v-else-if="social.icon === 'linkedin'"
+                    class="relative z-10 w-6 h-6 transition-transform duration-300 text-primary-2 group-hover:scale-110"
+                    fill="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"
+                    />
+                  </svg>
+
+                  <!-- WhatsApp Icon -->
+                  <svg
+                    v-else-if="social.icon === 'whatsapp'"
+                    class="relative z-10 w-6 h-6 transition-transform duration-300 text-primary-2 group-hover:scale-110"
+                    fill="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.49 3.488"
+                    />
+                  </svg>
+
                   <!-- Tooltip -->
                   <span
-                    class="absolute px-2 py-1 text-xs transition-opacity duration-300 transform -translate-x-1/2 rounded opacity-0 pointer-events-none -top-10 left-1/2 bg-primary-2 text-primary-1 group-hover:opacity-100 whitespace-nowrap"
+                    class="absolute px-3 py-1 text-xs font-medium transition-opacity duration-300 transform -translate-x-1/2 rounded-lg shadow-lg opacity-0 pointer-events-none -top-12 left-1/2 bg-primary-2 text-primary-1 group-hover:opacity-100 whitespace-nowrap"
                   >
                     {{ social.name }}
                   </span>
+
+                  <!-- Glow effect on hover -->
+                  <div
+                    class="absolute inset-0 transition-transform duration-300 scale-0 opacity-0 rounded-xl bg-primary-2/20 group-hover:scale-100 group-hover:opacity-100 blur-sm"
+                  ></div>
                 </a>
               </div>
             </div>
@@ -205,27 +246,6 @@
             </div>
           </div>
         </div>
-
-        <!-- Back to Top Button -->
-        <div
-          ref="backToTopRef"
-          class="flex justify-center mt-12 animate-line-ssr-safe"
-        >
-          <SharedButton
-            variant="outline"
-            size="md"
-            @click="scrollToTop"
-            class="group hover:shadow-xl hover:shadow-primary-2/25"
-          >
-            <SharedRenderSVG
-              iconName="arrow-up"
-              sizes="w-4 h-4"
-              :fill="isDark ? 'white' : 'black'"
-              class="transition-transform duration-300 group-hover:-translate-y-1"
-            />
-            Back to Top
-          </SharedButton>
-        </div>
       </div>
     </div>
   </footer>
@@ -236,12 +256,17 @@ const { isDark } = useToggleTheme()
 
 // Template refs for animations
 const footerRef = ref<HTMLElement | null>(null)
-const headerSectionRef = ref<HTMLElement | null>(null)
 const brandSectionRef = ref<HTMLElement | null>(null)
-const linksSectionRef = ref<HTMLElement | null>(null)
 const contactSectionRef = ref<HTMLElement | null>(null)
 const bottomSectionRef = ref<HTMLElement | null>(null)
-const backToTopRef = ref<HTMLElement | null>(null)
+
+// Animation configuration for SharedHeader
+const headerAnimationOptions = {
+  triggerStart: 'top 85%',
+  duration: 1.0,
+  staggerDelay: 0.2,
+  ease: 'back.out(1.2)',
+}
 
 // Current year for copyright
 const currentYear = new Date().getFullYear()
@@ -277,57 +302,92 @@ const socialLinks = [
   },
 ]
 
-// Scroll to top functionality
-const scrollToTop = () => {
-  window.scrollTo({
-    top: 0,
-    behavior: 'smooth',
-  })
-}
-
-// Enhanced footer animations
+// Enhanced footer animations with scroll triggers
 onMounted(() => {
-  if (process.client) {
-    const { animateOnScroll } = useAnimations()
+  if (!process.client) return
 
-    // Animate header first
-    animateOnScroll(headerSectionRef, 'fadeUp', {
-      start: 'top 85%',
-      duration: 1.0,
-      delay: 0,
+  // Wait for next tick to ensure DOM is ready
+  nextTick(() => {
+    const { $gsap, $ScrollTrigger } = useNuxtApp()
+
+    if (!$gsap || !$ScrollTrigger || !footerRef.value) {
+      console.warn('GSAP or ScrollTrigger not available, or footer ref not found')
+      return
+    }
+
+    // Debug: Log when footer animation setup starts
+    console.log('Setting up footer animations')
+
+    // Set initial states for all animated elements
+    const animatedElements = [
+      brandSectionRef.value,
+      contactSectionRef.value,
+      bottomSectionRef.value,
+    ].filter(Boolean)
+
+    if (animatedElements.length === 0) {
+      console.warn('No animated elements found in footer')
+      return
+    }
+
+    // Set initial hidden state
+    $gsap.set(animatedElements, {
+      opacity: 0,
+      y: 50,
+      willChange: 'transform, opacity',
     })
 
-    // Then animate content sections with stagger
-    animateOnScroll(brandSectionRef, 'fadeUp', {
-      start: 'top 85%',
-      duration: 0.8,
-      delay: 0.3,
+    // Create scroll trigger with better timing
+    const trigger = $ScrollTrigger.create({
+      trigger: footerRef.value,
+      start: 'top 60%', // Start when footer is more visible
+      end: 'bottom bottom',
+      once: true,
+      onEnter: () => {
+        console.log('Footer animation triggered!')
+        
+        // Create timeline for smoother coordination
+        const tl = $gsap.timeline()
+
+        // Animate brand section
+        tl.to(brandSectionRef.value, {
+          opacity: 1,
+          y: 0,
+          duration: 0.8,
+          ease: 'power2.out',
+        })
+
+        // Animate contact section
+        tl.to(contactSectionRef.value, {
+          opacity: 1,
+          y: 0,
+          duration: 0.8,
+          ease: 'power2.out',
+        }, '-=0.6')
+
+        // Animate bottom section
+        tl.to(bottomSectionRef.value, {
+          opacity: 1,
+          y: 0,
+          duration: 0.6,
+          ease: 'power2.out',
+          onComplete: () => {
+            // Clean up will-change for performance
+            animatedElements.forEach(el => {
+              if (el) el.style.willChange = 'auto'
+            })
+          }
+        }, '-=0.4')
+      }
     })
 
-    animateOnScroll(linksSectionRef, 'fadeUp', {
-      start: 'top 85%',
-      duration: 0.8,
-      delay: 0.5,
+    // Cleanup function
+    onUnmounted(() => {
+      if (trigger) {
+        trigger.kill()
+      }
     })
-
-    animateOnScroll(contactSectionRef, 'fadeUp', {
-      start: 'top 85%',
-      duration: 0.8,
-      delay: 0.7,
-    })
-
-    animateOnScroll(bottomSectionRef, 'fadeUp', {
-      start: 'top 85%',
-      duration: 0.6,
-      delay: 0.9,
-    })
-
-    animateOnScroll(backToTopRef, 'fadeUp', {
-      start: 'top 85%',
-      duration: 0.6,
-      delay: 1.1,
-    })
-  }
+  })
 })
 </script>
 
