@@ -397,13 +397,12 @@ export const useHeroAnimations = (
 
     const elements = getAnimationElements()
 
-    // Social icons hover effect with cleanup tracking
+    // Social icons hover effect with cleanup tracking - removed rotation
     if (elements.socialLinks.length) {
       elements.socialLinks.forEach(link => {
         const handleMouseEnter = () => {
           $gsap.to(link, {
             scale: 1.1,
-            rotation: 5,
             duration: 0.3,
             ease: 'power2.out',
           })
@@ -412,7 +411,6 @@ export const useHeroAnimations = (
         const handleMouseLeave = () => {
           $gsap.to(link, {
             scale: 1,
-            rotation: 0,
             duration: 0.3,
             ease: 'power2.out',
           })
