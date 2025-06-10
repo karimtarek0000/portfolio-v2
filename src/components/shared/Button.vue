@@ -28,14 +28,29 @@ withDefaults(defineProps<Props>(), {
 })
 
 const defaultClasses =
-  'relative capitalize inline-flex items-center justify-center gap-2 font-medium rounded-lg transition-all duration-300 ease-out   disabled:opacity-50 focus:ring-2 focus:ring-orange-300 focus:ring-offset-2 focus:ring-offset-transparent disabled:cursor-not-allowed disabled:pointer-events-none overflow-hidden focus:outline-none group cursor-pointer select-none '
+  'relative capitalize inline-flex items-center justify-center gap-2 font-medium transition-all duration-300 ease-out disabled:opacity-50 focus:ring-2 focus:ring-orange-300 focus:ring-offset-2 focus:ring-offset-transparent disabled:cursor-not-allowed disabled:pointer-events-none focus:outline-none group cursor-pointer select-none'
 
 const variantClasses: Record<NonNullable<Props['variant']>, string> = {
   primary:
-    'text-primary-1 bg-primary-2 hover:bg-opacity-90 hover:shadow-xl hover:shadow-primary-2/25',
+    'text-primary-1 bg-primary-2 hover:bg-opacity-90 hover:shadow-xl hover:shadow-primary-2/25 rounded-lg overflow-hidden',
 
-  outline:
-    'border-2 border-primary-2 dark:border-primary-3 hover:bg-primary-2 hover:text-primary-1 text-primary-2 bg-transparent hover:scale-[1.02] active:scale-[0.98] shadow-md hover:shadow-lg hover:shadow-primary-2/20 backdrop-blur-sm',
+  outline: [
+    'rounded-full px-6 py-2 sm:px-8 font-bold text-sm',
+    'border-[1.5px] border-gray-500 text-gray-300',
+    'bg-transparent backdrop-blur-md shadow-[0_2px_8px_rgba(0,0,0,0.1)]',
+    'tracking-[0.09em] overflow-hidden relative z-[1]',
+    'hover:border-gray-400 hover:text-white hover:scale-[1.065] hover:shadow-[0_4px_16px_rgba(0,0,0,0.2)]',
+    'dark:text-white dark:border-primary-2/50',
+    'before:absolute before:inset-0 before:opacity-50 before:pointer-events-none',
+    'before:transition-all before:duration-300 before:z-[2]',
+    'before:bg-gradient-to-r before:from-white/25 before:to-white/10',
+    'before:bg-[length:200%_200%] before:bg-[position:0%_50%]',
+    'hover:before:opacity-70 hover:before:bg-[position:100%_50%]',
+    'after:absolute after:top-0 after:w-[60%] after:h-full after:opacity-0',
+    'after:transition-all after:duration-300 after:z-[3] after:-left-[60%]',
+    'after:bg-gradient-to-r after:from-white/18 after:to-white/1 after:blur-[2px]',
+    'hover:after:opacity-100 hover:after:left-[110%]',
+  ].join(' '),
 }
 
 const sizeClasses: Record<NonNullable<Props['size']>, string> = {

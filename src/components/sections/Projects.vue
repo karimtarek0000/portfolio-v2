@@ -74,16 +74,18 @@
 
                 <footer class="projects__actions">
                   <!-- Visit button -->
-                  <a
+                  <SharedButton
+                    as="a"
+                    variant="outline"
+                    size="md"
                     :href="project.website"
                     target="_blank"
                     rel="noopener noreferrer"
-                    class="projects__link projects__link--secondary"
                     :aria-label="`Visit ${project.title} project (opens in new tab)`"
                   >
-                    <span class="projects__link-text">Visit</span>
+                    <span>Visit</span>
                     <svg
-                      class="projects__link-icon"
+                      class="w-5 h-5 inline-block align-middle transition-transform duration-300 drop-shadow-[0_1px_2px_rgba(0,0,0,0.1)] group-hover:translate-x-1 group-hover:scale-110"
                       fill="none"
                       stroke="currentColor"
                       stroke-width="2.5"
@@ -96,17 +98,23 @@
                         d="M5 12h14m-7-7l7 7-7 7"
                       />
                     </svg>
-                  </a>
+                  </SharedButton>
 
                   <!-- Source button -->
-                  <button
+                  <SharedButton
                     v-if="project.github"
-                    class="mx-3 projects__link projects__link--secondary"
-                    :aria-label="`View ${project.title} source code on GitHub`"
+                    as="a"
+                    :href="project.github"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    variant="outline"
+                    size="md"
+                    class="mx-3"
+                    :aria-label="`View ${project.title} source code on GitHub (opens in new tab)`"
                   >
-                    <span class="projects__link-text">Source</span>
+                    <span>Source</span>
                     <svg
-                      class="projects__link-icon"
+                      class="w-5 h-5 inline-block align-middle transition-transform duration-300 drop-shadow-[0_1px_2px_rgba(0,0,0,0.1)] group-hover:translate-x-1 group-hover:scale-110"
                       fill="none"
                       stroke="currentColor"
                       stroke-width="2.5"
@@ -119,41 +127,13 @@
                         d="M5 12h14m-7-7l7 7-7 7"
                       />
                     </svg>
-                  </button>
+                  </SharedButton>
                 </footer>
               </div>
             </article>
           </swiper-slide>
         </swiper-container>
       </div>
-
-      <template #fallback>
-        <div class="projects__slider-container">
-          <div class="projects__skeleton">
-            <div class="projects__skeleton-slide">
-              <div class="projects__skeleton-card">
-                <div class="projects__skeleton-image"></div>
-                <div class="projects__skeleton-content">
-                  <div class="projects__skeleton-title"></div>
-                  <div class="projects__skeleton-tags">
-                    <div class="projects__skeleton-tag"></div>
-                    <div class="projects__skeleton-tag"></div>
-                    <div class="projects__skeleton-tag"></div>
-                  </div>
-                  <div class="projects__skeleton-description">
-                    <div class="projects__skeleton-line"></div>
-                    <div class="projects__skeleton-line"></div>
-                    <div
-                      class="projects__skeleton-line projects__skeleton-line--short"
-                    ></div>
-                  </div>
-                  <div class="projects__skeleton-button"></div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </template>
     </ClientOnly>
   </section>
 </template>
@@ -330,88 +310,5 @@ const breakpoints = {
 
 .projects__actions {
   @apply flex items-center mt-5 gap-2;
-}
-
-.projects__link {
-  @apply rounded-full px-6 py-2 text-sm font-bold border-[1.5px] border-primary-2/30 shadow-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary-2 backdrop-blur-md bg-opacity-90 select-none relative overflow-hidden tracking-[0.09em] z-[1] text-white sm:px-8;
-}
-
-.dark .projects__link {
-  @apply text-white border-primary-2/50;
-  background: linear-gradient(
-    120deg,
-    rgba(var(--primary-2), 1) 0%,
-    rgba(var(--primary-3), 0.9) 40%,
-    rgba(var(--primary-2), 1) 100%
-  );
-  box-shadow: 0 4px 32px 0 rgba(var(--primary-2), 0.35),
-    0 1.5px 8px 0 rgba(var(--primary-3), 0.25);
-}
-
-.projects__link::before {
-  @apply absolute inset-0 opacity-50 pointer-events-none transition-all duration-300 z-[2];
-  content: '';
-  background: linear-gradient(
-    100deg,
-    rgba(255, 255, 255, 0.25) 0%,
-    rgba(255, 255, 255, 0.1) 100%
-  );
-  background-size: 200% 200%;
-  background-position: 0% 50%;
-}
-
-.projects__link::after {
-  @apply absolute top-0 w-[60%] h-full opacity-0 transition-all duration-300 z-[3] -left-[60%];
-  content: '';
-  background: linear-gradient(
-    120deg,
-    rgba(255, 255, 255, 0.18) 0%,
-    rgba(255, 255, 255, 0.01) 100%
-  );
-  filter: blur(2px);
-}
-
-.projects__link:hover::before,
-.projects__link:focus::before {
-  @apply opacity-70;
-  background-position: 100% 50%;
-}
-
-.projects__link:hover::after,
-.projects__link:focus::after {
-  @apply opacity-100 left-[110%];
-}
-
-.projects__link:hover,
-.projects__link:focus {
-  @apply scale-[1.065];
-  box-shadow: 0 8px 40px 0 rgba(var(--primary-2), 0.32),
-    0 2px 12px 0 rgba(var(--primary-3), 0.22),
-    0 0 16px 2px rgba(var(--primary-2), 0.18);
-}
-
-.projects__link-icon {
-  @apply w-5 h-5 inline-block align-middle transition-transform duration-300 drop-shadow-[0_1px_2px_rgba(0,0,0,0.1)];
-  color: inherit;
-  transition-timing-function: cubic-bezier(0.4, 2, 0.6, 1);
-}
-
-.projects__link:hover .projects__link-icon,
-.projects__link:focus .projects__link-icon {
-  @apply translate-x-1 scale-110;
-}
-
-.projects__link--secondary {
-  @apply bg-transparent border-gray-500 text-gray-300 hover:border-gray-400 hover:text-white scale-105 shadow-[0_2px_8px_rgba(0,0,0,0.1)];
-  background: transparent !important;
-}
-
-.projects__link--secondary:hover {
-  @apply shadow-[0_4px_16px_rgba(0,0,0,0.2)];
-}
-
-.projects__link:focus,
-.projects__tech-tag:focus {
-  @apply outline-none ring-2 ring-primary-2 ring-offset-2 ring-offset-gray-900;
 }
 </style>
