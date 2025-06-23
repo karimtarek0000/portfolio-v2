@@ -72,21 +72,31 @@ export const useServicesAnimations = (
       willChange: 'transform, opacity',
     })
 
-    // Create main scroll trigger for services section
-    const mainTrigger = $ScrollTrigger.create({
-      trigger: refs.servicesContainerRef.value,
-      start: triggerStart,
-      once: true,
-      onEnter: () => {
-        startServicesAnimations(serviceCards, {
-          duration,
-          ease,
-          staggerDelay,
-        })
-      },
-    })
+    // Create individual scroll triggers for each card
+    serviceCards.forEach((card, index) => {
+      const cardTrigger = $ScrollTrigger.create({
+        trigger: card,
+        start: triggerStart,
+        once: true,
+        onEnter: () => {
+          // Animate the individual card when it enters viewport
+          $gsap.to(card, {
+            opacity: 1,
+            y: 0,
+            scale: 1,
+            duration: duration,
+            ease: ease,
+            delay: index * 0.1, // Small stagger for natural feeling
+            onComplete: () => {
+              // Clean up will-change for performance
+              card.style.willChange = 'auto'
+            },
+          })
+        },
+      })
 
-    servicesScrollTriggers.push(mainTrigger)
+      servicesScrollTriggers.push(cardTrigger)
+    })
 
     // Add hover animations if enabled
     if (cardHoverEnabled) {
@@ -96,11 +106,13 @@ export const useServicesAnimations = (
 
   /**
    * Start services card animations with timeline coordination
+   * @deprecated - Now using individual ScrollTriggers for each card
    */
   const startServicesAnimations = (
     cards: HTMLElement[],
     config: { duration: number; ease: string; staggerDelay: number },
   ): void => {
+    // This method is kept for backward compatibility but is no longer used
     const timeline = $gsap.timeline()
 
     // Animate each service card with stagger
