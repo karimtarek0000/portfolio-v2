@@ -1,4 +1,5 @@
 import type { Ref } from 'vue'
+import { nextTick, onMounted, onUnmounted } from 'vue'
 import { type BaseAnimationOptions, SECTION_DEFAULTS } from './animation.config'
 
 // ============================================================================
@@ -17,13 +18,53 @@ interface ServicesAnimationConfig extends BaseAnimationOptions {
   cardHoverEnabled?: boolean
 }
 
+interface HoverElements {
+  icon?: HTMLElement | null
+  svg?: SVGElement | null
+  iconBg?: HTMLElement | null
+  techTags?: NodeListOf<HTMLElement>
+  title?: HTMLElement | null
+  bullets?: NodeListOf<HTMLElement>
+  overlay?: HTMLElement | null
+}
+
+// ============================================================================
+// CONSTANTS
+// ============================================================================
+
+const ANIMATION_DEFAULTS = {
+  TRIGGER_START: 'top 80%',
+  DURATION: 0.8,
+  EASE: 'power2.out',
+  STAGGER_DELAY: 0.1,
+  HOVER_DURATION: 0.4,
+  CARD_HOVER_SCALE: 1.03,
+  CARD_HOVER_Y: -12,
+  ICON_HOVER_SCALE: 1.2,
+  // Mobile optimizations
+  MOBILE_DURATION: 0.6,
+  MOBILE_STAGGER_DELAY: 0.08,
+  MOBILE_CARD_SCALE: 0.98,
+  MOBILE_Y_OFFSET: 30,
+} as const
+
+const SELECTORS = {
+  ICON: '.service-card__icon',
+  ICON_SVG: '.service-card__icon svg',
+  ICON_BG: '.service-card__icon-bg',
+  TECH_TAG: '.service-card__tech-tag',
+  TITLE: '.service-card__title',
+  FEATURE_BULLET: '.service-card__feature-bullet',
+  OVERLAY: '.service-card__overlay',
+} as const
+
 // ============================================================================
 // SERVICES ANIMATIONS COMPOSABLE
 // ============================================================================
 
 /**
- * Enhanced Services animations composable with GSAP encapsulation
- * Follows the project's established animation patterns
+ * Enhanced Services animations composable with optimized performance
+ * Follows the project's established animation patterns with improved efficiency
  */
 export const useServicesAnimations = (
   refs: ServicesAnimationRefs,
@@ -32,11 +73,35 @@ export const useServicesAnimations = (
   const { cleanup: baseCleanup } = useAnimations()
   const { $gsap, $ScrollTrigger } = useNuxtApp()
 
-  // Track ScrollTrigger instances for cleanup
+  // Track ScrollTrigger instances and hover handlers for cleanup
   const servicesScrollTriggers: ScrollTrigger[] = []
+  const hoverHandlers = new WeakMap<
+    HTMLElement,
+    { enter: () => void; leave: () => void }
+  >()
+
+  // Get device-optimized settings
+  const deviceSettings = getDeviceOptimizedSettings(options)
 
   /**
-   * Initialize all Services section animations
+   * Optimized element selection with caching
+   */
+  const getHoverElements = (card: HTMLElement): HoverElements => ({
+    icon: card.querySelector(SELECTORS.ICON) as HTMLElement | null,
+    svg: card.querySelector(SELECTORS.ICON_SVG) as SVGElement | null,
+    iconBg: card.querySelector(SELECTORS.ICON_BG) as HTMLElement | null,
+    techTags: card.querySelectorAll(
+      SELECTORS.TECH_TAG,
+    ) as NodeListOf<HTMLElement>,
+    title: card.querySelector(SELECTORS.TITLE) as HTMLElement | null,
+    bullets: card.querySelectorAll(
+      SELECTORS.FEATURE_BULLET,
+    ) as NodeListOf<HTMLElement>,
+    overlay: card.querySelector(SELECTORS.OVERLAY) as HTMLElement | null,
+  })
+
+  /**
+   * Initialize all Services section animations with performance optimizations
    */
   const initializeAnimations = () => {
     if (
@@ -49,377 +114,395 @@ export const useServicesAnimations = (
     }
 
     const {
-      triggerStart = 'top 80%',
-      duration = 0.8,
-      ease = 'power2.out',
-      staggerDelay = 0.15,
+      triggerStart = ANIMATION_DEFAULTS.TRIGGER_START,
+      duration = ANIMATION_DEFAULTS.DURATION,
+      ease = ANIMATION_DEFAULTS.EASE,
       cardHoverEnabled = true,
-    } = options
+      isMobile = false,
+    } = deviceSettings
 
     // Get valid service card elements
     const serviceCards = refs.serviceCardRefs.value.filter(Boolean)
 
     if (serviceCards.length === 0) {
-      console.warn('No service card elements found for animation')
+      console.warn('useServicesAnimations: No service card elements found')
       return
     }
 
-    // Set initial hidden state for cards
-    $gsap.set(serviceCards, {
-      opacity: 0,
-      y: 50,
-      scale: 0.95,
-      willChange: 'transform, opacity',
+    // Mobile-optimized initial state
+    const initialState = isMobile
+      ? {
+          opacity: 0,
+          y: ANIMATION_DEFAULTS.MOBILE_Y_OFFSET,
+          scale: ANIMATION_DEFAULTS.MOBILE_CARD_SCALE,
+          willChange: 'transform, opacity',
+        }
+      : {
+          opacity: 0,
+          y: 50,
+          scale: 0.95,
+          willChange: 'transform, opacity',
+        }
+
+    // Batch set initial state for better performance
+    $gsap.set(serviceCards, initialState)
+
+    // Create optimized scroll triggers with mobile considerations
+    serviceCards.forEach((card, index) => {
+      const cardTrigger = $ScrollTrigger.create({
+        trigger: card,
+        start: triggerStart,
+        once: true,
+        fastScrollEnd: isMobile, // Optimize for mobile scrolling
+        onEnter: () =>
+          animateCardEntry(card, {
+            duration,
+            ease,
+            delay:
+              index *
+              (deviceSettings.staggerDelay || ANIMATION_DEFAULTS.STAGGER_DELAY),
+            isMobile,
+          }),
+      })
+
+      servicesScrollTriggers.push(cardTrigger)
     })
 
-    // Create main scroll trigger for services section
-    const mainTrigger = $ScrollTrigger.create({
-      trigger: refs.servicesContainerRef.value,
-      start: triggerStart,
-      once: true,
-      onEnter: () => {
-        startServicesAnimations(serviceCards, {
-          duration,
-          ease,
-          staggerDelay,
-        })
-      },
-    })
-
-    servicesScrollTriggers.push(mainTrigger)
-
-    // Add hover animations if enabled
-    if (cardHoverEnabled) {
+    // Add hover animations only for non-mobile devices
+    if (cardHoverEnabled && !isMobile) {
       addCardHoverEffects(serviceCards)
     }
   }
 
   /**
-   * Start services card animations with timeline coordination
+   * Enhanced card entry animation with mobile optimizations
    */
-  const startServicesAnimations = (
-    cards: HTMLElement[],
-    config: { duration: number; ease: string; staggerDelay: number },
-  ): void => {
-    const timeline = $gsap.timeline()
-
-    // Animate each service card with stagger
-    cards.forEach((card, index) => {
-      timeline.to(
-        card,
-        {
+  const animateCardEntry = (
+    card: HTMLElement,
+    config: {
+      duration: number
+      ease: string
+      delay: number
+      isMobile?: boolean
+    },
+  ) => {
+    const animationProps = config.isMobile
+      ? {
           opacity: 1,
           y: 0,
           scale: 1,
           duration: config.duration,
           ease: config.ease,
-          onComplete: () => {
-            // Clean up will-change for performance
-            card.style.willChange = 'auto'
-          },
-        },
-        index * config.staggerDelay,
-      )
+          delay: config.delay,
+          force3D: true, // Hardware acceleration for mobile
+          transformOrigin: 'center center',
+        }
+      : {
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          duration: config.duration,
+          ease: config.ease,
+          delay: config.delay,
+        }
+
+    $gsap.to(card, {
+      ...animationProps,
+      onComplete: () => {
+        // Clean up will-change for performance
+        $gsap.set(card, { willChange: 'auto' })
+
+        // Remove transform origin after animation for mobile
+        if (config.isMobile) {
+          $gsap.set(card, { transformOrigin: '' })
+        }
+      },
     })
   }
 
   /**
-   * Add interactive hover effects to service cards
+   * Optimized hover enter animation
    */
-  const addCardHoverEffects = (cards: HTMLElement[]): void => {
-    cards.forEach(card => {
-      // Enhanced hover animation for service cards
-      const handleMouseEnter = () => {
-        // Main card animation with magnetic effect
-        $gsap.to(card, {
-          scale: 1.03,
-          y: -12,
-          duration: 0.4,
-          ease: 'power3.out',
+  const createHoverEnterAnimation = (
+    card: HTMLElement,
+    elements: HoverElements,
+  ) => {
+    return () => {
+      // Skip complex animations on mobile devices
+      if (deviceSettings.isMobile) return
+
+      // Kill any existing animations to prevent conflicts
+      const targets = [
+        card,
+        elements.icon,
+        elements.svg,
+        elements.iconBg,
+        elements.title,
+        elements.overlay,
+      ]
+      $gsap.killTweensOf(targets.filter(Boolean))
+
+      // Main card animation with magnetic effect
+      $gsap.to(card, {
+        scale: ANIMATION_DEFAULTS.CARD_HOVER_SCALE,
+        y: ANIMATION_DEFAULTS.CARD_HOVER_Y,
+        duration: ANIMATION_DEFAULTS.HOVER_DURATION,
+        ease: 'power3.out',
+      })
+
+      // Icon animations
+      if (elements.icon) {
+        $gsap.to(elements.icon, {
+          scale: ANIMATION_DEFAULTS.ICON_HOVER_SCALE,
+          rotation: 12,
+          y: -6,
+          duration: 0.5,
+          ease: 'back.out',
         })
-
-        // Enhanced icon animation - faster and more beautiful
-        const icon = card.querySelector('.service-card__icon')
-        if (icon) {
-          // Kill any existing animations first
-          $gsap.killTweensOf(icon)
-
-          // Main icon bounce with overshoot
-          $gsap.to(icon, {
-            scale: 1.2,
-            rotation: 12,
-            duration: 0.5,
-            ease: 'back.out(3)',
-          })
-
-          // Floating animation with slight oscillation
-          $gsap.to(icon, {
-            y: -6,
-            duration: 0.3,
-            ease: 'power2.out',
-            delay: 0.1,
-          })
-
-          // Add continuous gentle floating while hovered
-          $gsap.to(icon, {
-            y: -4,
-            duration: 2,
-            ease: 'power1.inOut',
-            repeat: -1,
-            yoyo: true,
-            delay: 0.4,
-          })
-
-          // Animate the SVG inside the icon for extra flair
-          const svg = icon.querySelector('svg')
-          if (svg) {
-            // Initial pop
-            $gsap.fromTo(
-              svg,
-              { scale: 0.9 },
-              {
-                scale: 1.15,
-                duration: 0.4,
-                ease: 'elastic.out(1.2, 0.4)',
-                delay: 0.2,
-              },
-            )
-
-            // Add a subtle rotation to the SVG
-            $gsap.to(svg, {
-              rotation: -5,
-              duration: 1.5,
-              ease: 'power1.inOut',
-              repeat: -1,
-              yoyo: true,
-              delay: 0.5,
-            })
-          }
-        }
-
-        // Enhanced background glow with multiple layers
-        const iconBg = card.querySelector('.service-card__icon-bg')
-        if (iconBg) {
-          // Main glow animation
-          $gsap.to(iconBg, {
-            opacity: 1,
-            scale: 2.2,
-            duration: 0.5,
-            ease: 'power2.out',
-          })
-
-          // Pulsing effect with varying intensity
-          $gsap.to(iconBg, {
-            scale: 2.4,
-            opacity: 0.8,
-            duration: 1.8,
-            ease: 'power2.inOut',
-            repeat: -1,
-            yoyo: true,
-            delay: 0.3,
-          })
-
-          // Add rotation to the glow for extra dynamism
-          $gsap.to(iconBg, {
-            rotation: 360,
-            duration: 8,
-            ease: 'none',
-            repeat: -1,
-            delay: 0.2,
-          })
-        }
-
-        // Enhanced sparkle effect to tech tags with wave animation
-        const techTags = card.querySelectorAll('.service-card__tech-tag')
-        if (techTags.length > 0) {
-          // Initial bounce
-          $gsap.to(techTags, {
-            scale: 1.08,
-            y: -2,
-            duration: 0.25,
-            ease: 'back.out(2)',
-            stagger: 0.04,
-            delay: 0.3,
-          })
-
-          // Continuous gentle wave effect
-          techTags.forEach((tag, index) => {
-            $gsap.to(tag, {
-              y: -1,
-              duration: 1.5 + index * 0.1,
-              ease: 'power1.inOut',
-              repeat: -1,
-              yoyo: true,
-              delay: 0.5 + index * 0.1,
-            })
-          })
-        }
-
-        // Add shimmer effect to the title
-        const title = card.querySelector('.service-card__title')
-        if (title) {
-          $gsap.to(title, {
-            scale: 1.02,
-            duration: 0.3,
-            ease: 'power2.out',
-            delay: 0.2,
-          })
-        }
-
-        // Add subtle scale to feature bullets
-        const bullets = card.querySelectorAll('.service-card__feature-bullet')
-        if (bullets.length > 0) {
-          $gsap.to(bullets, {
-            scale: 1.3,
-            duration: 0.3,
-            ease: 'back.out(2)',
-            stagger: 0.03,
-            delay: 0.4,
-          })
-        }
-
-        // Add card overlay glow effect
-        const overlay = card.querySelector('.service-card__overlay')
-        if (overlay) {
-          $gsap.to(overlay, {
-            opacity: 1,
-            duration: 0.4,
-            ease: 'power2.out',
-          })
-        }
       }
 
-      const handleMouseLeave = () => {
-        // Kill all ongoing animations for smooth reset
-        $gsap.killTweensOf([
-          card,
-          card.querySelector('.service-card__icon'),
-          card.querySelector('.service-card__icon svg'),
-          card.querySelector('.service-card__icon-bg'),
-          card.querySelectorAll('.service-card__tech-tag'),
-          card.querySelector('.service-card__title'),
-          card.querySelectorAll('.service-card__feature-bullet'),
-          card.querySelector('.service-card__overlay'),
-        ])
+      // SVG enhancement
+      if (elements.svg) {
+        $gsap.to(elements.svg, {
+          scale: 1.15,
+          rotation: -5,
+          duration: 0.4,
+          ease: 'elastic.out',
+        })
+      }
 
-        // Reset main card with bounce
-        $gsap.to(card, {
+      // Background glow
+      if (elements.iconBg) {
+        $gsap.to(elements.iconBg, {
+          opacity: 1,
+          scale: 2.2,
+          duration: 0.5,
+          ease: 'power2.out',
+        })
+      }
+
+      // Tech tags animation
+      if (elements.techTags?.length) {
+        $gsap.to(elements.techTags, {
+          scale: 1.08,
+          y: -2,
+          duration: 0.25,
+          ease: 'back.out',
+          stagger: 0.04,
+        })
+      }
+
+      // Title enhancement
+      if (elements.title) {
+        $gsap.to(elements.title, {
+          scale: 1.02,
+          duration: 0.3,
+          ease: 'power2.out',
+        })
+      }
+
+      // Feature bullets
+      if (elements.bullets?.length) {
+        $gsap.to(elements.bullets, {
+          scale: 1.3,
+          duration: 0.3,
+          ease: 'back.out',
+          stagger: 0.03,
+        })
+      }
+
+      // Overlay effect
+      if (elements.overlay) {
+        $gsap.to(elements.overlay, {
+          opacity: 1,
+          duration: 0.4,
+          ease: 'power2.out',
+        })
+      }
+    }
+  }
+
+  /**
+   * Optimized hover leave animation
+   */
+  const createHoverLeaveAnimation = (
+    card: HTMLElement,
+    elements: HoverElements,
+  ) => {
+    return () => {
+      // Skip complex animations on mobile devices
+      if (deviceSettings.isMobile) return
+
+      // Kill all ongoing animations for smooth reset
+      const allTargets = [
+        card,
+        elements.icon,
+        elements.svg,
+        elements.iconBg,
+        elements.techTags,
+        elements.title,
+        elements.bullets,
+        elements.overlay,
+      ].filter(Boolean)
+
+      $gsap.killTweensOf(allTargets)
+
+      // Batch reset animations for better performance
+      const resetTimeline = $gsap.timeline()
+
+      resetTimeline.to(
+        card,
+        {
           scale: 1,
           y: 0,
           duration: 0.4,
           ease: 'back.out(1.2)',
-        })
+        },
+        0,
+      )
 
-        // Reset icon with satisfying spring animation
-        const icon = card.querySelector('.service-card__icon')
-        if (icon) {
-          $gsap.to(icon, {
+      if (elements.icon) {
+        resetTimeline.to(
+          elements.icon,
+          {
             scale: 1,
             rotation: 0,
             y: 0,
             duration: 0.5,
             ease: 'back.out(1.8)',
-          })
+          },
+          0,
+        )
+      }
 
-          // Reset SVG with elastic ease
-          const svg = icon.querySelector('svg')
-          if (svg) {
-            $gsap.to(svg, {
-              scale: 1,
-              rotation: 0,
-              duration: 0.4,
-              ease: 'elastic.out(1, 0.6)',
-            })
-          }
-        }
-
-        // Reset background glow smoothly
-        const iconBg = card.querySelector('.service-card__icon-bg')
-        if (iconBg) {
-          $gsap.to(iconBg, {
-            opacity: 0,
+      if (elements.svg) {
+        resetTimeline.to(
+          elements.svg,
+          {
             scale: 1,
             rotation: 0,
+            duration: 0.4,
+            ease: 'elastic.out(1, 0.6)',
+          },
+          0,
+        )
+      }
+
+      if (elements.iconBg) {
+        resetTimeline.to(
+          elements.iconBg,
+          {
+            opacity: 0,
+            scale: 1,
             duration: 0.5,
             ease: 'power2.out',
-          })
-        }
+          },
+          0,
+        )
+      }
 
-        // Reset tech tags with staggered animation
-        const techTags = card.querySelectorAll('.service-card__tech-tag')
-        if (techTags.length > 0) {
-          $gsap.to(techTags, {
+      if (elements.techTags?.length) {
+        resetTimeline.to(
+          elements.techTags,
+          {
             scale: 1,
             y: 0,
             duration: 0.3,
             ease: 'back.out(1.5)',
             stagger: 0.02,
-          })
-        }
+          },
+          0,
+        )
+      }
 
-        // Reset title
-        const title = card.querySelector('.service-card__title')
-        if (title) {
-          $gsap.to(title, {
+      if (elements.title) {
+        resetTimeline.to(
+          elements.title,
+          {
             scale: 1,
             duration: 0.3,
             ease: 'power2.out',
-          })
-        }
+          },
+          0,
+        )
+      }
 
-        // Reset feature bullets
-        const bullets = card.querySelectorAll('.service-card__feature-bullet')
-        if (bullets.length > 0) {
-          $gsap.to(bullets, {
+      if (elements.bullets?.length) {
+        resetTimeline.to(
+          elements.bullets,
+          {
             scale: 1,
             duration: 0.3,
             ease: 'back.out(1.5)',
             stagger: 0.02,
-          })
-        }
+          },
+          0,
+        )
+      }
 
-        // Reset overlay
-        const overlay = card.querySelector('.service-card__overlay')
-        if (overlay) {
-          $gsap.to(overlay, {
+      if (elements.overlay) {
+        resetTimeline.to(
+          elements.overlay,
+          {
             opacity: 0,
             duration: 0.3,
             ease: 'power2.out',
-          })
-        }
+          },
+          0,
+        )
       }
+    }
+  }
 
-      // Add event listeners
-      card.addEventListener('mouseenter', handleMouseEnter)
-      card.addEventListener('mouseleave', handleMouseLeave)
+  /**
+   * Add optimized interactive hover effects to service cards
+   */
+  const addCardHoverEffects = (cards: HTMLElement[]): void => {
+    // Only add hover effects for non-mobile devices
+    if (deviceSettings.isMobile) return
 
-      // Store cleanup functions for later removal
-      card.setAttribute('data-hover-listeners', 'true')
+    cards.forEach(card => {
+      const elements = getHoverElements(card)
+
+      const handleMouseEnter = createHoverEnterAnimation(card, elements)
+      const handleMouseLeave = createHoverLeaveAnimation(card, elements)
+
+      // Store handlers for cleanup
+      hoverHandlers.set(card, {
+        enter: handleMouseEnter,
+        leave: handleMouseLeave,
+      })
+
+      // Add event listeners with passive options for better performance
+      card.addEventListener('mouseenter', handleMouseEnter, { passive: true })
+      card.addEventListener('mouseleave', handleMouseLeave, { passive: true })
     })
   }
 
   /**
-   * Remove hover effect listeners
+   * Optimized hover effect cleanup
    */
   const removeCardHoverEffects = (cards: HTMLElement[]): void => {
     cards.forEach(card => {
-      if (card.getAttribute('data-hover-listeners')) {
-        // Clone and replace to remove all event listeners
-        const newCard = card.cloneNode(true) as HTMLElement
-        card.parentNode?.replaceChild(newCard, card)
+      const handlers = hoverHandlers.get(card)
+      if (handlers) {
+        card.removeEventListener('mouseenter', handlers.enter)
+        card.removeEventListener('mouseleave', handlers.leave)
+        hoverHandlers.delete(card)
       }
+
+      // Kill any ongoing animations
+      $gsap.killTweensOf(card)
     })
   }
 
   /**
-   * Enhanced cleanup for Services-specific ScrollTriggers and interactions
+   * Enhanced cleanup with better memory management
    */
   const cleanup = (): void => {
     // Clean up ScrollTriggers
     servicesScrollTriggers.forEach(trigger => {
-      if (trigger && typeof trigger.kill === 'function') {
-        trigger.kill()
-      }
+      trigger?.kill?.()
     })
     servicesScrollTriggers.length = 0
 
@@ -428,6 +511,8 @@ export const useServicesAnimations = (
     if (serviceCards.length > 0) {
       removeCardHoverEffects(serviceCards)
     }
+
+    // Note: WeakMap doesn't need manual clearing as it allows garbage collection
 
     // Call base cleanup
     baseCleanup()
@@ -438,7 +523,18 @@ export const useServicesAnimations = (
    */
   const refresh = (): void => {
     if (import.meta.client && $ScrollTrigger) {
+      // Update mobile detection on refresh (for orientation changes)
+      const updatedSettings = getDeviceOptimizedSettings(options)
+      Object.assign(deviceSettings, updatedSettings)
+
       $ScrollTrigger.refresh()
+    }
+  }
+
+  // Handle orientation change for mobile optimization
+  const handleOrientationChange = () => {
+    if (import.meta.client && deviceSettings.isMobile) {
+      setTimeout(refresh, 100) // Small delay for orientation to settle
     }
   }
 
@@ -448,14 +544,21 @@ export const useServicesAnimations = (
 
   onMounted(() => {
     if (import.meta.client) {
-      // Wait for next tick to ensure DOM is ready
-      nextTick(() => {
-        initializeAnimations()
-      })
+      nextTick(initializeAnimations)
+
+      // Listen for orientation changes on mobile
+      if (deviceSettings.isMobile) {
+        window.addEventListener('orientationchange', handleOrientationChange, {
+          passive: true,
+        })
+      }
     }
   })
 
   onUnmounted(() => {
+    if (import.meta.client && deviceSettings.isMobile) {
+      window.removeEventListener('orientationchange', handleOrientationChange)
+    }
     cleanup()
   })
 
@@ -465,5 +568,42 @@ export const useServicesAnimations = (
     refresh,
     addCardHoverEffects,
     removeCardHoverEffects,
+    // Expose mobile detection for external use
+    isMobile: () => deviceSettings.isMobile,
+  }
+}
+
+/**
+ * Detect mobile devices for performance optimization
+ */
+const isMobileDevice = (): boolean => {
+  if (!import.meta.client) return false
+
+  return (
+    /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+      navigator.userAgent,
+    ) ||
+    'ontouchstart' in window ||
+    navigator.maxTouchPoints > 0 ||
+    window.innerWidth <= 768
+  )
+}
+
+/**
+ * Get optimized animation settings for current device
+ */
+const getDeviceOptimizedSettings = (baseOptions: ServicesAnimationConfig) => {
+  const isMobile = isMobileDevice()
+
+  return {
+    ...baseOptions,
+    duration: isMobile
+      ? ANIMATION_DEFAULTS.MOBILE_DURATION
+      : baseOptions.duration || ANIMATION_DEFAULTS.DURATION,
+    staggerDelay: isMobile
+      ? ANIMATION_DEFAULTS.MOBILE_STAGGER_DELAY
+      : baseOptions.staggerDelay || ANIMATION_DEFAULTS.STAGGER_DELAY,
+    cardHoverEnabled: isMobile ? false : baseOptions.cardHoverEnabled !== false,
+    isMobile,
   }
 }
