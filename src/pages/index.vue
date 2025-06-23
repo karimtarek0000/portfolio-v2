@@ -3,6 +3,7 @@
     <SectionsSkills />
     <SectionsAbout />
     <SectionsExperience />
+    <SectionsServices />
   </main>
   <SectionsProjects />
 </template>
