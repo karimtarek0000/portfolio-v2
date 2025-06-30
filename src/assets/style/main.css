@@ -4,7 +4,7 @@
 
 @layer base {
   html {
-    @apply box-border overflow-x-hidden text-[12px] md:text-[16px];
+    @apply box-border overflow-x-hidden text-[10px] md:text-[16px];
   }
 
   body {
