@@ -48,12 +48,7 @@
       </div>
 
       <!-- DOWNLOAD CV -->
-      <SharedButton
-        ref="downloadButtonRef"
-        as="button"
-        @click="handleDownload"
-        class="hero__download-button"
-      >
+      <SharedButton as="button" @click="handleDownload">
         Download CV
         <ClientOnly>
           <SharedRenderSVG
