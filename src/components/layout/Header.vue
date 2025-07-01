@@ -48,21 +48,21 @@
       </div>
 
       <!-- DOWNLOAD CV -->
-      <ClientOnly>
-        <SharedButton
-          as="button"
-          class="hero__download-button"
-          ref="downloadButtonRef"
-          @click="handleDownload"
-        >
-          Download CV
+      <SharedButton
+        as="button"
+        class="bg-primary-2 hero__download-button dark:bg-primary-2"
+        ref="downloadButtonRef"
+        @click="handleDownload"
+      >
+        Download CV
+        <ClientOnly>
           <SharedRenderSVG
             iconName="downloadcv"
             sizes="h-[2rem] w-[2rem]"
             :fill="isDark ? 'black' : 'white'"
           />
-        </SharedButton>
-      </ClientOnly>
+        </ClientOnly>
+      </SharedButton>
     </div>
   </header>
 </template>
@@ -128,6 +128,6 @@ function handleDownload() {
 
 /* Hide download button initially to prevent flash before animation */
 .hero__download-button {
-  @apply opacity-0 translate-y-0 mt-10 px-6 py-3 bg-primary-2;
+  @apply opacity-0 translate-y-0 mt-10;
 }
 </style>
