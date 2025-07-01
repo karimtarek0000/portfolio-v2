@@ -7,7 +7,7 @@
       <LayoutNavbar />
     </ClientOnly>
 
-    <div class="mt-16 hero">
+    <div class="mt-8 hero">
       <!-- ANIMATIONS -->
       <div
         ref="lottieContainerRef"
