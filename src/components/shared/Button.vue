@@ -56,7 +56,7 @@ const variantClasses: Record<NonNullable<Props['variant']>, string> = {
 const sizeClasses: Record<NonNullable<Props['size']>, string> = {
   sm: 'px-3 py-1.5 text-sm min-h-[32px] text-xs',
   md: 'px-4 py-2 text-sm min-h-[36px]',
-  lg: 'px-6 py-3 text-base',
+  lg: 'px-6 py-3',
   xl: 'px-8 py-4 text-lg min-h-[52px] font-semibold',
 }
 </script>
