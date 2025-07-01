@@ -272,7 +272,7 @@ useServicesAnimations(
   @apply bg-white dark:bg-[#2A2A2A] backdrop-blur-md;
   @apply border border-white/20 dark:border-white/10;
   @apply shadow-lg shadow-black/10 dark:shadow-black/30;
-  @apply hover:bg-white/10 dark:hover:bg-white/10;
+  @apply hover:bg-white/10 md:dark:hover:bg-white/10;
   @apply hover:border-white/30 dark:hover:border-white/20;
   @apply hover:shadow-xl hover:shadow-black/20 dark:hover:shadow-black/40;
 
