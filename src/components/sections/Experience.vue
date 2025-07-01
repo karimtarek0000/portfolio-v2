@@ -297,8 +297,8 @@ onBeforeUnmount(() => {
 
 .timeline__content {
   @apply w-full max-w-lg px-5 py-4 transition-all duration-300 border-l-2 border-gray-700/50 
-         rounded-r-md backdrop-blur-sm group-hover:border-primary-2 group-hover:translate-x-1 
-         dark:group-hover:bg-gray-800/30 group-hover:bg-gray-800/10;
+         rounded-r-md  group-hover:border-primary-2 group-hover:translate-x-1 
+         dark:group-hover:bg-[#2A2A2A] group-hover:bg-gray-800/10;
   /* Enhanced animation support */
   transition: transform 0.3s ease-out, opacity 0.3s ease-out,
     border-color 0.3s ease-out;
