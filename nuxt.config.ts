@@ -7,7 +7,14 @@ export default defineNuxtConfig({
     head: {
       charset: 'utf-8',
       viewport: 'width=device-width, initial-scale=1, maximum-scale=1',
-      title: 'karim tarek',
+      meta: [
+        {
+          name: 'description',
+          content:
+            'Karim Tarek - Frontend Software Engineer. Explore my portfolio showcasing web development projects, technical skills, and professional experience.',
+        },
+      ],
+      title: 'karim tarek - Frontend Engineer',
       link: [
         {
           rel: 'preload',
