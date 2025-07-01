@@ -194,7 +194,7 @@ onBeforeUnmount(() => {
       />
     </div>
 
-    <div class="timeline">
+    <div class="mx-3 md:mx-0 timeline">
       <div
         v-for="(item, index) in experience"
         :key="createExperienceKey(item, index)"

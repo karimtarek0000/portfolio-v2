@@ -1,8 +1,5 @@
 <template>
-  <header
-    ref="heroContainerRef"
-    class="overflow-hidden layout-container lg:h-dvh"
-  >
+  <header ref="heroContainerRef" class="overflow-hidden layout-container h-dvh">
     <!-- ------------------ -->
     <!-- ------NAVBAR------ -->
     <!-- ------------------ -->
@@ -33,7 +30,7 @@
 
       <!-- TITLE -->
       <h1 ref="titleRef" class="hero__title">
-        <span class="graident">
+        <span class="text-[3rem] md:text-lg graident">
           <span class="text-[#FFC948]">i'm,</span> karim tarek
         </span>
         <span class="graident text-md text-nowrap"
