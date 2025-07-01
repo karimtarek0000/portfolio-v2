@@ -55,11 +55,13 @@
         class="hero__download-button"
       >
         Download CV
-        <SharedRenderSVG
-          iconName="downloadcv"
-          sizes="h-[2rem] w-[2rem]"
-          :fill="isDark ? 'black' : 'white'"
-        />
+        <ClientOnly>
+          <SharedRenderSVG
+            iconName="downloadcv"
+            sizes="h-[2rem] w-[2rem]"
+            :fill="isDark ? 'black' : 'white'"
+          />
+        </ClientOnly>
       </SharedButton>
     </div>
   </header>
@@ -126,6 +128,6 @@ function handleDownload() {
 
 /* Hide download button initially to prevent flash before animation */
 .hero__download-button {
-  @apply opacity-0 translate-y-[60px] flex items-center mt-10 gap-x-2;
+  @apply opacity-0 translate-y-[60px] mt-10;
 }
 </style>
