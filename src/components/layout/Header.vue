@@ -55,13 +55,11 @@
         class="hero__download-button"
       >
         Download CV
-        <ClientOnly>
-          <SharedRenderSVG
-            iconName="downloadcv"
-            sizes="h-[2rem] w-[2rem]"
-            :fill="isDark ? 'black' : 'white'"
-          />
-        </ClientOnly>
+        <SharedRenderSVG
+          iconName="downloadcv"
+          sizes="h-[2rem] w-[2rem]"
+          :fill="isDark ? 'black' : 'white'"
+        />
       </SharedButton>
     </div>
   </header>
