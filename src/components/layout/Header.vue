@@ -3,7 +3,9 @@
     <!-- ------------------ -->
     <!-- ------NAVBAR------ -->
     <!-- ------------------ -->
-    <LayoutNavbar />
+    <ClientOnly>
+      <LayoutNavbar />
+    </ClientOnly>
 
     <div class="hero">
       <!-- ANIMATIONS -->
@@ -40,23 +42,27 @@
 
       <!-- SOCIAL ICONS -->
       <div ref="socialIconsRef" class="flex justify-center mt-5 gap-x-5">
-        <SharedSocialLinks type="header" />
+        <ClientOnly>
+          <SharedSocialLinks type="header" />
+        </ClientOnly>
       </div>
 
       <!-- DOWNLOAD CV -->
-      <SharedButton
-        ref="downloadButtonRef"
-        as="button"
-        @click="handleDownload"
-        class="hero__download-button"
-      >
-        Download CV
-        <SharedRenderSVG
-          iconName="downloadcv"
-          sizes="h-[2rem] w-[2rem]"
-          :fill="isDark ? 'black' : 'white'"
-        />
-      </SharedButton>
+      <ClientOnly>
+        <SharedButton
+          ref="downloadButtonRef"
+          as="button"
+          @click="handleDownload"
+          class="hero__download-button"
+        >
+          Download CV
+          <SharedRenderSVG
+            iconName="downloadcv"
+            sizes="h-[2rem] w-[2rem]"
+            :fill="isDark ? 'black' : 'white'"
+          />
+        </SharedButton>
+      </ClientOnly>
     </div>
   </header>
 </template>
