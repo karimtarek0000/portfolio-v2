@@ -122,7 +122,9 @@
 
             <!-- Social Links -->
             <div class="mx-auto space-y-3 w-fit lg:w-full">
-              <SharedSocialLinks />
+              <ClientOnly>
+                <SharedSocialLinks />
+              </ClientOnly>
             </div>
           </div>
         </div>
