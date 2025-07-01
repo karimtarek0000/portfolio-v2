@@ -51,33 +51,6 @@
     will-change: auto;
   }
 
-  /* Safari mobile fixes for GSAP animations */
-  [data-gsap-safari-fix='true'] {
-    -webkit-transform: translateZ(0);
-    transform: translateZ(0);
-    -webkit-backface-visibility: hidden;
-    backface-visibility: hidden;
-    -webkit-perspective: 1000px;
-    perspective: 1000px;
-  }
-
-  /* Ensure button backgrounds are maintained during animations on Safari */
-  .hero__download-button {
-    -webkit-transform: translateZ(0);
-    transform: translateZ(0);
-    -webkit-backface-visibility: hidden;
-    backface-visibility: hidden;
-  }
-
-  /* Force hardware acceleration for better Safari performance */
-  @supports (-webkit-appearance: none) {
-    .hero__download-button {
-      -webkit-transform: translate3d(0, 0, 0);
-      transform: translate3d(0, 0, 0);
-      -webkit-font-smoothing: antialiased;
-    }
-  }
-
   /* Animation initial states - for preventing layout shift */
   .animate-hidden {
     opacity: 0;

@@ -216,27 +216,7 @@ export const useHeroAnimations = (
           y: isReducedMotion ? 0 : 60,
           transformOrigin: '50% 50%',
           willChange: 'transform, opacity',
-          // Safari fix: Force background properties to be maintained during animation
-          force3D: true,
-          backfaceVisibility: 'hidden',
-          perspective: 1000,
         })
-
-        // Additional Safari mobile fix for pre-rendered content
-        if (elements.button instanceof HTMLElement) {
-          // Instead of forcing background colors, just ensure proper rendering context
-          elements.button.setAttribute('data-gsap-safari-fix', 'true')
-
-          // Use a more targeted approach - only set transform properties for Safari
-          const isSafari = /^((?!chrome|android).)*safari/i.test(
-            navigator.userAgent,
-          )
-          if (isSafari) {
-            // Don't force background colors - let CSS handle them
-            elements.button.style.transform =
-              elements.button.style.transform || 'translateZ(0)'
-          }
-        }
       })
     }
 
@@ -318,23 +298,6 @@ export const useHeroAnimations = (
             y: 0,
             duration: 0.48,
             ease: 'power3.out',
-            // Safari mobile fixes for background rendering during animation
-            force3D: true,
-            transformPerspective: 1000,
-            onStart: () => {
-              // Ensure background is visible during animation on Safari
-              if (elements.button instanceof HTMLElement) {
-                elements.button.style.transform =
-                  elements.button.style.transform || 'translateZ(0)'
-              }
-            },
-            onComplete: () => {
-              // Clean up transform optimizations after animation
-              if (elements.button instanceof HTMLElement) {
-                elements.button.style.backfaceVisibility = ''
-                elements.button.style.perspective = ''
-              }
-            },
           },
           0.6,
         )

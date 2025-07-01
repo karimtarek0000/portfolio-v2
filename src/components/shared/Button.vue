@@ -5,7 +5,6 @@
       mergeClasses(defaultClasses, variantClasses[variant], sizeClasses[size])
     "
     :disabled="disabled"
-    :style="safariBackgroundFix"
   >
     <slot />
   </Component>
@@ -26,52 +25,6 @@ withDefaults(defineProps<Props>(), {
   size: 'lg',
   disabled: false,
   loading: false,
-})
-
-// Safari background fix for pre-rendered content
-const safariBackgroundFix = computed(() => {
-  // Only apply on client-side to avoid hydration issues
-  if (!import.meta.client) return {}
-
-  // Detect Safari browser
-  const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent)
-
-  if (isSafari) {
-    return {
-      // Force hardware acceleration and background persistence
-      transform: 'translateZ(0)',
-      backfaceVisibility: 'hidden',
-      WebkitBackfaceVisibility: 'hidden',
-      WebkitTransform: 'translateZ(0)',
-      // Ensure background colors are properly rendered
-      WebkitFontSmoothing: 'antialiased',
-      // Remove any forced background colors to allow theme changes
-      backgroundColor: '',
-      backgroundImage: '',
-    }
-  }
-
-  return {}
-})
-
-// Watch for theme changes and update Safari-fixed elements
-const { isDark } = useToggleTheme()
-watch(isDark, () => {
-  if (import.meta.client) {
-    // Force re-computation of styles when theme changes
-    nextTick(() => {
-      // Remove any forced background styles that might interfere with theme
-      const safariElements = document.querySelectorAll(
-        '[data-gsap-safari-fix="true"]',
-      )
-      safariElements.forEach((element: Element) => {
-        if (element instanceof HTMLElement) {
-          element.style.removeProperty('background-color')
-          element.style.removeProperty('background-image')
-        }
-      })
-    })
-  }
 })
 
 const defaultClasses =
