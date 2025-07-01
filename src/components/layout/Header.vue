@@ -128,6 +128,6 @@ function handleDownload() {
 
 /* Hide download button initially to prevent flash before animation */
 .hero__download-button {
-  @apply opacity-0 translate-y-0 mt-10;
+  @apply opacity-0 translate-y-0 mt-10 px-6 py-3;
 }
 </style>
