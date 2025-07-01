@@ -47,7 +47,7 @@ const { headerRef } = useHeaderAnimations(props.animationOptions)
 }
 
 .header__subtitle {
-  @apply text-sm mb-10;
+  @apply text-sm mb-10 text-center px-2;
   /* Ensure smooth transitions for animations */
   transition: transform 0.3s ease-out, opacity 0.3s ease-out;
 }

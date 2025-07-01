@@ -143,7 +143,7 @@ useServicesAnimations(
 
     <!-- Services Grid -->
     <div ref="servicesContainerRef" class="max-w-6xl px-5 mx-auto mt-12">
-      <div class="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-2">
+      <div class="grid grid-cols-1 gap-8 lg:grid-cols-2">
         <div
           v-for="(service, index) in services"
           :key="service.id"

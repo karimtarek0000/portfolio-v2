@@ -32,30 +32,16 @@
             class="space-y-6 lg:col-span-6 animate-line-ssr-safe"
           >
             <div class="space-y-4">
-              <h3 class="text-sm font-bold graident">Karim Tarek</h3>
-              <p class="max-w-md text-sm leading-relaxed text-primary-3">
+              <h3 class="text-sm font-bold text-center lg:text-start graident">
+                Karim Tarek
+              </h3>
+              <p
+                class="text-sm leading-relaxed text-center lg:text-start lg:max-w-md text-primary-3"
+              >
                 Frontend Software Engineer passionate about creating exceptional
                 user experiences with modern web technologies. Always eager to
                 take on new challenges and learn cutting-edge tools.
               </p>
-            </div>
-
-            <!-- Skills/Tech Stack Preview -->
-            <div class="space-y-3">
-              <h4
-                class="text-sm font-semibold tracking-wider uppercase text-primary-2"
-              >
-                Tech Stack
-              </h4>
-              <div class="flex flex-wrap gap-2">
-                <span
-                  v-for="tech in techStack"
-                  :key="tech"
-                  class="px-3 py-1 text-xs font-medium transition-colors duration-300 border rounded-full bg-primary-2/10 text-primary-2 border-primary-2/20 hover:bg-primary-2/20"
-                >
-                  {{ tech }}
-                </span>
-              </div>
             </div>
           </div>
 
@@ -64,14 +50,16 @@
             ref="contactSectionRef"
             class="space-y-6 lg:col-span-6 animate-line-ssr-safe"
           >
-            <h4 class="mb-4 text-sm font-semibold text-primary-2">
+            <h4
+              class="mb-4 text-sm font-semibold text-center lg:text-start text-primary-2"
+            >
               Get In Touch
             </h4>
 
             <!-- Contact Info Cards -->
-            <div class="space-y-4">
+            <div class="mx-auto space-y-4 w-fit lg:w-full">
               <a
-                href="mailto:karim@example.com"
+                href="mailto:karimtarekabdelaziz@gmail.com"
                 class="group flex items-center gap-4 p-4 rounded-xl bg-primary-2/5 hover:bg-primary-2/10 transition-all duration-300 hover:scale-[1.02] hover:shadow-lg border border-primary-2/10"
               >
                 <div
@@ -101,7 +89,7 @@
               </a>
 
               <a
-                href="tel:+1234567890"
+                href="tel:+01022659933"
                 class="group flex items-center gap-4 p-4 rounded-xl bg-primary-2/5 hover:bg-primary-2/10 transition-all duration-300 hover:scale-[1.02] hover:shadow-lg border border-primary-2/10"
               >
                 <div
@@ -133,7 +121,7 @@
             </div>
 
             <!-- Social Links -->
-            <div class="space-y-3">
+            <div class="mx-auto space-y-3 w-fit lg:w-full">
               <SharedSocialLinks />
             </div>
           </div>

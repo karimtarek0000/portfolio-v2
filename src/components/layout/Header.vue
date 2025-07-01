@@ -1,8 +1,5 @@
 <template>
-  <header
-    ref="heroContainerRef"
-    class="overflow-hidden layout-container lg:h-dvh"
-  >
+  <header ref="heroContainerRef" class="overflow-hidden layout-container h-dvh">
     <!-- ------------------ -->
     <!-- ------NAVBAR------ -->
     <!-- ------------------ -->
@@ -12,17 +9,18 @@
       <!-- ANIMATIONS -->
       <div
         ref="lottieContainerRef"
-        class="h-[400px] w-[400px] mt-32 *:shrink-0 flex flex-col justify-center items-center"
+        class="h-[200px] w-[200px] md:h-[400px] md:w-[400px] mt-32 *:shrink-0 flex flex-col justify-center items-center"
       >
         <client-only>
           <Vue3Lottie
-            style="transform: translate3d(0px, 130px, 0px)"
+            class="translate-y-[10px] md:translate-y-[130px]"
+            size="200"
             animationLink="https://lottie.host/707ad562-0d36-49dc-bc46-b46fa8ce1896/fGbyNuf4y4.json"
           />
         </client-only>
         <client-only>
           <Vue3Lottie
-            style="transform: translate3d(0px, -70px, 0px)"
+            class="-translate-y-[50px] md:-translate-y-[70px]"
             animationLink="https://lottie.host/eca2fac4-6448-4276-8f61-783f40d33d66/n7MP5EFvxv.json"
             :loop="false"
             :speed="2"
@@ -32,7 +30,7 @@
 
       <!-- TITLE -->
       <h1 ref="titleRef" class="hero__title">
-        <span class="graident">
+        <span class="text-[3rem] md:text-lg graident">
           <span class="text-[#FFC948]">i'm,</span> karim tarek
         </span>
         <span class="graident text-md text-nowrap"

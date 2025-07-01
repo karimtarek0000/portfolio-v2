@@ -18,7 +18,7 @@ export default {
     },
     fontSize: {
       lg: '4rem',
-      md: '2.7rem',
+      md: '2.2rem',
       sm: ['1.25rem', '1.875rem'],
     },
     extend: {
@@ -41,7 +41,7 @@ export default {
       colorThemes: themes,
     }),
     // Add plugin for SSR-safe animation utilities
-    function ({ addUtilities, theme }) {
+    function ({ addUtilities }) {
       const newUtilities = {
         '.animate-line-ssr-safe': {
           opacity: '0.1',
