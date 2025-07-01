@@ -50,7 +50,7 @@
       <!-- DOWNLOAD CV -->
       <SharedButton
         as="button"
-        class="bg-primary-2 hero__download-button dark:bg-primary-2"
+        class="hero__download-button"
         ref="downloadButtonRef"
         @click="handleDownload"
       >
