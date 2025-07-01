@@ -48,21 +48,21 @@
       </div>
 
       <!-- DOWNLOAD CV -->
-      <SharedButton
-        ref="downloadButtonRef"
-        as="button"
-        @click="handleDownload"
-        class="hero__download-button"
-      >
-        Download CV
-        <ClientOnly>
+      <ClientOnly>
+        <SharedButton
+          as="button"
+          class="hero__download-button"
+          ref="downloadButtonRef"
+          @click="handleDownload"
+        >
+          Download CV
           <SharedRenderSVG
             iconName="downloadcv"
             sizes="h-[2rem] w-[2rem]"
             :fill="isDark ? 'black' : 'white'"
           />
-        </ClientOnly>
-      </SharedButton>
+        </SharedButton>
+      </ClientOnly>
     </div>
   </header>
 </template>
