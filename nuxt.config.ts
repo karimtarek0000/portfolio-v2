@@ -8,8 +8,19 @@ export default defineNuxtConfig({
       charset: 'utf-8',
       viewport: 'width=device-width, initial-scale=1, maximum-scale=1',
       title: 'karim tarek',
-
       link: [
+        {
+          rel: 'preload',
+          href: 'https://lottie.host/707ad562-0d36-49dc-bc46-b46fa8ce1896/fGbyNuf4y4.json',
+          as: 'fetch',
+          crossorigin: 'anonymous',
+        },
+        {
+          rel: 'preload',
+          href: 'https://lottie.host/eca2fac4-6448-4276-8f61-783f40d33d66/n7MP5EFvxv.json',
+          as: 'fetch',
+          crossorigin: 'anonymous',
+        },
         { rel: 'icon', href: '/favicons/favicon.ico', sizes: '48x48' },
         {
           rel: 'icon',
