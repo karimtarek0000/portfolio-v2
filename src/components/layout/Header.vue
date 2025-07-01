@@ -51,7 +51,7 @@
       <ClientOnly>
         <SharedButton
           as="button"
-          class="hero__download-button"
+          class="hero__download-button animate-button-ssr-safe"
           ref="downloadButtonRef"
           @click="handleDownload"
         >
@@ -128,6 +128,27 @@ function handleDownload() {
 
 /* Hide download button initially to prevent flash before animation */
 .hero__download-button {
-  @apply opacity-0 translate-y-[60px] mt-10;
+  @apply mt-10;
+}
+
+/* SSR-safe animation states */
+.animate-button-ssr-safe {
+  @apply opacity-0 will-change-transform;
+  transform: translateY(60px);
+}
+
+/* Ensure proper rendering in SSR/print mode */
+@media print {
+  .animate-button-ssr-safe {
+    @apply !opacity-100;
+    transform: none !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-button-ssr-safe {
+    @apply opacity-0;
+    transform: none;
+  }
 }
 </style>
