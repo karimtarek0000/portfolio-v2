@@ -35,7 +35,9 @@
               <h3 class="text-sm font-bold text-center lg:text-start graident">
                 Karim Tarek
               </h3>
-              <p class="text-sm leading-relaxed lg:max-w-md text-primary-3">
+              <p
+                class="text-sm leading-relaxed text-center lg:text-start lg:max-w-md text-primary-3"
+              >
                 Frontend Software Engineer passionate about creating exceptional
                 user experiences with modern web technologies. Always eager to
                 take on new challenges and learn cutting-edge tools.
@@ -87,7 +89,7 @@
               </a>
 
               <a
-                href="tel:+1234567890"
+                href="tel:+01022659933"
                 class="group flex items-center gap-4 p-4 rounded-xl bg-primary-2/5 hover:bg-primary-2/10 transition-all duration-300 hover:scale-[1.02] hover:shadow-lg border border-primary-2/10"
               >
                 <div

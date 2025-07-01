@@ -222,7 +222,7 @@ const breakpoints = {
 
 <style scoped>
 .projects__slider-container {
-  @apply mt-8 relative min-h-[580px];
+  @apply mt-8 relative lg:min-h-[580px] px-5 lg:px-0;
 }
 
 .projects__slider {
