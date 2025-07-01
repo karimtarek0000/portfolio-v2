@@ -7,7 +7,7 @@
       <LayoutNavbar />
     </ClientOnly>
 
-    <div class="hero">
+    <div class="mt-16 hero">
       <!-- ANIMATIONS -->
       <div
         ref="lottieContainerRef"
@@ -50,7 +50,7 @@
       <!-- DOWNLOAD CV -->
       <SharedButton
         as="button"
-        class="hero__download-button"
+        class="hero__download-button min-w-[147.688px] min-h-[42px]"
         ref="downloadButtonRef"
         @click="handleDownload"
       >
