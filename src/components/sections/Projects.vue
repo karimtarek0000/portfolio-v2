@@ -277,19 +277,30 @@ const breakpoints = {
 }
 
 .projects__overlay {
-  @apply absolute inset-0 z-10 bg-gradient-to-t from-black/95 via-black/60 to-transparent pointer-events-none;
+  @apply absolute inset-0 z-10 pointer-events-none;
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.95) 0%,
+    rgba(0, 0, 0, 0.6) 50%,
+    transparent 100%
+  );
+  background: -webkit-linear-gradient(
+    bottom,
+    rgba(0, 0, 0, 0.95) 0%,
+    rgba(0, 0, 0, 0.6) 50%,
+    transparent 100%
+  );
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  will-change: auto;
 }
 
 .projects__content {
   @apply relative z-20 justify-center h-full flex flex-col w-full p-6 pointer-events-auto translate-y-24 opacity-0 transition-all duration-700 ease-out sm:p-8;
-  will-change: transform, opacity;
-  transform: translate3d(0, 96px, 0);
-  transition: transform 0.7s ease-out, opacity 0.7s ease-out;
 }
 
 .projects__slide.swiper-slide-active .projects__content {
   @apply translate-y-0 opacity-100;
-  transform: translate3d(0, 0, 0);
 }
 
 .projects__header {
