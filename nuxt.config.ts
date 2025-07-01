@@ -50,9 +50,9 @@ export default defineNuxtConfig({
       ],
     },
   },
-  // routeRules: {
-  //   '/': { prerender: true },
-  // },
+  routeRules: {
+    '/': { prerender: true },
+  },
   modules: ['@nuxtjs/tailwindcss', '@nuxtjs/google-fonts', 'nuxt-swiper'],
   css: ['~/assets/style/main.css'],
 
