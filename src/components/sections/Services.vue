@@ -269,7 +269,7 @@ useServicesAnimations(
 /* Service Card Styles - Fully converted to Tailwind */
 .service-card {
   @apply relative p-8 rounded-2xl transition-all duration-500 cursor-pointer;
-  @apply bg-white/5 dark:bg-white/5 backdrop-blur-md;
+  @apply bg-white dark:bg-[#2A2A2A] backdrop-blur-md;
   @apply border border-white/20 dark:border-white/10;
   @apply shadow-lg shadow-black/10 dark:shadow-black/30;
   @apply hover:bg-white/10 dark:hover:bg-white/10;
