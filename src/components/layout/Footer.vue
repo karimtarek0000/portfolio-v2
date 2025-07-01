@@ -32,10 +32,10 @@
             class="space-y-6 lg:col-span-6 animate-line-ssr-safe"
           >
             <div class="space-y-4">
-              <h3 class="text-sm font-bold text-center sm:text-start graident">
+              <h3 class="text-sm font-bold text-center lg:text-start graident">
                 Karim Tarek
               </h3>
-              <p class="text-sm leading-relaxed md:max-w-md text-primary-3">
+              <p class="text-sm leading-relaxed lg:max-w-md text-primary-3">
                 Frontend Software Engineer passionate about creating exceptional
                 user experiences with modern web technologies. Always eager to
                 take on new challenges and learn cutting-edge tools.
@@ -49,15 +49,15 @@
             class="space-y-6 lg:col-span-6 animate-line-ssr-safe"
           >
             <h4
-              class="mb-4 text-sm font-semibold text-center sm:text-start text-primary-2"
+              class="mb-4 text-sm font-semibold text-center lg:text-start text-primary-2"
             >
               Get In Touch
             </h4>
 
             <!-- Contact Info Cards -->
-            <div class="space-y-4">
+            <div class="mx-auto space-y-4 w-fit lg:w-full">
               <a
-                href="mailto:karim@example.com"
+                href="mailto:karimtarekabdelaziz@gmail.com"
                 class="group flex items-center gap-4 p-4 rounded-xl bg-primary-2/5 hover:bg-primary-2/10 transition-all duration-300 hover:scale-[1.02] hover:shadow-lg border border-primary-2/10"
               >
                 <div
@@ -119,7 +119,7 @@
             </div>
 
             <!-- Social Links -->
-            <div class="mx-auto space-y-3 w-fit md:w-full">
+            <div class="mx-auto space-y-3 w-fit lg:w-full">
               <SharedSocialLinks />
             </div>
           </div>
