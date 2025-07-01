@@ -32,30 +32,14 @@
             class="space-y-6 lg:col-span-6 animate-line-ssr-safe"
           >
             <div class="space-y-4">
-              <h3 class="text-sm font-bold graident">Karim Tarek</h3>
-              <p class="max-w-md text-sm leading-relaxed text-primary-3">
+              <h3 class="text-sm font-bold text-center sm:text-start graident">
+                Karim Tarek
+              </h3>
+              <p class="text-sm leading-relaxed md:max-w-md text-primary-3">
                 Frontend Software Engineer passionate about creating exceptional
                 user experiences with modern web technologies. Always eager to
                 take on new challenges and learn cutting-edge tools.
               </p>
-            </div>
-
-            <!-- Skills/Tech Stack Preview -->
-            <div class="space-y-3">
-              <h4
-                class="text-sm font-semibold tracking-wider uppercase text-primary-2"
-              >
-                Tech Stack
-              </h4>
-              <div class="flex flex-wrap gap-2">
-                <span
-                  v-for="tech in techStack"
-                  :key="tech"
-                  class="px-3 py-1 text-xs font-medium transition-colors duration-300 border rounded-full bg-primary-2/10 text-primary-2 border-primary-2/20 hover:bg-primary-2/20"
-                >
-                  {{ tech }}
-                </span>
-              </div>
             </div>
           </div>
 
@@ -64,7 +48,9 @@
             ref="contactSectionRef"
             class="space-y-6 lg:col-span-6 animate-line-ssr-safe"
           >
-            <h4 class="mb-4 text-sm font-semibold text-primary-2">
+            <h4
+              class="mb-4 text-sm font-semibold text-center sm:text-start text-primary-2"
+            >
               Get In Touch
             </h4>
 
@@ -133,7 +119,7 @@
             </div>
 
             <!-- Social Links -->
-            <div class="space-y-3">
+            <div class="mx-auto space-y-3 w-fit md:w-full">
               <SharedSocialLinks />
             </div>
           </div>
