@@ -282,14 +282,10 @@ const breakpoints = {
 
 .projects__content {
   @apply relative z-20 justify-center h-full flex flex-col w-full p-6 pointer-events-auto translate-y-24 opacity-0 transition-all duration-700 ease-out sm:p-8;
-  will-change: transform, opacity;
-  transform: translate3d(0, 96px, 0);
-  transition: transform 0.7s ease-out, opacity 0.7s ease-out;
 }
 
 .projects__slide.swiper-slide-active .projects__content {
   @apply translate-y-0 opacity-100;
-  transform: translate3d(0, 0, 0);
 }
 
 .projects__header {
