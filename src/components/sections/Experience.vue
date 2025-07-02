@@ -75,30 +75,14 @@ const lastExperienceIndex = computed(() => experienceCount.value - 1)
 // UTILITIES - Pure functions for data transformation
 // ============================================================================
 
-/**
- * Formats a date string for display
- * @param date - Date string to format
- * @returns Formatted date string
- */
 const formatDate = (date: string): string => {
   if (date === PRESENT_DATE_LABEL) return date
   return dateFormatter.value.format(new Date(date))
 }
 
-/**
- * Creates a unique key for experience items
- * @param item - Experience item
- * @param index - Array index
- * @returns Unique key string
- */
 const createExperienceKey = (item: ExperienceItem, index: number): string =>
   `${item.company}-${item.position}-${index}`
 
-/**
- * Checks if an experience item is the last one
- * @param index - Current index
- * @returns Boolean indicating if it's the last item
- */
 const isLastExperience = (index: number): boolean =>
   index === lastExperienceIndex.value
 
@@ -112,11 +96,6 @@ const timelineDotsRef = ref<HTMLElement[]>([])
 const sharedHeaderRef = ref<HTMLElement | null>(null)
 const documentElementRef = ref<HTMLElement | null>(null)
 
-/**
- * Template ref handler for timeline items
- * @param el - DOM element
- * @param index - Array index
- */
 const setTimelineItemRef = (
   el: Element | ComponentPublicInstance | null,
   index: number,
@@ -126,11 +105,6 @@ const setTimelineItemRef = (
   }
 }
 
-/**
- * Template ref handler for timeline dots
- * @param el - DOM element
- * @param index - Array index
- */
 const setTimelineDotRef = (
   el: Element | ComponentPublicInstance | null,
   index: number,
@@ -140,11 +114,6 @@ const setTimelineDotRef = (
   }
 }
 
-/**
- * Template ref handler for timeline lines
- * @param el - DOM element
- * @param index - Array index
- */
 const setTimelineLineRef = (
   el: Element | ComponentPublicInstance | null,
   index: number,
@@ -224,10 +193,10 @@ onBeforeUnmount(() => {
             <!-- Header with company and date -->
             <div class="timeline__header">
               <h3 class="timeline__company">{{ item.company }}</h3>
-              <span class="timeline__date">
+              <time class="timeline__date">
                 {{ formatDate(item.startDate) }} -
                 {{ formatDate(item.endDate) }}
-              </span>
+              </time>
             </div>
 
             <!-- Job details -->

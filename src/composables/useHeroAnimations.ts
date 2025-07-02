@@ -6,6 +6,7 @@ interface HeroAnimationRefs {
   titleRef: Ref<HTMLElement | null>
   socialIconsRef: Ref<HTMLElement | null>
   downloadButtonRef: Ref<HTMLElement | null>
+  viewButtonRef: Ref<HTMLElement | null>
 }
 
 interface HeroAnimationOptions {
@@ -115,11 +116,20 @@ export const useHeroAnimations = (
         ? (buttonElement as any).$el
         : buttonElement
 
+    const viewButtonElement = refs.viewButtonRef.value
+    const viewButtonEl =
+      viewButtonElement &&
+      typeof viewButtonElement === 'object' &&
+      '$el' in viewButtonElement
+        ? (viewButtonElement as any).$el
+        : viewButtonElement
+
     const elements = {
       lottie: refs.lottieContainerRef.value,
       titleSpans: refs.titleRef.value?.querySelectorAll('span') || [],
       socialLinks: refs.socialIconsRef.value?.querySelectorAll('div a') || [],
       button: buttonEl,
+      viewButton: viewButtonEl,
     }
 
     return elements
@@ -212,6 +222,18 @@ export const useHeroAnimations = (
     if (elements.button) {
       batchOperations.push(() => {
         $gsap.set(elements.button, {
+          opacity: 0,
+          y: isReducedMotion ? 0 : 60,
+          transformOrigin: '50% 50%',
+          willChange: 'transform, opacity',
+        })
+      })
+    }
+
+    // View button - smooth bottom-to-top translation setup
+    if (elements.viewButton) {
+      batchOperations.push(() => {
+        $gsap.set(elements.viewButton, {
           opacity: 0,
           y: isReducedMotion ? 0 : 60,
           transformOrigin: '50% 50%',
@@ -314,7 +336,33 @@ export const useHeroAnimations = (
         )
     }
 
-    // 5. Add subtle floating animation for lottie container (only on desktop)
+    // 5. View button synchronized with download button ending
+    if (elements.viewButton) {
+      masterTimeline
+        .to(
+          elements.viewButton,
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.48,
+            ease: 'power3.out',
+          },
+          0.6,
+        )
+        .set(elements.viewButton, {
+          cursor: 'pointer',
+        })
+        .to(
+          elements.viewButton,
+          {
+            duration: 0.48,
+            ease: 'power3.out',
+          },
+          '-=0.3',
+        )
+    }
+
+    // 6. Add subtle floating animation for lottie container (only on desktop)
     if (elements.lottie && !device.isMobile()) {
       masterTimeline.to(
         elements.lottie,
@@ -329,7 +377,7 @@ export const useHeroAnimations = (
       )
     }
 
-    // 6. Add hover-ready class after animations complete
+    // 7. Add hover-ready class after animations complete
     masterTimeline.call(() => {
       if (refs.heroContainerRef.value) {
         refs.heroContainerRef.value.classList.add('animations-complete')
@@ -353,6 +401,7 @@ export const useHeroAnimations = (
       ...Array.from(elements.titleSpans),
       ...Array.from(elements.socialLinks),
       elements.button,
+      elements.viewButton,
     ].filter(Boolean)
 
     if (allElements.length) {
@@ -450,6 +499,7 @@ export const useHeroAnimations = (
       ...Array.from(elements.titleSpans),
       ...Array.from(elements.socialLinks),
       elements.button,
+      elements.viewButton,
     ].filter(Boolean) as HTMLElement[]
 
     // Batch DOM operations

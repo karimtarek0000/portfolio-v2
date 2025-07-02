@@ -296,7 +296,7 @@ const breakpoints = {
 }
 
 .projects__content {
-  @apply relative z-20 justify-center h-full flex flex-col w-full p-6 pointer-events-auto translate-y-24 opacity-0 transition-all duration-700 ease-out sm:p-8;
+  @apply relative z-20 justify-evenly lg:justify-center items-center lg:items-start h-full flex flex-col w-full p-6 pointer-events-auto translate-y-24 opacity-0 transition-all duration-700 ease-out sm:p-8;
 }
 
 .projects__slide.swiper-slide-active .projects__content {
@@ -308,7 +308,7 @@ const breakpoints = {
 }
 
 .projects__title {
-  @apply mb-2 font-extrabold leading-tight text-white drop-shadow-lg text-sm transition-all duration-500 sm:text-lg;
+  @apply mb-10 lg:mb-4 text-center font-extrabold leading-tight text-white drop-shadow-lg text-md lg:text-start transition-all duration-500 sm:text-lg;
 }
 
 .projects__tech-stack {
@@ -320,7 +320,7 @@ const breakpoints = {
 }
 
 .projects__description {
-  @apply max-w-xl mb-4 text-sm leading-relaxed text-white/80 transition-opacity duration-500;
+  @apply max-w-xl text-center lg:text-start mb-4 text-sm leading-relaxed text-white/80 transition-opacity duration-500;
 }
 
 .projects__actions {
