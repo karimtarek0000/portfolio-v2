@@ -68,15 +68,17 @@
 
         <!-- VIEW CV -->
         <SharedButton
-          as="button"
+          as="a"
           class="hero__button"
           ref="viewButtonRef"
-          @click="handleViewCV"
+          href="https://drive.google.com/file/d/1x6uYDQssXpTFXOgMInQfElMgTmQMhlS-/view?usp=sharing"
+          target="_blank"
+          rel="noopener noreferrer"
         >
           View CV
           <ClientOnly>
             <SharedRenderSVG
-              iconName="downloadcv"
+              iconName="viewcv"
               sizes="h-[2rem] w-[2rem]"
               :fill="isDark ? 'black' : 'white'"
             />
@@ -124,17 +126,6 @@ function handleDownload() {
   link.href =
     'https://drive.google.com/uc?export=download&id=1x6uYDQssXpTFXOgMInQfElMgTmQMhlS-'
   link.download = 'Karim_Tarek_CV.pdf'
-  document.body.appendChild(link)
-  link.click()
-  document.body.removeChild(link)
-}
-
-// Handle view CV
-function handleViewCV() {
-  const link = document.createElement('a')
-  link.href =
-    'https://drive.google.com/file/d/1x6uYDQssXpTFXOgMInQfElMgTmQMhlS/view?usp=sharing'
-  link.target = '_blank'
   document.body.appendChild(link)
   link.click()
   document.body.removeChild(link)
