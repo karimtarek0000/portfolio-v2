@@ -37,6 +37,14 @@ export const skillsData: Skill[] = [
     iconName: 'vue',
   },
   {
+    title: 'nuxt.js',
+    iconName: 'nuxtjs',
+  },
+  {
+    title: 'pinia',
+    iconName: 'pinia',
+  },
+  {
     title: 'react.js',
     iconName: 'react',
   },
@@ -45,16 +53,16 @@ export const skillsData: Skill[] = [
     iconName: 'redux',
   },
   {
-    title: 'pinia',
-    iconName: 'pinia',
-  },
-  {
-    title: 'nuxt.js',
-    iconName: 'nuxtjs',
-  },
-  {
     title: 'next.js',
     iconName: 'nextjs',
+  },
+  {
+    title: 'vitest/jest',
+    iconName: 'unittest',
+  },
+  {
+    title: 'CI/CD github actions',
+    iconName: 'github-actions',
   },
   {
     title: 'node.js/express',
@@ -63,9 +71,5 @@ export const skillsData: Skill[] = [
   {
     title: 'docker',
     iconName: 'docker',
-  },
-  {
-    title: 'unittest(jest/vitest)',
-    iconName: 'unittest',
   },
 ]

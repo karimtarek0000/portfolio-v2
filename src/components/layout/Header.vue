@@ -49,23 +49,6 @@
 
       <!-- BUTTONS CONTAINER -->
       <div class="flex items-center gap-4 mt-10">
-        <!-- DOWNLOAD CV -->
-        <SharedButton
-          as="button"
-          class="hero__button"
-          ref="downloadButtonRef"
-          @click="handleDownload"
-        >
-          Download CV
-          <ClientOnly>
-            <SharedRenderSVG
-              iconName="downloadcv"
-              sizes="h-[2rem] w-[2rem]"
-              :fill="isDark ? 'black' : 'white'"
-            />
-          </ClientOnly>
-        </SharedButton>
-
         <!-- VIEW CV -->
         <SharedButton
           as="a"
@@ -79,6 +62,23 @@
           <ClientOnly>
             <SharedRenderSVG
               iconName="viewcv"
+              sizes="h-[2rem] w-[2rem]"
+              :fill="isDark ? 'black' : 'white'"
+            />
+          </ClientOnly>
+        </SharedButton>
+
+        <!-- DOWNLOAD CV -->
+        <SharedButton
+          as="button"
+          class="hero__button"
+          ref="downloadButtonRef"
+          @click="handleDownload"
+        >
+          Download CV
+          <ClientOnly>
+            <SharedRenderSVG
+              iconName="downloadcv"
               sizes="h-[2rem] w-[2rem]"
               :fill="isDark ? 'black' : 'white'"
             />
