@@ -24,7 +24,7 @@ defineProps<{
 
 .skill-item__icon {
   @apply p-1 rounded-full ease-in-out duration-300 transition-all lg:hover:-translate-y-3 lg:hover:scale-105;
-  @apply bg-white/10 dark:bg-white/5 backdrop-blur-md;
+  @apply bg-white/10 dark:bg-white/10 backdrop-blur-md;
   @apply border border-white/20 dark:border-white/10;
   @apply shadow-lg shadow-black/10 dark:shadow-black/30;
   @apply hover:bg-white/20 dark:hover:bg-white/10;
