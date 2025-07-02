@@ -61,6 +61,10 @@ export const skillsData: Skill[] = [
     iconName: 'unittest',
   },
   {
+    title: 'git/github',
+    iconName: 'github',
+  },
+  {
     title: 'CI/CD github actions',
     iconName: 'github-actions',
   },
