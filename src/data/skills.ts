@@ -53,6 +53,10 @@ export const skillsData: Skill[] = [
     iconName: 'redux',
   },
   {
+    title: 'next.js',
+    iconName: 'nextjs',
+  },
+  {
     title: 'vitest/jest',
     iconName: 'unittest',
   },
@@ -60,10 +64,6 @@ export const skillsData: Skill[] = [
     title: 'CI/CD github actions',
     iconName: 'github-actions',
   },
-  // {
-  //   title: 'next.js',
-  //   iconName: 'nextjs',
-  // },
   {
     title: 'node.js/express',
     iconName: 'nodejs',
