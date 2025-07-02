@@ -83,7 +83,7 @@
                   <p
                     class="text-sm font-medium transition-transform duration-300 transform text-primary-2 group-hover:translate-x-1"
                   >
-                    karim@example.com
+                    karimtarekabdelaziz@gmail.com
                   </p>
                 </div>
               </a>
@@ -114,7 +114,7 @@
                   <p
                     class="text-sm font-medium transition-transform duration-300 transform text-primary-2 group-hover:translate-x-1"
                   >
-                    +1 (234) 567-890
+                    01022659933
                   </p>
                 </div>
               </a>
