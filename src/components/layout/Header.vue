@@ -47,22 +47,42 @@
         </ClientOnly>
       </div>
 
-      <!-- DOWNLOAD CV -->
-      <SharedButton
-        as="button"
-        class="hero__download-button min-w-[147.688px] min-h-[42px]"
-        ref="downloadButtonRef"
-        @click="handleDownload"
-      >
-        Download CV
-        <ClientOnly>
-          <SharedRenderSVG
-            iconName="downloadcv"
-            sizes="h-[2rem] w-[2rem]"
-            :fill="isDark ? 'black' : 'white'"
-          />
-        </ClientOnly>
-      </SharedButton>
+      <!-- BUTTONS CONTAINER -->
+      <div class="flex items-center gap-4 mt-10">
+        <!-- DOWNLOAD CV -->
+        <SharedButton
+          as="button"
+          class="hero__button"
+          ref="downloadButtonRef"
+          @click="handleDownload"
+        >
+          Download CV
+          <ClientOnly>
+            <SharedRenderSVG
+              iconName="downloadcv"
+              sizes="h-[2rem] w-[2rem]"
+              :fill="isDark ? 'black' : 'white'"
+            />
+          </ClientOnly>
+        </SharedButton>
+
+        <!-- VIEW CV -->
+        <SharedButton
+          as="button"
+          class="hero__button"
+          ref="viewButtonRef"
+          @click="handleViewCV"
+        >
+          View CV
+          <ClientOnly>
+            <SharedRenderSVG
+              iconName="downloadcv"
+              sizes="h-[2rem] w-[2rem]"
+              :fill="isDark ? 'black' : 'white'"
+            />
+          </ClientOnly>
+        </SharedButton>
+      </div>
     </div>
   </header>
 </template>
@@ -78,6 +98,7 @@ const lottieContainerRef = ref<HTMLElement | null>(null)
 const titleRef = ref<HTMLElement | null>(null)
 const socialIconsRef = ref<HTMLElement | null>(null)
 const downloadButtonRef = ref<HTMLElement | null>(null)
+const viewButtonRef = ref<HTMLElement | null>(null)
 
 // Initialize hero animations
 useHeroAnimations(
@@ -87,6 +108,7 @@ useHeroAnimations(
     titleRef,
     socialIconsRef,
     downloadButtonRef,
+    viewButtonRef,
   },
   {
     enableAutoPlay: true,
@@ -102,6 +124,17 @@ function handleDownload() {
   link.href =
     'https://drive.google.com/uc?export=download&id=1x6uYDQssXpTFXOgMInQfElMgTmQMhlS-'
   link.download = 'Karim_Tarek_CV.pdf'
+  document.body.appendChild(link)
+  link.click()
+  document.body.removeChild(link)
+}
+
+// Handle view CV
+function handleViewCV() {
+  const link = document.createElement('a')
+  link.href =
+    'https://drive.google.com/file/d/1x6uYDQssXpTFXOgMInQfElMgTmQMhlS/view?usp=sharing'
+  link.target = '_blank'
   document.body.appendChild(link)
   link.click()
   document.body.removeChild(link)
@@ -127,7 +160,7 @@ function handleDownload() {
 }
 
 /* Hide download button initially to prevent flash before animation */
-.hero__download-button {
-  @apply opacity-0 translate-y-0 mt-10;
+.hero__button {
+  @apply opacity-0 translate-y-0;
 }
 </style>

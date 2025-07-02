@@ -28,14 +28,14 @@ withDefaults(defineProps<Props>(), {
 })
 
 const defaultClasses =
-  'relative capitalize inline-flex items-center justify-center gap-2 font-medium transition-all duration-300 ease-out disabled:opacity-50 focus:ring-2 focus:ring-orange-300 focus:ring-offset-2 focus:ring-offset-transparent disabled:cursor-not-allowed disabled:pointer-events-none focus:outline-none group cursor-pointer select-none'
+  'relative capitalize inline-flex items-center justify-center gap-2 font-medium transition-all duration-300 ease-out disabled:opacity-50 focus:ring-2 rounded-full focus:ring-orange-300 focus:ring-offset-2 focus:ring-offset-transparent disabled:cursor-not-allowed disabled:pointer-events-none focus:outline-none group cursor-pointer select-none'
 
 const variantClasses: Record<NonNullable<Props['variant']>, string> = {
   primary:
-    'text-primary-1 bg-primary-2 hover:bg-opacity-90 hover:shadow-xl hover:shadow-primary-2/25 rounded-lg overflow-hidden',
+    'text-primary-1 bg-primary-2 hover:bg-opacity-90 hover:shadow-xl hover:shadow-primary-2/25 overflow-hidden',
 
   outline: [
-    'rounded-full px-6 py-2 sm:px-8 font-bold text-sm',
+    'px-6 py-2 sm:px-8 font-bold text-sm',
     'border-[1.5px] border-gray-500 text-gray-300',
     'bg-transparent backdrop-blur-md shadow-[0_2px_8px_rgba(0,0,0,0.1)]',
     'tracking-[0.09em] overflow-hidden relative z-[1]',
