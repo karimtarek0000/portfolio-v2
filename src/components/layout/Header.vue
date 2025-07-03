@@ -33,7 +33,7 @@
       <!-- TITLE -->
       <h1 ref="titleRef" class="hero__title">
         <span class="text-[3rem] md:text-lg graident">
-          <span class="text-[#FFC948]">i'm,</span> karim tarek
+          <span class="text-[#FFC948]">i'm,</span> {{ data?.info.name }}
         </span>
         <span class="graident text-md text-nowrap">{{ data?.info.title }}</span>
       </h1>
@@ -41,30 +41,30 @@
       <!-- SOCIAL ICONS -->
       <div ref="socialIconsRef" class="flex justify-center mt-5 gap-x-5">
         <ClientOnly>
-          <SharedSocialLinks type="header" />
+          <SharedSocialLinks :socialLinks="data?.info.social" type="header" />
         </ClientOnly>
       </div>
 
       <!-- BUTTONS CONTAINER -->
       <div class="flex items-center gap-4 mt-10">
         <!-- VIEW CV -->
-        <SharedButton
-          as="a"
-          class="hero__button"
-          ref="viewButtonRef"
-          href="https://drive.google.com/file/d/1x6uYDQssXpTFXOgMInQfElMgTmQMhlS-/view?usp=sharing"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          View CV
-          <ClientOnly>
+        <ClientOnly>
+          <SharedButton
+            as="a"
+            class="hero__button"
+            ref="viewButtonRef"
+            :href="data?.info.links.previewCV"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            View CV
             <SharedRenderSVG
               iconName="viewcv"
               sizes="h-[2rem] w-[2rem]"
               :fill="isDark ? 'black' : 'white'"
             />
-          </ClientOnly>
-        </SharedButton>
+          </SharedButton>
+        </ClientOnly>
 
         <!-- DOWNLOAD CV -->
         <SharedButton
@@ -122,8 +122,7 @@ useHeroAnimations(
 // Handle CV download
 function handleDownload() {
   const link = document.createElement('a')
-  link.href =
-    'https://drive.google.com/uc?export=download&id=1x6uYDQssXpTFXOgMInQfElMgTmQMhlS-'
+  link.href = data.value.info.links.downloadCV
   link.download = 'Karim_Tarek_CV.pdf'
   document.body.appendChild(link)
   link.click()

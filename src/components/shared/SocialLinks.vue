@@ -13,7 +13,7 @@
       ]"
     >
       <SharedRenderSVG
-        :iconName="social.icon"
+        :iconName="social.name"
         sizes="w-[2rem] h-[2rem]"
         :fill="isDark ? 'white' : 'black'"
       />
@@ -32,28 +32,10 @@ const { isDark } = useToggleTheme()
 withDefaults(
   defineProps<{
     type?: 'header' | 'footer'
+    socialLinks: Social[]
   }>(),
   {
     type: 'footer',
   },
 )
-
-// Social media links data - centralized in the component
-const socialLinks = [
-  {
-    name: 'GitHub',
-    icon: 'github',
-    url: 'https://github.com/karimtarek',
-  },
-  {
-    name: 'LinkedIn',
-    icon: 'linkedin',
-    url: 'https://linkedin.com/in/karimtarek',
-  },
-  {
-    name: 'WhatsApp',
-    icon: 'whatsapp',
-    url: 'https://wa.me/1234567890',
-  },
-]
 </script>

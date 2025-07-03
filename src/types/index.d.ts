@@ -1,20 +1,26 @@
 declare global {
   interface Info {
+    name: string
     title: string
     phone: string
     email: string
-    social: Social
+    social: Social[]
+    links: Links
   }
 
   interface Social {
-    linkedin: string
-    github: string
-    whatsapp: string
+    name: string
+    url: string
   }
 
   interface Skill {
     title: string
     iconName: string
+  }
+
+  interface Links {
+    downloadCV: string
+    previewCV: string
   }
 
   interface Data {
