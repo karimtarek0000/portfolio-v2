@@ -48,23 +48,23 @@
       <!-- BUTTONS CONTAINER -->
       <div class="flex items-center gap-4 mt-10">
         <!-- VIEW CV -->
-        <ClientOnly>
-          <SharedButton
-            as="a"
-            class="hero__button"
-            ref="viewButtonRef"
-            :href="data?.info.links.previewCV"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            View CV
+        <SharedButton
+          as="a"
+          class="hero__button"
+          ref="viewButtonRef"
+          :href="data?.info.links.previewCV"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          View CV
+          <ClientOnly>
             <SharedRenderSVG
               iconName="viewcv"
               sizes="h-[2rem] w-[2rem]"
               :fill="isDark ? 'black' : 'white'"
             />
-          </SharedButton>
-        </ClientOnly>
+          </ClientOnly>
+        </SharedButton>
 
         <!-- DOWNLOAD CV -->
         <SharedButton
