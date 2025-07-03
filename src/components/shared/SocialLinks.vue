@@ -1,7 +1,7 @@
 <template>
   <div class="flex gap-3">
     <a
-      v-for="social in socialLinks"
+      v-for="social in data.info.social"
       :key="social.name"
       :href="social.url"
       :aria-label="social.name"
@@ -13,7 +13,7 @@
       ]"
     >
       <SharedRenderSVG
-        :iconName="social.icon"
+        :iconName="social.name"
         sizes="w-[2rem] h-[2rem]"
         :fill="isDark ? 'white' : 'black'"
       />
@@ -27,8 +27,6 @@
 </template>
 
 <script lang="ts" setup>
-const { isDark } = useToggleTheme()
-
 withDefaults(
   defineProps<{
     type?: 'header' | 'footer'
@@ -38,22 +36,6 @@ withDefaults(
   },
 )
 
-// Social media links data - centralized in the component
-const socialLinks = [
-  {
-    name: 'GitHub',
-    icon: 'github',
-    url: 'https://github.com/karimtarek',
-  },
-  {
-    name: 'LinkedIn',
-    icon: 'linkedin',
-    url: 'https://linkedin.com/in/karimtarek',
-  },
-  {
-    name: 'WhatsApp',
-    icon: 'whatsapp',
-    url: 'https://wa.me/1234567890',
-  },
-]
+const { isDark } = useToggleTheme()
+const data: Ref<Data> = useState('data')
 </script>

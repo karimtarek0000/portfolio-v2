@@ -7,5 +7,3 @@
   </main>
   <SectionsProjects />
 </template>
-
-<script lang="ts" setup></script>

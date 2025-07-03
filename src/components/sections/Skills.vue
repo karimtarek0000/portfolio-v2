@@ -14,7 +14,7 @@
     <!-- Body -->
     <figure class="skills-section__body">
       <SharedSkillItem
-        v-for="(skill, index) in skills"
+        v-for="(skill, index) in data.skills"
         :key="skill.title"
         :ref="el => setSkillRef(el, index)"
         :skill="skill"
@@ -24,10 +24,7 @@
 </template>
 
 <script lang="ts" setup>
-import { skillsData } from '@/data/skills'
-
-// Data
-const skills = skillsData
+const data: Ref<Data> = useState('data')
 
 // Animation setup with internal lifecycle management
 const { containerRef, setSkillRef } = useSkillsAnimation()
