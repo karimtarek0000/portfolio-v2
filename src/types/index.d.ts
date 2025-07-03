@@ -26,6 +26,7 @@ declare global {
   interface Data {
     info: Info
     skills: Skill[]
+    about: string
   }
 }
 
