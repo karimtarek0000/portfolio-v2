@@ -25,30 +25,8 @@ const PRESENT_DATE_LABEL = 'Present' as const
 // ============================================================================
 // DATA LAYER - Experience data (consider moving to external data file)
 // ============================================================================
-
-const experience = shallowRef<ExperienceItem[]>([
-  {
-    company: 'HectarApp',
-    position: 'Frontend Engineer',
-    startDate: '2022-01-01',
-    endDate: 'Present',
-    description: 'Developing and maintaining web applications.',
-  },
-  {
-    company: 'HectarApp',
-    position: 'Frontend Engineer',
-    startDate: '2022-01-01',
-    endDate: '2023-01-01',
-    description: 'Developing and maintaining web applications.',
-  },
-  {
-    company: 'HectarApp',
-    position: 'Frontend Engineer',
-    startDate: '2022-01-01',
-    endDate: 'Present',
-    description: 'Developing and maintaining web applications.',
-  },
-])
+const data: Ref<Data> = useState('data')
+const experience = shallowRef(data.value.experience)
 
 // ============================================================================
 // COMPUTED VALUES - Memoized calculations for performance

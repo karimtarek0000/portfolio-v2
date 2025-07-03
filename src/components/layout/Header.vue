@@ -41,7 +41,7 @@
       <!-- SOCIAL ICONS -->
       <div ref="socialIconsRef" class="flex justify-center mt-5 gap-x-5">
         <ClientOnly>
-          <SharedSocialLinks :socialLinks="data?.info.social" type="header" />
+          <SharedSocialLinks type="header" />
         </ClientOnly>
       </div>
 

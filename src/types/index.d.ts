@@ -23,10 +23,19 @@ declare global {
     previewCV: string
   }
 
+  interface Experience {
+    company: string
+    position: string
+    startDate: string
+    endDate: string
+    description: string
+  }
+
   interface Data {
     info: Info
     skills: Skill[]
     about: string
+    experience: Experience[]
   }
 }
 

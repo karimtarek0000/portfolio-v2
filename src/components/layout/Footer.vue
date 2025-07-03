@@ -59,7 +59,7 @@
             <!-- Contact Info Cards -->
             <div class="mx-auto space-y-4 w-fit lg:w-full">
               <a
-                href="mailto:karimtarekabdelaziz@gmail.com"
+                :href="`mailto:${data.info.email}`"
                 class="group flex items-center gap-4 p-4 rounded-xl bg-primary-2/5 hover:bg-primary-2/10 transition-all duration-300 hover:scale-[1.02] hover:shadow-lg border border-primary-2/10"
               >
                 <div
@@ -83,13 +83,13 @@
                   <p
                     class="text-sm font-medium transition-transform duration-300 transform text-primary-2 group-hover:translate-x-1"
                   >
-                    karimtarekabdelaziz@gmail.com
+                    {{ data.info.email }}
                   </p>
                 </div>
               </a>
 
               <a
-                href="tel:+01022659933"
+                :href="`tel:+${data.info.phone}`"
                 class="group flex items-center gap-4 p-4 rounded-xl bg-primary-2/5 hover:bg-primary-2/10 transition-all duration-300 hover:scale-[1.02] hover:shadow-lg border border-primary-2/10"
               >
                 <div
@@ -114,7 +114,7 @@
                   <p
                     class="text-sm font-medium transition-transform duration-300 transform text-primary-2 group-hover:translate-x-1"
                   >
-                    01022659933
+                    {{ data.info.phone }}
                   </p>
                 </div>
               </a>
@@ -158,6 +158,7 @@ const footerRef = ref<HTMLElement | null>(null)
 const brandSectionRef = ref<HTMLElement | null>(null)
 const contactSectionRef = ref<HTMLElement | null>(null)
 const bottomSectionRef = ref<HTMLElement | null>(null)
+const data: Ref<Data> = useState('data')
 
 // Animation configuration for SharedHeader
 const headerAnimationOptions = {

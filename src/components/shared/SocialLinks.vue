@@ -1,7 +1,7 @@
 <template>
   <div class="flex gap-3">
     <a
-      v-for="social in socialLinks"
+      v-for="social in data.info.social"
       :key="social.name"
       :href="social.url"
       :aria-label="social.name"
@@ -27,15 +27,15 @@
 </template>
 
 <script lang="ts" setup>
-const { isDark } = useToggleTheme()
-
 withDefaults(
   defineProps<{
     type?: 'header' | 'footer'
-    socialLinks: Social[]
   }>(),
   {
     type: 'footer',
   },
 )
+
+const { isDark } = useToggleTheme()
+const data: Ref<Data> = useState('data')
 </script>

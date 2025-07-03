@@ -1,24 +1,3 @@
-<template>
-  <section ref="sectionRef" class="py-10 mt-20 glassmorphism">
-    <!-- Use SharedHeader with animations instead of custom header -->
-    <SharedHeader title="about" :animation-options="headerAnimationOptions" />
-
-    <!-- Text content broken into lines for animation -->
-    <div
-      ref="textContainerRef"
-      class="max-w-[1000px] px-5 mx-auto space-y-2 text-sm font-normal select-none dark:text-gray-300"
-    >
-      <p
-        v-for="(paragraph, index) in paragraphs"
-        :key="index"
-        class="animate-line-ssr-safe animate-line paragraph-hidden"
-      >
-        {{ paragraph }}
-      </p>
-    </div>
-  </section>
-</template>
-
 <script lang="ts" setup>
 // ============================================================================
 // REACTIVE DATA
@@ -87,6 +66,27 @@ useAboutAnimations(
   },
 )
 </script>
+
+<template>
+  <section ref="sectionRef" class="py-10 mt-20 glassmorphism">
+    <!-- Use SharedHeader with animations instead of custom header -->
+    <SharedHeader title="about" :animation-options="headerAnimationOptions" />
+
+    <!-- Text content broken into lines for animation -->
+    <div
+      ref="textContainerRef"
+      class="max-w-[1000px] px-5 mx-auto space-y-2 text-sm font-normal select-none dark:text-gray-300"
+    >
+      <p
+        v-for="(paragraph, index) in paragraphs"
+        :key="index"
+        class="animate-line-ssr-safe animate-line paragraph-hidden"
+      >
+        {{ paragraph }}
+      </p>
+    </div>
+  </section>
+</template>
 
 <style scoped>
 .paragraph-hidden {
