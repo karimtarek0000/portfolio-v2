@@ -1,3 +1,14 @@
+<script lang="ts" setup>
+const { data } = await useFetch<Data>(
+  'https://jsonblob.com/api/jsonBlob/1390326166061244416',
+  {
+    key: 'data',
+  },
+)
+
+useState('data', () => data)
+</script>
+
 <template>
   <main class="layout-container">
     <SectionsSkills />
@@ -7,5 +18,3 @@
   </main>
   <SectionsProjects />
 </template>
-
-<script lang="ts" setup></script>

@@ -35,9 +35,7 @@
         <span class="text-[3rem] md:text-lg graident">
           <span class="text-[#FFC948]">i'm,</span> karim tarek
         </span>
-        <span class="graident text-md text-nowrap"
-          >frontend software engineer</span
-        >
+        <span class="graident text-md text-nowrap">{{ data?.info.title }}</span>
       </h1>
 
       <!-- SOCIAL ICONS -->
@@ -93,6 +91,7 @@
 import { Vue3Lottie } from 'vue3-lottie'
 
 const { isDark } = useToggleTheme()
+const data: Ref<Data> = useState('data')
 
 // Template refs for animations
 const heroContainerRef = ref<HTMLElement | null>(null)
