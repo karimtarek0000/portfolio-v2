@@ -16,6 +16,7 @@ export default defineNuxtConfig({
       ],
       title: 'karim tarek - Frontend Engineer',
       link: [
+        { rel: 'dns-prefetch', href: 'https://drive.google.com' },
         {
           rel: 'preload',
           href: 'https://lottie.host/707ad562-0d36-49dc-bc46-b46fa8ce1896/fGbyNuf4y4.json',
@@ -53,8 +54,22 @@ export default defineNuxtConfig({
   routeRules: {
     '/': { prerender: true },
   },
-  modules: ['@nuxtjs/tailwindcss', '@nuxtjs/google-fonts', 'nuxt-swiper'],
+  modules: [
+    '@nuxtjs/tailwindcss',
+    '@nuxt/image',
+    '@nuxtjs/google-fonts',
+    'nuxt-swiper',
+  ],
   css: ['~/assets/style/main.css'],
+
+  image: {
+    cloudinary: {
+      baseURL: 'https://res.cloudinary.com/dafgi7p8c/image/fetch',
+      modifiers: {
+        format: 'webp',
+      },
+    },
+  },
 
   googleFonts: {
     display: 'block',
