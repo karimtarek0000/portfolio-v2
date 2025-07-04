@@ -200,7 +200,7 @@ const breakpoints = {
 }
 
 .projects__image {
-  @apply absolute inset-0 z-0 object-fill max-w-full object-center w-full h-full will-change-transform transition-opacity duration-300 scale-100;
+  @apply absolute inset-0 z-0 object-cover lg:object-fill max-w-full object-center w-full h-full will-change-transform transition-opacity duration-300 scale-100;
   transition: transform 0.4s ease-in-out, filter 0.8s ease-in-out;
 }
 
@@ -210,7 +210,7 @@ const breakpoints = {
 }
 
 .projects__slide.swiper-slide-active .projects__card:hover .projects__image {
-  @apply scale-110 brightness-75;
+  @apply scale-110 brightness-90;
   transition: transform 0.8s ease-in-out, filter 0.8s ease-in-out;
 }
 
@@ -220,7 +220,7 @@ const breakpoints = {
 }
 
 .projects__slide.swiper-slide-active:hover .projects__card .projects__image {
-  @apply scale-110 brightness-75;
+  @apply scale-110 brightness-90;
   transition: transform 0.8s ease-in-out, filter 0.8s ease-in-out;
 }
 
@@ -229,13 +229,7 @@ const breakpoints = {
   background: linear-gradient(
     to top,
     rgba(0, 0, 0, 0.95) 0%,
-    rgba(0, 0, 0, 0.6) 50%,
-    transparent 100%
-  );
-  background: -webkit-linear-gradient(
-    bottom,
-    rgba(0, 0, 0, 0.95) 0%,
-    rgba(0, 0, 0, 0.6) 50%,
+    rgba(0, 0, 0, 0.7) 50%,
     transparent 100%
   );
   -webkit-transform: translateZ(0);
