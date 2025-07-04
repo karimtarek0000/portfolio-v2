@@ -13,6 +13,26 @@ export default defineNuxtConfig({
           content:
             'Karim Tarek - Frontend Software Engineer. Explore my portfolio showcasing web development projects, technical skills, and professional experience.',
         },
+        {
+          property: 'og:image',
+          content: '',
+        },
+        {
+          property: 'og:title',
+          content: 'Karim Tarek - Frontend Software Engineer',
+        },
+        {
+          property: 'og:description',
+          content: 'Frontend Software Engineer | Explore my portfolio',
+        },
+        {
+          property: 'og:type',
+          content: 'website',
+        },
+        {
+          property: 'og:url',
+          content: 'https://portfolio-v2-sigma-rust.vercel.app/',
+        },
       ],
       title: 'karim tarek - Frontend Engineer',
       link: [
