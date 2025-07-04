@@ -139,15 +139,6 @@
 </template>
 
 <script lang="ts" setup>
-interface Project {
-  image: string
-  title: string
-  description: string
-  technologies: string[]
-  website: string
-  github?: string
-}
-
 const data: Ref<Data> = useState('data')
 const projects = shallowRef(data.value.projects)
 
@@ -157,51 +148,6 @@ const autoplayConfig = {
   pauseOnMouseEnter: true,
   reverseDirection: false,
 }
-
-// const projects: Project[] = [
-//   {
-//     image: 'https://picsum.photos/id/1015/800/500',
-//     title: 'test 1',
-//     description:
-//       'A modern e-commerce platform built with Vue 3 and Nuxt, featuring real-time inventory management and seamless payment integration.',
-//     technologies: ['Vue', 'Nuxt', 'Tailwind', 'Swiper'],
-//     website: 'https://example.com/ecommerce',
-//     github: 'https://github.com/user/ecommerce',
-//     featured: true,
-//   },
-//   {
-//     image: 'https://picsum.photos/id/1016/800/500',
-//     title: 'test 2',
-//     description:
-//       'Believe in yourself and your team. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque euismod, nisi eu consectetur consectetur, nisl nisi consectetur nisi, euismod euismod nisi nisi euismod.',
-//     technologies: ['JavaScript', 'Vue', 'Tailwind'],
-//     website: 'https://example.com/ted',
-//   },
-//   {
-//     image: 'https://picsum.photos/id/1018/800/500',
-//     title: 'test 3',
-//     description:
-//       'Exciting new releases this June. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque euismod, nisi eu consectetur consectetur, nisl nisi consectetur nisi, euismod euismod nisi nisi euismod.',
-//     technologies: ['TypeScript', 'Nuxt', 'Tailwind'],
-//     website: 'https://example.com/new',
-//   },
-//   {
-//     image: 'https://picsum.photos/id/1020/800/500',
-//     title: 'test 4',
-//     description:
-//       'Uncover the secrets hidden within. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque euismod, nisi eu consectetur consectetur, nisl nisi consectetur nisi, euismod euismod nisi nisi euismod.',
-//     technologies: ['Vue', 'Swiper', 'Lottie'],
-//     website: 'https://example.com/mystery',
-//   },
-//   {
-//     image: 'https://picsum.photos/id/1024/800/500',
-//     title: 'test 5',
-//     description:
-//       'A journey beyond imagination. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque euismod, nisi eu consectetur consectetur, nisl nisi consectetur nisi, euismod euismod nisi nisi euismod.',
-//     technologies: ['Nuxt', 'Tailwind', 'Vitest'],
-//     website: 'https://example.com/escape',
-//   },
-// ]
 
 const breakpoints = {
   640: {
@@ -254,7 +200,7 @@ const breakpoints = {
 }
 
 .projects__image {
-  @apply absolute inset-0 z-0 object-fill object-center w-full h-full will-change-transform transition-opacity duration-300 scale-100;
+  @apply absolute inset-0 z-0 object-fill max-w-full object-center w-full h-full will-change-transform transition-opacity duration-300 scale-100;
   transition: transform 0.4s ease-in-out, filter 0.8s ease-in-out;
 }
 
