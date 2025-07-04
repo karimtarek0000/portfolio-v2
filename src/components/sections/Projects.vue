@@ -254,7 +254,7 @@ const breakpoints = {
 }
 
 .projects__tech-stack {
-  @apply flex flex-wrap gap-2 mb-2;
+  @apply flex flex-wrap justify-center gap-2 mb-2;
 }
 
 .projects__tech-tag {
