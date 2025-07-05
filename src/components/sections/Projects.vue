@@ -13,22 +13,26 @@
     <ClientOnly>
       <div class="projects__slider-container">
         <Swiper
-          :modules="[Pagination, Keyboard]"
-          :slides-per-view="1"
+          :modules="[Virtual, Pagination, Keyboard]"
           :space-between="24"
           :centered-slides="true"
           :breakpoints="breakpoints"
           :pagination="{ clickable: true }"
-          :initial-slide="0"
-          :keyboard="{ enabled: true }"
           :grab-cursor="true"
           :speed="500"
-          :threshold="10"
-          :touch-ratio="1"
+          :threshold="20"
+          :touch-ratio="0.5"
           :resistance="true"
           :resistance-ratio="0.85"
           :observer="true"
           :observer-parents="true"
+          :update-on-images-ready="true"
+          :watch-overflow="true"
+          :lazy="{ loadPrevNext: true }"
+          :prevent-clicks="true"
+          :prevent-clicks-propagation="true"
+          :touch-start-prevent-default="false"
+          :touch-move-stop-propagation="false"
           class="projects__slider"
         >
           <SwiperSlide
@@ -145,7 +149,7 @@
 <script lang="ts" setup>
 import 'swiper/css'
 import 'swiper/css/pagination'
-import { Keyboard, Pagination } from 'swiper/modules'
+import { Keyboard, Pagination, Virtual } from 'swiper/modules'
 import { Swiper, SwiperSlide } from 'swiper/vue'
 
 const data: Ref<Data> = useState('data')
