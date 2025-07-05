@@ -45,7 +45,6 @@
                 class="projects__image"
               />
 
-              <div class="projects__overlay" />
               <div class="projects__content">
                 <div class="projects__overlay" />
                 <header class="projects__header">
