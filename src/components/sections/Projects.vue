@@ -76,7 +76,7 @@
 
                 <footer class="projects__actions">
                   <!-- Visit button -->
-                  <SharedButton
+                  <!-- <SharedButton
                     as="a"
                     variant="outline"
                     size="md"
@@ -100,10 +100,10 @@
                         d="M5 12h14m-7-7l7 7-7 7"
                       />
                     </svg>
-                  </SharedButton>
+                  </SharedButton> -->
 
                   <!-- Source button -->
-                  <SharedButton
+                  <!-- <SharedButton
                     v-if="project.github"
                     as="a"
                     :href="project.github"
@@ -129,7 +129,7 @@
                         d="M5 12h14m-7-7l7 7-7 7"
                       />
                     </svg>
-                  </SharedButton>
+                  </SharedButton> -->
                 </footer>
               </div>
             </article>
@@ -182,6 +182,12 @@ const breakpoints = {
   --swiper-pagination-bullet-size: 12px;
   --swiper-pagination-bullet-horizontal-gap: 6px;
   @apply overflow-visible w-full;
+}
+
+.swiper-slide {
+  will-change: transform;
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
 }
 
 .projects__slide {
