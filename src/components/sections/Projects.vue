@@ -224,8 +224,8 @@ const breakpoints = {
 
 .projects__overlay {
   @apply fixed inset-0 will-change-auto w-full bg-gradient-to-t from-[rgba(0,0,0,0.95)] via-[rgba(0,0,0,0.6)] to-transparent block isolate overflow-hidden pointer-events-none;
-  -webkit-transform: translateZ(0);
-  transform: translateZ(0);
+  -webkit-transform: translateY(0);
+  transform: translateY(0);
 }
 
 .projects__content {
