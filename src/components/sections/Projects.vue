@@ -26,6 +26,7 @@
           :prevent-clicks="true"
           :prevent-clicks-propagation="true"
           :touch-start-prevent-default="false"
+          :touch-move-stop-propagation="false"
           class="projects__slider"
           aria-label="Project showcase slider"
           role="region"
