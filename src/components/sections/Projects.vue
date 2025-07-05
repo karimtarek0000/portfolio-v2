@@ -45,6 +45,7 @@
                 class="projects__image"
               />
 
+              <div class="projects__overlay" />
               <div class="projects__content">
                 <header class="projects__header">
                   <h3 class="projects__title">
@@ -72,6 +73,7 @@
                 </p>
 
                 <footer class="projects__actions">
+                  <!-- Visit button -->
                   <SharedButton
                     as="a"
                     variant="outline"
@@ -98,6 +100,7 @@
                     </svg>
                   </SharedButton>
 
+                  <!-- Source button -->
                   <SharedButton
                     v-if="project.github"
                     as="a"
@@ -176,7 +179,7 @@ const breakpoints = {
   --swiper-pagination-bullet-inactive-opacity: 0.4;
   --swiper-pagination-bullet-size: 12px;
   --swiper-pagination-bullet-horizontal-gap: 6px;
-  @apply overflow-hidden w-full;
+  @apply overflow-visible w-full;
 }
 
 .projects__slide {
@@ -196,23 +199,8 @@ const breakpoints = {
   @apply relative flex flex-col justify-end items-start w-full rounded-2xl overflow-hidden shadow-2xl bg-black/60 h-[500px] min-h-[500px];
 }
 
-.projects__card::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  pointer-events: none;
-  background: linear-gradient(
-    to top,
-    rgba(0, 0, 0, 0.95) 0%,
-    rgba(0, 0, 0, 0.6) 50%,
-    transparent 100%
-  );
-  will-change: opacity;
-}
-
 .projects__image {
-  @apply absolute inset-0 z-0 object-cover lg:object-fill max-w-full object-center w-full h-full will-change-transform transition-opacity duration-300 scale-100;
+  @apply absolute inset-0 z-0 object-fill max-w-full object-center w-full h-full will-change-transform transition-opacity duration-300 scale-100;
   transition: transform 0.4s ease-in-out, filter 0.8s ease-in-out;
 }
 
@@ -222,7 +210,7 @@ const breakpoints = {
 }
 
 .projects__slide.swiper-slide-active .projects__card:hover .projects__image {
-  @apply scale-110 brightness-90;
+  @apply scale-110 brightness-75;
   transition: transform 0.8s ease-in-out, filter 0.8s ease-in-out;
 }
 
@@ -232,8 +220,13 @@ const breakpoints = {
 }
 
 .projects__slide.swiper-slide-active:hover .projects__card .projects__image {
-  @apply scale-110 brightness-90;
+  @apply scale-110 brightness-75;
   transition: transform 0.8s ease-in-out, filter 0.8s ease-in-out;
+}
+
+.projects__overlay {
+  @apply absolute inset-0 will-change-auto w-full bg-gradient-to-t from-[rgba(0,0,0,0.95)] via-[rgba(0,0,0,0.6)] to-transparent block isolate overflow-hidden pointer-events-none;
+  transform: translate3d(0, 0, 0);
 }
 
 .projects__content {
@@ -253,11 +246,11 @@ const breakpoints = {
 }
 
 .projects__tech-stack {
-  @apply flex flex-wrap justify-center gap-2 mb-2;
+  @apply flex flex-wrap gap-2 mb-2;
 }
 
 .projects__tech-tag {
-  @apply px-2 py-1 font-semibold transition transform rounded-full text-white bg-green-500 cursor-pointer select-none sm:px-5 py-2 px-5 sm:py-2;
+  @apply px-2 py-1  font-semibold transition transform rounded-full text-white bg-green-500  cursor-pointer select-none sm:px-5 py-2 px-5 sm:py-2;
 }
 
 .projects__description {
