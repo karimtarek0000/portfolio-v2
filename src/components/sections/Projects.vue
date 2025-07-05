@@ -12,30 +12,25 @@
 
     <ClientOnly>
       <div class="projects__slider-container">
-        <Swiper
-          :modules="[Virtual, Pagination, Keyboard]"
+        <swiper-container
           :space-between="24"
           :centered-slides="true"
           :breakpoints="breakpoints"
-          :pagination="{ clickable: true }"
+          :navigation="false"
+          :pagination="true"
+          :initial-slide="0"
+          :keyboard="{ enabled: true }"
           :grab-cursor="true"
-          :speed="500"
-          :threshold="20"
-          :touch-ratio="0.5"
-          :resistance="true"
-          :resistance-ratio="0.85"
-          :observer="true"
-          :observer-parents="true"
-          :update-on-images-ready="true"
-          :watch-overflow="true"
-          :lazy="{ loadPrevNext: true }"
+          :autoplay="autoplayConfig"
+          :speed="700"
           :prevent-clicks="true"
           :prevent-clicks-propagation="true"
           :touch-start-prevent-default="false"
-          :touch-move-stop-propagation="false"
           class="projects__slider"
+          aria-label="Project showcase slider"
+          role="region"
         >
-          <SwiperSlide
+          <swiper-slide
             v-for="(project, index) in projects"
             :key="`slide-${index}`"
             class="projects__slide"
@@ -50,123 +45,44 @@
                 sizes="sm:100vw lg:50vw xl:80vw"
                 :alt="`Screenshot of ${project.title} project`"
                 class="projects__image"
-                loading="lazy"
               />
 
               <div class="projects__overlay" />
-              <div class="projects__content">
-                <header class="projects__header">
-                  <h3 class="projects__title">
-                    {{ project.title }}
-                  </h3>
-                  <div
-                    class="projects__tech-stack"
-                    role="list"
-                    aria-label="Technologies used"
-                  >
-                    <span
-                      v-for="tech in project.technologies"
-                      :key="tech"
-                      class="projects__tech-tag"
-                      role="listitem"
-                      :aria-label="`Technology: ${tech}`"
-                    >
-                      {{ tech }}
-                    </span>
-                  </div>
-                </header>
-
-                <p class="projects__description">
-                  {{ project.description }}
-                </p>
-
-                <footer class="projects__actions">
-                  <!-- Visit button -->
-                  <SharedButton
-                    as="a"
-                    variant="outline"
-                    size="md"
-                    :href="project.website"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    :aria-label="`Visit ${project.title} project (opens in new tab)`"
-                  >
-                    <span>Visit</span>
-                    <svg
-                      class="w-5 h-5 inline-block align-middle transition-transform duration-300 drop-shadow-[0_1px_2px_rgba(0,0,0,0.1)] group-hover:translate-x-1 group-hover:scale-110"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2.5"
-                      viewBox="0 0 24 24"
-                      aria-hidden="true"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="M5 12h14m-7-7l7 7-7 7"
-                      />
-                    </svg>
-                  </SharedButton>
-
-                  <!-- Source button -->
-                  <SharedButton
-                    v-if="project.github"
-                    as="a"
-                    :href="project.github"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    variant="outline"
-                    size="md"
-                    class="mx-3"
-                    :aria-label="`View ${project.title} source code on GitHub (opens in new tab)`"
-                  >
-                    <span>Source</span>
-                    <svg
-                      class="w-5 h-5 inline-block align-middle transition-transform duration-300 drop-shadow-[0_1px_2px_rgba(0,0,0,0.1)] group-hover:translate-x-1 group-hover:scale-110"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2.5"
-                      viewBox="0 0 24 24"
-                      aria-hidden="true"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="M5 12h14m-7-7l7 7-7 7"
-                      />
-                    </svg>
-                  </SharedButton>
-                </footer>
-              </div>
+              <div class="projects__content"></div>
             </article>
-          </SwiperSlide>
-        </Swiper>
+          </swiper-slide>
+        </swiper-container>
       </div>
     </ClientOnly>
   </section>
 </template>
 
 <script lang="ts" setup>
-import 'swiper/css'
-import 'swiper/css/pagination'
-import { Keyboard, Pagination, Virtual } from 'swiper/modules'
-import { Swiper, SwiperSlide } from 'swiper/vue'
-
 const data: Ref<Data> = useState('data')
 const projects = shallowRef(data.value.projects)
+
+const autoplayConfig = {
+  delay: 10000000,
+  disableOnInteraction: false,
+  pauseOnMouseEnter: true,
+  reverseDirection: false,
+}
 
 const breakpoints = {
   640: {
     slidesPerView: 1,
     spaceBetween: 24,
+    centeredSlides: true,
   },
   1024: {
-    slidesPerView: 1.5,
+    slidesPerView: 1.8,
     spaceBetween: 32,
+    centeredSlides: true,
   },
   1280: {
-    slidesPerView: 2,
+    slidesPerView: 2.5,
     spaceBetween: 32,
+    centeredSlides: true,
   },
 }
 </script>
@@ -185,24 +101,17 @@ const breakpoints = {
   @apply overflow-visible w-full;
 }
 
-.swiper-slide {
-  will-change: transform;
-  transform: translate3d(0, 0, 0);
-  backface-visibility: hidden;
-}
-
 .projects__slide {
-  @apply transition-[opacity,transform] duration-300 opacity-60 scale-[0.95] h-[500px] w-auto;
-  transform: translate3d(0, 0, 0);
+  @apply transition-all duration-500 opacity-60 blur-[1px] grayscale-[20%] scale-[0.92] will-change-transform h-[500px] w-auto;
 }
 
 .projects__slide.swiper-slide-active {
-  @apply opacity-100 scale-100 z-[2];
+  @apply opacity-100 blur-0 grayscale-0 scale-100 z-[2];
 }
 
 .projects__slide.swiper-slide-next,
 .projects__slide.swiper-slide-prev {
-  @apply opacity-80 scale-[0.98] z-[1];
+  @apply opacity-80 blur-[0.5px] grayscale-[5%] scale-[0.96] z-[1];
 }
 
 .projects__card {
@@ -210,13 +119,23 @@ const breakpoints = {
 }
 
 .projects__image {
-  @apply absolute inset-0 z-0 object-cover lg:object-fill max-w-full object-center w-full h-full transition-transform duration-300 scale-100;
-  transform: translate3d(0, 0, 0);
+  @apply absolute inset-0 z-0 object-cover lg:object-fill max-w-full object-center w-full h-full will-change-transform transition-opacity duration-300 scale-100;
+  transition: transform 0.4s ease-in-out, filter 0.8s ease-in-out;
 }
 
 .projects__card:hover .projects__image {
   @apply scale-105 brightness-90;
-  transition: transform 0.5s ease-out;
+  transition: transform 0.8s ease-in-out, filter 0.8s ease-in-out;
+}
+
+.projects__slide.swiper-slide-active .projects__card:hover .projects__image {
+  @apply scale-110 brightness-90;
+  transition: transform 0.8s ease-in-out, filter 0.8s ease-in-out;
+}
+
+.projects__slide:hover .projects__card .projects__image {
+  @apply scale-105 brightness-90;
+  transition: transform 0.8s ease-in-out, filter 0.8s ease-in-out;
 }
 
 .projects__slide.swiper-slide-active:hover .projects__card .projects__image {
@@ -232,8 +151,9 @@ const breakpoints = {
     rgba(0, 0, 0, 0.7) 50%,
     transparent 100%
   );
-  transform: translate3d(0, 0, 0);
-  will-change: opacity;
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  will-change: auto;
 }
 
 .projects__content {
