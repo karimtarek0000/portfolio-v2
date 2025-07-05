@@ -223,7 +223,7 @@ const breakpoints = {
 }
 
 .projects__overlay {
-  @apply absolute inset-0 w-full bg-gradient-to-t from-[rgba(0,0,0,0.95)] via-[rgba(0,0,0,0.6)] to-transparent block isolate overflow-hidden pointer-events-none;
+  @apply fixed inset-0 will-change-auto w-full bg-gradient-to-t from-[rgba(0,0,0,0.95)] via-[rgba(0,0,0,0.6)] to-transparent block isolate overflow-hidden pointer-events-none;
 }
 
 .projects__content {
