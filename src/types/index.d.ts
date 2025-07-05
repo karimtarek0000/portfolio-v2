@@ -18,6 +18,16 @@ declare global {
     iconName: string
   }
 
+  interface Project {
+    image: string
+    title: string
+    description: string
+    technologies: string[]
+    website: string
+    github?: string
+    featured?: boolean
+  }
+
   interface Links {
     downloadCV: string
     previewCV: string
@@ -36,6 +46,7 @@ declare global {
     skills: Skill[]
     about: string
     experience: Experience[]
+    projects: Project[]
   }
 }
 

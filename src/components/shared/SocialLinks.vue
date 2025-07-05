@@ -8,7 +8,7 @@
       target="_blank"
       rel="noopener noreferrer"
       :class="[
-        'relative p-3 transition-all duration-300 border social-link--header group rounded-xl bg-primary-2/10 hover:bg-primary-2/20 hover:scale-110 hover:-translate-y-1 border-primary-2/10 hover:border-primary-2/30 hover:shadow-lg',
+        'relative p-3 transition-all duration-300 border group rounded-xl bg-primary-2/10 hover:bg-primary-2/20 hover:scale-110 hover:-translate-y-1 border-primary-2/10 hover:border-primary-2/30 hover:shadow-lg',
         { 'opacity-0': type === 'header' },
       ]"
     >

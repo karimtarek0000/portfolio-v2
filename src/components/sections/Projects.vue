@@ -37,14 +37,14 @@
             }`"
           >
             <article class="projects__card">
-              <img
+              <NuxtImg
+                provider="cloudinary"
                 :src="project.image"
+                sizes="sm:100vw lg:50vw xl:80vw"
                 :alt="`Screenshot of ${project.title} project`"
                 class="projects__image"
-                loading="lazy"
-                width="800"
-                height="500"
               />
+
               <div class="projects__overlay" />
               <div class="projects__content">
                 <header class="projects__header">
@@ -139,15 +139,8 @@
 </template>
 
 <script lang="ts" setup>
-interface Project {
-  image: string
-  title: string
-  description: string
-  technologies: string[]
-  website: string
-  github?: string
-  featured?: boolean
-}
+const data: Ref<Data> = useState('data')
+const projects = shallowRef(data.value.projects)
 
 const autoplayConfig = {
   delay: 10000000,
@@ -155,51 +148,6 @@ const autoplayConfig = {
   pauseOnMouseEnter: true,
   reverseDirection: false,
 }
-
-const projects: Project[] = [
-  {
-    image: 'https://picsum.photos/id/1015/800/500',
-    title: 'test 1',
-    description:
-      'A modern e-commerce platform built with Vue 3 and Nuxt, featuring real-time inventory management and seamless payment integration.',
-    technologies: ['Vue', 'Nuxt', 'Tailwind', 'Swiper'],
-    website: 'https://example.com/ecommerce',
-    github: 'https://github.com/user/ecommerce',
-    featured: true,
-  },
-  {
-    image: 'https://picsum.photos/id/1016/800/500',
-    title: 'test 2',
-    description:
-      'Believe in yourself and your team. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque euismod, nisi eu consectetur consectetur, nisl nisi consectetur nisi, euismod euismod nisi nisi euismod.',
-    technologies: ['JavaScript', 'Vue', 'Tailwind'],
-    website: 'https://example.com/ted',
-  },
-  {
-    image: 'https://picsum.photos/id/1018/800/500',
-    title: 'test 3',
-    description:
-      'Exciting new releases this June. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque euismod, nisi eu consectetur consectetur, nisl nisi consectetur nisi, euismod euismod nisi nisi euismod.',
-    technologies: ['TypeScript', 'Nuxt', 'Tailwind'],
-    website: 'https://example.com/new',
-  },
-  {
-    image: 'https://picsum.photos/id/1020/800/500',
-    title: 'test 4',
-    description:
-      'Uncover the secrets hidden within. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque euismod, nisi eu consectetur consectetur, nisl nisi consectetur nisi, euismod euismod nisi nisi euismod.',
-    technologies: ['Vue', 'Swiper', 'Lottie'],
-    website: 'https://example.com/mystery',
-  },
-  {
-    image: 'https://picsum.photos/id/1024/800/500',
-    title: 'test 5',
-    description:
-      'A journey beyond imagination. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque euismod, nisi eu consectetur consectetur, nisl nisi consectetur nisi, euismod euismod nisi nisi euismod.',
-    technologies: ['Nuxt', 'Tailwind', 'Vitest'],
-    website: 'https://example.com/escape',
-  },
-]
 
 const breakpoints = {
   640: {
@@ -231,7 +179,7 @@ const breakpoints = {
   --swiper-pagination-bullet-inactive-opacity: 0.4;
   --swiper-pagination-bullet-size: 12px;
   --swiper-pagination-bullet-horizontal-gap: 6px;
-  @apply overflow-visible w-full h-[500px];
+  @apply overflow-visible w-full;
 }
 
 .projects__slide {
@@ -252,7 +200,7 @@ const breakpoints = {
 }
 
 .projects__image {
-  @apply absolute inset-0 z-0 object-cover object-center w-full h-full will-change-transform transition-opacity duration-300 scale-100;
+  @apply absolute inset-0 z-0 object-cover lg:object-fill max-w-full object-center w-full h-full will-change-transform transition-opacity duration-300 scale-100;
   transition: transform 0.4s ease-in-out, filter 0.8s ease-in-out;
 }
 
@@ -262,7 +210,7 @@ const breakpoints = {
 }
 
 .projects__slide.swiper-slide-active .projects__card:hover .projects__image {
-  @apply scale-110 brightness-75;
+  @apply scale-110 brightness-90;
   transition: transform 0.8s ease-in-out, filter 0.8s ease-in-out;
 }
 
@@ -272,22 +220,16 @@ const breakpoints = {
 }
 
 .projects__slide.swiper-slide-active:hover .projects__card .projects__image {
-  @apply scale-110 brightness-75;
+  @apply scale-110 brightness-90;
   transition: transform 0.8s ease-in-out, filter 0.8s ease-in-out;
 }
 
 .projects__overlay {
-  @apply absolute inset-0 z-10 pointer-events-none;
+  @apply fixed -inset-1 z-10 pointer-events-none;
   background: linear-gradient(
     to top,
     rgba(0, 0, 0, 0.95) 0%,
-    rgba(0, 0, 0, 0.6) 50%,
-    transparent 100%
-  );
-  background: -webkit-linear-gradient(
-    bottom,
-    rgba(0, 0, 0, 0.95) 0%,
-    rgba(0, 0, 0, 0.6) 50%,
+    rgba(0, 0, 0, 0.7) 50%,
     transparent 100%
   );
   -webkit-transform: translateZ(0);
@@ -312,7 +254,7 @@ const breakpoints = {
 }
 
 .projects__tech-stack {
-  @apply flex flex-wrap gap-2 mb-2;
+  @apply flex flex-wrap justify-center gap-2 mb-2;
 }
 
 .projects__tech-tag {
