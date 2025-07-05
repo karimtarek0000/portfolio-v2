@@ -21,8 +21,6 @@
           :initial-slide="0"
           :keyboard="{ enabled: true }"
           :grab-cursor="true"
-          :autoplay="autoplayConfig"
-          :effect="'slide'"
           :speed="700"
           class="projects__slider"
           aria-label="Project showcase slider"
@@ -71,64 +69,6 @@
                 <p class="projects__description">
                   {{ project.description }}
                 </p>
-
-                <footer class="projects__actions" v-if="false">
-                  <!-- Visit button -->
-                  <SharedButton
-                    as="a"
-                    variant="outline"
-                    size="md"
-                    :href="project.website"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    :aria-label="`Visit ${project.title} project (opens in new tab)`"
-                  >
-                    <span>Visit</span>
-                    <svg
-                      class="w-5 h-5 inline-block align-middle transition-transform duration-300 drop-shadow-[0_1px_2px_rgba(0,0,0,0.1)] group-hover:translate-x-1 group-hover:scale-110"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2.5"
-                      viewBox="0 0 24 24"
-                      aria-hidden="true"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="M5 12h14m-7-7l7 7-7 7"
-                      />
-                    </svg>
-                  </SharedButton>
-
-                  <!-- Source button -->
-                  <SharedButton
-                    v-if="project.github"
-                    as="a"
-                    :href="project.github"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    variant="outline"
-                    size="md"
-                    class="mx-3"
-                    :aria-label="`View ${project.title} source code on GitHub (opens in new tab)`"
-                  >
-                    <span>Source</span>
-                    <svg
-                      class="w-5 h-5 inline-block align-middle transition-transform duration-300 drop-shadow-[0_1px_2px_rgba(0,0,0,0.1)] group-hover:translate-x-1 group-hover:scale-110"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2.5"
-                      viewBox="0 0 24 24"
-                      aria-hidden="true"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="M5 12h14m-7-7l7 7-7 7"
-                      />
-                    </svg>
-                  </SharedButton>
-                </footer>
               </div>
             </article>
           </swiper-slide>
