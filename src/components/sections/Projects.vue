@@ -43,7 +43,7 @@
                 class="projects__image"
               />
 
-              <div class="pointer-events-none projects__overlay" />
+              <div class="projects__overlay" />
               <div class="projects__content">
                 <header class="projects__header">
                   <h3 class="projects__title">
@@ -121,7 +121,7 @@ const breakpoints = {
   --swiper-pagination-bullet-horizontal-gap: 6px;
   @apply overflow-visible w-full;
 }
-
+/* 
 .projects__slide {
   @apply transition-all duration-500 opacity-60 blur-[1px] grayscale-[20%] scale-[0.92] will-change-transform w-auto;
 }
@@ -213,5 +213,5 @@ const breakpoints = {
 
 .projects__actions {
   @apply flex items-center mt-5 gap-2;
-}
+} */
 </style>

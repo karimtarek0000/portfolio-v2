@@ -71,9 +71,9 @@ export default defineNuxtConfig({
       ],
     },
   },
-  // routeRules: {
-  //   '/': { prerender: true },
-  // },
+  routeRules: {
+    '/': { prerender: true },
+  },
   modules: [
     '@nuxtjs/tailwindcss',
     '@nuxt/image',
