@@ -22,8 +22,10 @@
           :keyboard="{ enabled: true }"
           :grab-cursor="true"
           :autoplay="autoplayConfig"
-          :effect="'slide'"
           :speed="700"
+          :prevent-clicks="true"
+          :prevent-clicks-propagation="true"
+          :touch-start-prevent-default="false"
           class="projects__slider"
           aria-label="Project showcase slider"
           role="region"
@@ -37,13 +39,13 @@
             }`"
           >
             <article class="projects__card">
-              <!-- <NuxtImg
+              <NuxtImg
                 provider="cloudinary"
                 :src="project.image"
                 sizes="sm:100vw lg:50vw xl:80vw"
                 :alt="`Screenshot of ${project.title} project`"
                 class="projects__image"
-              /> -->
+              />
 
               <div class="projects__overlay" />
               <div class="projects__content">
