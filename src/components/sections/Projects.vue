@@ -17,7 +17,7 @@
           :centered-slides="true"
           :breakpoints="breakpoints"
           :navigation="false"
-          :pagination="false"
+          :pagination="true"
           :initial-slide="0"
           :keyboard="{ enabled: true }"
           :grab-cursor="true"
@@ -37,13 +37,13 @@
             }`"
           >
             <article class="projects__card">
-              <NuxtImg
+              <!-- <NuxtImg
                 provider="cloudinary"
                 :src="project.image"
                 sizes="sm:100vw lg:50vw xl:80vw"
                 :alt="`Screenshot of ${project.title} project`"
                 class="projects__image"
-              />
+              /> -->
 
               <div class="projects__overlay" />
               <div class="projects__content">
