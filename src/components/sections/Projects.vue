@@ -45,7 +45,7 @@
                 class="projects__image"
               />
 
-              <div class="projects__overlay" />
+              <div class="pointer-events-none projects__overlay" />
               <div class="projects__content">
                 <header class="projects__header">
                   <h3 class="projects__title">
@@ -58,7 +58,7 @@
                   >
                     <span
                       v-for="tech in project.technologies"
-                      :key="tech"
+                      :key="`slide-${index}-${tech}`"
                       class="projects__tech-tag"
                       role="listitem"
                       :aria-label="`Technology: ${tech}`"
@@ -72,7 +72,7 @@
                   {{ project.description }}
                 </p>
 
-                <footer class="projects__actions">
+                <footer class="projects__actions" v-if="false">
                   <!-- Visit button -->
                   <SharedButton
                     as="a"
