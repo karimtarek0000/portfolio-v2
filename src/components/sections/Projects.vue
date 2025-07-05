@@ -45,8 +45,9 @@
                 class="projects__image"
               />
 
+              <div class="projects__overlay" />
+
               <div class="projects__content">
-                <div class="projects__overlay" />
                 <header class="projects__header">
                   <h3 class="projects__title">
                     {{ project.title }}
@@ -213,18 +214,8 @@ const breakpoints = {
   transition: transform 0.8s ease-in-out, filter 0.8s ease-in-out;
 }
 
-.projects__slide:hover .projects__card .projects__image {
-  @apply scale-105 brightness-90;
-  transition: transform 0.8s ease-in-out, filter 0.8s ease-in-out;
-}
-
-.projects__slide.swiper-slide-active:hover .projects__card .projects__image {
-  @apply scale-110 brightness-75;
-  transition: transform 0.8s ease-in-out, filter 0.8s ease-in-out;
-}
-
 .projects__overlay {
-  @apply fixed -inset-0 will-change-auto bg-gradient-to-t from-[rgba(0,0,0,0.95)] via-[rgba(0,0,0,0.6)] to-transparent overflow-hidden pointer-events-none;
+  @apply fixed -inset-0 will-change-auto bg-gradient-to-t from-[rgba(0,0,0,0.95)] via-[rgba(0,0,0,0.6)] to-transparent overflow-hidden transition-all pointer-events-none;
 }
 
 .projects__content {
@@ -244,9 +235,8 @@ const breakpoints = {
 }
 
 .projects__tech-stack {
-  @apply flex flex-wrap gap-2 mb-2;
+  @apply flex flex-wrap justify-center lg:justify-start gap-2 mb-2;
 }
-
 .projects__tech-tag {
   @apply px-2 py-1  font-semibold transition transform rounded-full text-white bg-green-500  cursor-pointer select-none sm:px-5 py-2 px-5 sm:py-2;
 }
