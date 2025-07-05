@@ -13,21 +13,17 @@
         ref="lottieContainerRef"
         class="h-[200px] w-[200px] md:h-[400px] md:w-[400px] mt-32 *:shrink-0 flex flex-col justify-center items-center"
       >
-        <client-only>
-          <Vue3Lottie
-            class="translate-y-[10px] md:translate-y-[130px]"
-            size="200"
-            animationLink="https://lottie.host/707ad562-0d36-49dc-bc46-b46fa8ce1896/fGbyNuf4y4.json"
-          />
-        </client-only>
-        <client-only>
-          <Vue3Lottie
-            class="-translate-y-[50px] md:-translate-y-[70px]"
-            animationLink="https://lottie.host/eca2fac4-6448-4276-8f61-783f40d33d66/n7MP5EFvxv.json"
-            :loop="false"
-            :speed="2"
-          />
-        </client-only>
+        <Vue3Lottie
+          class="translate-y-[10px] md:translate-y-[130px]"
+          size="200"
+          animationLink="https://lottie.host/707ad562-0d36-49dc-bc46-b46fa8ce1896/fGbyNuf4y4.json"
+        />
+        <Vue3Lottie
+          class="-translate-y-[50px] md:-translate-y-[70px]"
+          animationLink="https://lottie.host/eca2fac4-6448-4276-8f61-783f40d33d66/n7MP5EFvxv.json"
+          :loop="false"
+          :speed="2"
+        />
       </div>
 
       <!-- TITLE -->
@@ -141,15 +137,15 @@ function handleDownload() {
 
 /* Initial hidden states for animation elements */
 .hero__title span {
-  @apply opacity-0;
+  @apply opacity-[0.01];
 }
 
 .hero__social-icons a {
-  @apply opacity-0;
+  @apply opacity-[0.01];
 }
 
 /* Hide download button initially to prevent flash before animation */
 .hero__button {
-  @apply opacity-0 translate-y-0;
+  @apply opacity-[0.01] translate-y-0;
 }
 </style>
