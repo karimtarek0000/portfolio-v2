@@ -123,7 +123,7 @@ const breakpoints = {
 }
 
 .projects__slide {
-  @apply transition-all duration-500 opacity-60 blur-[1px] grayscale-[20%] scale-[0.92] will-change-transform h-[500px] w-auto;
+  @apply transition-all duration-500 opacity-60 blur-[1px] grayscale-[20%] scale-[0.92] will-change-transform w-auto;
 }
 
 .projects__slide.swiper-slide-active {
@@ -165,7 +165,7 @@ const breakpoints = {
 }
 
 .projects__overlay {
-  @apply absolute -inset-1 z-10 pointer-events-none;
+  @apply fixed -inset-1 z-10 pointer-events-none;
   background: linear-gradient(
     to top,
     rgba(0, 0, 0, 0.95) 0%,
