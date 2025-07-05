@@ -128,7 +128,7 @@
                 </footer>
               </div>
 
-              <div class="projects__overlay"></div>
+              <span class="projects__overlay" />
             </article>
           </swiper-slide>
         </swiper-container>
@@ -195,7 +195,7 @@ const breakpoints = {
 }
 
 .projects__card {
-  @apply relative flex flex-col justify-end items-start w-full rounded-2xl overflow-hidden shadow-2xl bg-black/60 h-[500px] min-h-[500px];
+  @apply relative flex flex-col justify-end items-start w-full rounded-2xl overflow-hidden shadow-2xl h-[500px] min-h-[500px];
 }
 
 .projects__image {
@@ -223,32 +223,8 @@ const breakpoints = {
 }
 
 .projects__overlay {
-  @apply absolute inset-0 w-full z-10 overflow-hidden pointer-events-none;
-  background: linear-gradient(
-    to top,
-    rgba(0, 0, 0, 0.95) 0%,
-    rgba(0, 0, 0, 0.6) 50%,
-    transparent 100%
-  );
+  @apply absolute inset-0 w-full bg-gradient-to-t from-[rgba(0,0,0,0.95)] via-[rgba(0,0,0,0.6)] to-transparent block isolate overflow-hidden pointer-events-none;
 }
-/* .projects__overlay {
-  @apply fixed -inset-1 z-10 pointer-events-none;
-  background: linear-gradient(
-    to top,
-    rgba(0, 0, 0, 0.95) 0%,
-    rgba(0, 0, 0, 0.6) 50%,
-    transparent 100%
-  );
-  background: -webkit-linear-gradient(
-    bottom,
-    rgba(0, 0, 0, 0.95) 0%,
-    rgba(0, 0, 0, 0.6) 50%,
-    transparent 100%
-  );
-  -webkit-transform: translateZ(0);
-  transform: translateZ(0);
-  will-change: auto;
-} */
 
 .projects__content {
   @apply relative z-20 justify-evenly lg:justify-center items-center lg:items-start h-full flex flex-col w-full p-6 pointer-events-auto translate-y-24 opacity-0 transition-all duration-700 ease-out sm:p-8;
