@@ -47,6 +47,7 @@
 
               <div class="projects__overlay" />
               <div class="projects__content">
+                <div class="projects__overlay" />
                 <header class="projects__header">
                   <h3 class="projects__title">
                     {{ project.title }}
@@ -225,8 +226,7 @@ const breakpoints = {
 }
 
 .projects__overlay {
-  @apply absolute inset-0 will-change-auto w-full bg-gradient-to-t from-[rgba(0,0,0,0.95)] via-[rgba(0,0,0,0.6)] to-transparent block isolate overflow-hidden pointer-events-none;
-  transform: translate3d(0, 0, 0);
+  @apply fixed -inset-0 will-change-auto bg-gradient-to-t from-[rgba(0,0,0,0.95)] via-[rgba(0,0,0,0.6)] to-transparent overflow-hidden pointer-events-none;
 }
 
 .projects__content {
@@ -254,7 +254,7 @@ const breakpoints = {
 }
 
 .projects__description {
-  @apply max-w-xl text-center lg:text-start mb-4 text-sm leading-relaxed text-white/80 transition-opacity duration-500;
+  @apply max-w-xl z-10 text-center lg:text-start mb-4 text-sm leading-relaxed text-white/80 transition-opacity duration-500;
 }
 
 .projects__actions {
