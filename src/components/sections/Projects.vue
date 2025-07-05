@@ -12,26 +12,26 @@
 
     <ClientOnly>
       <div class="projects__slider-container">
-        <swiper-container
+        <Swiper
+          :modules="[Pagination, Keyboard]"
+          :slides-per-view="1"
           :space-between="24"
           :centered-slides="true"
           :breakpoints="breakpoints"
-          :navigation="false"
-          :pagination="true"
+          :pagination="{ clickable: true }"
           :initial-slide="0"
           :keyboard="{ enabled: true }"
           :grab-cursor="true"
-          :autoplay="autoplayConfig"
-          :speed="700"
-          :prevent-clicks="true"
-          :prevent-clicks-propagation="true"
-          :touch-start-prevent-default="false"
-          :touch-move-stop-propagation="false"
+          :speed="500"
+          :threshold="10"
+          :touch-ratio="1"
+          :resistance="true"
+          :resistance-ratio="0.85"
+          :observer="true"
+          :observer-parents="true"
           class="projects__slider"
-          aria-label="Project showcase slider"
-          role="region"
         >
-          <swiper-slide
+          <SwiperSlide
             v-for="(project, index) in projects"
             :key="`slide-${index}`"
             class="projects__slide"
@@ -46,6 +46,7 @@
                 sizes="sm:100vw lg:50vw xl:80vw"
                 :alt="`Screenshot of ${project.title} project`"
                 class="projects__image"
+                loading="lazy"
               />
 
               <div class="projects__overlay" />
@@ -77,7 +78,7 @@
 
                 <footer class="projects__actions">
                   <!-- Visit button -->
-                  <!-- <SharedButton
+                  <SharedButton
                     as="a"
                     variant="outline"
                     size="md"
@@ -101,10 +102,10 @@
                         d="M5 12h14m-7-7l7 7-7 7"
                       />
                     </svg>
-                  </SharedButton> -->
+                  </SharedButton>
 
                   <!-- Source button -->
-                  <!-- <SharedButton
+                  <SharedButton
                     v-if="project.github"
                     as="a"
                     :href="project.github"
@@ -130,43 +131,38 @@
                         d="M5 12h14m-7-7l7 7-7 7"
                       />
                     </svg>
-                  </SharedButton> -->
+                  </SharedButton>
                 </footer>
               </div>
             </article>
-          </swiper-slide>
-        </swiper-container>
+          </SwiperSlide>
+        </Swiper>
       </div>
     </ClientOnly>
   </section>
 </template>
 
 <script lang="ts" setup>
+import 'swiper/css'
+import 'swiper/css/pagination'
+import { Keyboard, Pagination } from 'swiper/modules'
+import { Swiper, SwiperSlide } from 'swiper/vue'
+
 const data: Ref<Data> = useState('data')
 const projects = shallowRef(data.value.projects)
-
-const autoplayConfig = {
-  delay: 10000000,
-  disableOnInteraction: false,
-  pauseOnMouseEnter: true,
-  reverseDirection: false,
-}
 
 const breakpoints = {
   640: {
     slidesPerView: 1,
     spaceBetween: 24,
-    centeredSlides: true,
   },
   1024: {
-    slidesPerView: 1.8,
+    slidesPerView: 1.5,
     spaceBetween: 32,
-    centeredSlides: true,
   },
   1280: {
-    slidesPerView: 2.5,
+    slidesPerView: 2,
     spaceBetween: 32,
-    centeredSlides: true,
   },
 }
 </script>
@@ -192,16 +188,17 @@ const breakpoints = {
 }
 
 .projects__slide {
-  @apply transition-all duration-500 opacity-60 blur-[1px] grayscale-[20%] scale-[0.92] will-change-transform h-[500px] w-auto;
+  @apply transition-[opacity,transform] duration-300 opacity-60 scale-[0.95] h-[500px] w-auto;
+  transform: translate3d(0, 0, 0);
 }
 
 .projects__slide.swiper-slide-active {
-  @apply opacity-100 blur-0 grayscale-0 scale-100 z-[2];
+  @apply opacity-100 scale-100 z-[2];
 }
 
 .projects__slide.swiper-slide-next,
 .projects__slide.swiper-slide-prev {
-  @apply opacity-80 blur-[0.5px] grayscale-[5%] scale-[0.96] z-[1];
+  @apply opacity-80 scale-[0.98] z-[1];
 }
 
 .projects__card {
@@ -209,23 +206,13 @@ const breakpoints = {
 }
 
 .projects__image {
-  @apply absolute inset-0 z-0 object-cover lg:object-fill max-w-full object-center w-full h-full will-change-transform transition-opacity duration-300 scale-100;
-  transition: transform 0.4s ease-in-out, filter 0.8s ease-in-out;
+  @apply absolute inset-0 z-0 object-cover lg:object-fill max-w-full object-center w-full h-full transition-transform duration-300 scale-100;
+  transform: translate3d(0, 0, 0);
 }
 
 .projects__card:hover .projects__image {
   @apply scale-105 brightness-90;
-  transition: transform 0.8s ease-in-out, filter 0.8s ease-in-out;
-}
-
-.projects__slide.swiper-slide-active .projects__card:hover .projects__image {
-  @apply scale-110 brightness-90;
-  transition: transform 0.8s ease-in-out, filter 0.8s ease-in-out;
-}
-
-.projects__slide:hover .projects__card .projects__image {
-  @apply scale-105 brightness-90;
-  transition: transform 0.8s ease-in-out, filter 0.8s ease-in-out;
+  transition: transform 0.5s ease-out;
 }
 
 .projects__slide.swiper-slide-active:hover .projects__card .projects__image {
@@ -241,9 +228,8 @@ const breakpoints = {
     rgba(0, 0, 0, 0.7) 50%,
     transparent 100%
   );
-  -webkit-transform: translateZ(0);
-  transform: translateZ(0);
-  will-change: auto;
+  transform: translate3d(0, 0, 0);
+  will-change: opacity;
 }
 
 .projects__content {
