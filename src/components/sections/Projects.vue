@@ -43,7 +43,6 @@
                 class="projects__image"
               />
 
-              <div class="projects__overlay" />
               <div class="projects__content">
                 <header class="projects__header">
                   <h3 class="projects__title">
@@ -69,7 +68,67 @@
                 <p class="projects__description">
                   {{ project.description }}
                 </p>
+
+                <footer class="projects__actions">
+                  <!-- Visit button -->
+                  <SharedButton
+                    as="a"
+                    variant="outline"
+                    size="md"
+                    :href="project.website"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    :aria-label="`Visit ${project.title} project (opens in new tab)`"
+                  >
+                    <span>Visit</span>
+                    <svg
+                      class="w-5 h-5 inline-block align-middle transition-transform duration-300 drop-shadow-[0_1px_2px_rgba(0,0,0,0.1)] group-hover:translate-x-1 group-hover:scale-110"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2.5"
+                      viewBox="0 0 24 24"
+                      aria-hidden="true"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M5 12h14m-7-7l7 7-7 7"
+                      />
+                    </svg>
+                  </SharedButton>
+
+                  <!-- Source button -->
+                  <SharedButton
+                    v-if="project.github"
+                    as="a"
+                    :href="project.github"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    variant="outline"
+                    size="md"
+                    class="mx-3"
+                    :aria-label="`View ${project.title} source code on GitHub (opens in new tab)`"
+                  >
+                    <span>Source</span>
+                    <svg
+                      class="w-5 h-5 inline-block align-middle transition-transform duration-300 drop-shadow-[0_1px_2px_rgba(0,0,0,0.1)] group-hover:translate-x-1 group-hover:scale-110"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2.5"
+                      viewBox="0 0 24 24"
+                      aria-hidden="true"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M5 12h14m-7-7l7 7-7 7"
+                      />
+                    </svg>
+                  </SharedButton>
+                </footer>
               </div>
+
+              <div class="projects__overlay"></div>
             </article>
           </swiper-slide>
         </swiper-container>
@@ -119,15 +178,15 @@ const breakpoints = {
   --swiper-pagination-bullet-inactive-opacity: 0.4;
   --swiper-pagination-bullet-size: 12px;
   --swiper-pagination-bullet-horizontal-gap: 6px;
-  @apply overflow-visible w-full;
+  @apply overflow-hidden w-full;
 }
-/* 
+
 .projects__slide {
-  @apply transition-all duration-500 opacity-60 blur-[1px] grayscale-[20%] scale-[0.92] will-change-transform w-auto;
+  @apply transition-all duration-500 opacity-60 blur-[1px] grayscale-[20%] lg:scale-[0.92] will-change-transform;
 }
 
 .projects__slide.swiper-slide-active {
-  @apply opacity-100 blur-0 grayscale-0 scale-100 z-[2];
+  @apply opacity-100 blur-0 grayscale-0 lg:scale-100 z-[2];
 }
 
 .projects__slide.swiper-slide-next,
@@ -143,7 +202,6 @@ const breakpoints = {
   @apply absolute inset-0 z-0 object-fill max-w-full object-center w-full h-full will-change-transform transition-opacity duration-300 scale-100;
   transition: transform 0.4s ease-in-out, filter 0.8s ease-in-out;
 }
-
 .projects__card:hover .projects__image {
   @apply scale-105 brightness-90;
   transition: transform 0.8s ease-in-out, filter 0.8s ease-in-out;
@@ -165,6 +223,15 @@ const breakpoints = {
 }
 
 .projects__overlay {
+  @apply absolute inset-0 w-full z-10 overflow-hidden pointer-events-none;
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.95) 0%,
+    rgba(0, 0, 0, 0.6) 50%,
+    transparent 100%
+  );
+}
+/* .projects__overlay {
   @apply fixed -inset-1 z-10 pointer-events-none;
   background: linear-gradient(
     to top,
@@ -181,7 +248,7 @@ const breakpoints = {
   -webkit-transform: translateZ(0);
   transform: translateZ(0);
   will-change: auto;
-}
+} */
 
 .projects__content {
   @apply relative z-20 justify-evenly lg:justify-center items-center lg:items-start h-full flex flex-col w-full p-6 pointer-events-auto translate-y-24 opacity-0 transition-all duration-700 ease-out sm:p-8;
@@ -213,5 +280,5 @@ const breakpoints = {
 
 .projects__actions {
   @apply flex items-center mt-5 gap-2;
-} */
+}
 </style>
