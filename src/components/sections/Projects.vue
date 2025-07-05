@@ -216,6 +216,7 @@ const breakpoints = {
 
 .projects__overlay {
   @apply fixed -inset-0 will-change-auto bg-gradient-to-t from-[rgba(0,0,0,0.95)] via-[rgba(0,0,0,0.6)] to-transparent overflow-hidden transition-all pointer-events-none;
+  transform: translateZ(0);
 }
 
 .projects__content {
