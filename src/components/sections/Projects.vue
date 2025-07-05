@@ -127,9 +127,8 @@
                   </SharedButton>
                 </footer>
               </div>
-
-              <span class="projects__overlay" />
             </article>
+            <span class="projects__overlay" />
           </swiper-slide>
         </swiper-container>
       </div>
@@ -182,7 +181,7 @@ const breakpoints = {
 }
 
 .projects__slide {
-  @apply transition-all duration-500 opacity-60 blur-[1px] grayscale-[20%] lg:scale-[0.92] will-change-transform;
+  @apply transition-all relative duration-500 opacity-60 blur-[1px] grayscale-[20%] lg:scale-[0.92] will-change-transform;
 }
 
 .projects__slide.swiper-slide-active {
@@ -224,8 +223,6 @@ const breakpoints = {
 
 .projects__overlay {
   @apply fixed inset-0 will-change-auto w-full bg-gradient-to-t from-[rgba(0,0,0,0.95)] via-[rgba(0,0,0,0.6)] to-transparent block isolate overflow-hidden pointer-events-none;
-  -webkit-transform: translateY(0);
-  transform: translateY(0);
 }
 
 .projects__content {
