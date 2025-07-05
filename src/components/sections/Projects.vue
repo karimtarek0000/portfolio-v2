@@ -48,7 +48,7 @@
               <div class="projects__overlay" />
 
               <div class="projects__content">
-                <header class="projects__header">
+                <header class="mb-4 projects__header">
                   <h3 class="projects__title">
                     {{ project.title }}
                   </h3>
@@ -180,44 +180,34 @@ const breakpoints = {
   --swiper-pagination-bullet-inactive-opacity: 0.4;
   --swiper-pagination-bullet-size: 12px;
   --swiper-pagination-bullet-horizontal-gap: 6px;
-  @apply overflow-visible w-full;
+  @apply overflow-hidden w-full;
 }
 .projects__slide {
-  @apply transition-all duration-500 opacity-60 blur-[1px] grayscale-[20%] lg:scale-[0.92] will-change-transform h-[500px] w-auto;
+  @apply transition-all duration-500 lg:scale-[0.92] will-change-transform min-h-[500px] h-[500px] w-auto;
 }
 
 .projects__slide.swiper-slide-active {
-  @apply opacity-100 blur-0 grayscale-0 scale-100 z-[2];
-}
-
-.projects__slide.swiper-slide-next,
-.projects__slide.swiper-slide-prev {
-  @apply opacity-80 blur-[0.5px] grayscale-[5%] lg:scale-[0.96] z-[1];
+  @apply opacity-100 lg:scale-100 z-[2];
 }
 
 .projects__card {
-  @apply relative flex flex-col justify-end items-start w-full rounded-2xl overflow-hidden shadow-2xl bg-black/60 h-[500px] min-h-[500px];
-}
-
-.projects__image {
-  @apply absolute inset-0 z-0 object-fill max-w-full object-center w-full h-full will-change-transform transition-opacity duration-300 scale-100;
-  transition: transform 0.4s ease-in-out, filter 0.8s ease-in-out;
+  @apply relative flex flex-col justify-end items-start w-full rounded-2xl overflow-hidden h-[500px] min-h-[500px];
 }
 
 .projects__overlay {
-  @apply fixed -inset-0 will-change-auto bg-gradient-to-t from-[rgba(0,0,0,0.95)] via-[rgba(0,0,0,0.6)] to-transparent overflow-hidden transition-all pointer-events-none;
+  @apply fixed -inset-0 bg-gradient-to-t from-[rgba(0,0,0,0.95)] via-[rgba(0,0,0,0.6)] to-transparent overflow-hidden pointer-events-none;
+}
+
+.projects__image {
+  @apply absolute inset-0 z-0 object-fill max-w-full max-h-full object-center w-full h-full;
 }
 
 .projects__content {
-  @apply relative z-20 justify-evenly lg:justify-center items-center lg:items-start h-full flex flex-col w-full p-6 pointer-events-auto translate-y-24 opacity-0 transition-all duration-700 ease-out sm:p-8;
+  @apply relative z-20 justify-evenly lg:justify-center items-center lg:items-start h-full flex flex-col w-full p-6 translate-y-24 opacity-0 transition-all duration-700 ease-out sm:p-8;
 }
 
 .projects__slide.swiper-slide-active .projects__content {
   @apply translate-y-0 opacity-100;
-}
-
-.projects__header {
-  @apply mb-4;
 }
 
 .projects__title {
@@ -228,7 +218,7 @@ const breakpoints = {
   @apply flex flex-wrap justify-center lg:justify-start gap-2 mb-2;
 }
 .projects__tech-tag {
-  @apply px-2 py-1  font-semibold transition transform rounded-full text-white bg-green-500  cursor-pointer select-none sm:px-5 py-2 px-5 sm:py-2;
+  @apply px-2 py-1 font-semibold transition transform rounded-full text-white bg-green-500  cursor-pointer select-none sm:px-5 py-2 px-5 sm:py-2;
 }
 
 .projects__description {
