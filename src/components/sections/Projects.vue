@@ -47,7 +47,6 @@
                 class="projects__image"
               />
 
-              <div class="projects__overlay" />
               <div class="projects__content"></div>
             </article>
           </swiper-slide>
