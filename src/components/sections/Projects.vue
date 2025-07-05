@@ -21,6 +21,8 @@
           :initial-slide="0"
           :keyboard="{ enabled: true }"
           :grab-cursor="true"
+          :autoplay="autoplayConfig"
+          :effect="'slide'"
           :speed="700"
           class="projects__slider"
           aria-label="Project showcase slider"
@@ -55,7 +57,7 @@
                   >
                     <span
                       v-for="tech in project.technologies"
-                      :key="`slide-${index}-${tech}`"
+                      :key="tech"
                       class="projects__tech-tag"
                       role="listitem"
                       :aria-label="`Technology: ${tech}`"
@@ -70,7 +72,6 @@
                 </p>
 
                 <footer class="projects__actions">
-                  <!-- Visit button -->
                   <SharedButton
                     as="a"
                     variant="outline"
@@ -97,7 +98,6 @@
                     </svg>
                   </SharedButton>
 
-                  <!-- Source button -->
                   <SharedButton
                     v-if="project.github"
                     as="a"
@@ -128,7 +128,6 @@
                 </footer>
               </div>
             </article>
-            <span class="projects__overlay" />
           </swiper-slide>
         </swiper-container>
       </div>
@@ -181,11 +180,11 @@ const breakpoints = {
 }
 
 .projects__slide {
-  @apply transition-all relative duration-500 opacity-60 blur-[1px] grayscale-[20%] lg:scale-[0.92] will-change-transform;
+  @apply transition-all duration-500 opacity-60 blur-[1px] grayscale-[20%] scale-[0.92] will-change-transform h-[500px] w-auto;
 }
 
 .projects__slide.swiper-slide-active {
-  @apply opacity-100 blur-0 grayscale-0 lg:scale-100 z-[2];
+  @apply opacity-100 blur-0 grayscale-0 scale-100 z-[2];
 }
 
 .projects__slide.swiper-slide-next,
@@ -194,20 +193,36 @@ const breakpoints = {
 }
 
 .projects__card {
-  @apply relative flex flex-col justify-end items-start w-full rounded-2xl overflow-hidden shadow-2xl h-[500px] min-h-[500px];
+  @apply relative flex flex-col justify-end items-start w-full rounded-2xl overflow-hidden shadow-2xl bg-black/60 h-[500px] min-h-[500px];
+}
+
+.projects__card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.95) 0%,
+    rgba(0, 0, 0, 0.6) 50%,
+    transparent 100%
+  );
+  will-change: opacity;
 }
 
 .projects__image {
-  @apply absolute inset-0 z-0 object-fill max-w-full object-center w-full h-full will-change-transform transition-opacity duration-300 scale-100;
+  @apply absolute inset-0 z-0 object-cover lg:object-fill max-w-full object-center w-full h-full will-change-transform transition-opacity duration-300 scale-100;
   transition: transform 0.4s ease-in-out, filter 0.8s ease-in-out;
 }
+
 .projects__card:hover .projects__image {
   @apply scale-105 brightness-90;
   transition: transform 0.8s ease-in-out, filter 0.8s ease-in-out;
 }
 
 .projects__slide.swiper-slide-active .projects__card:hover .projects__image {
-  @apply scale-110 brightness-75;
+  @apply scale-110 brightness-90;
   transition: transform 0.8s ease-in-out, filter 0.8s ease-in-out;
 }
 
@@ -217,12 +232,8 @@ const breakpoints = {
 }
 
 .projects__slide.swiper-slide-active:hover .projects__card .projects__image {
-  @apply scale-110 brightness-75;
+  @apply scale-110 brightness-90;
   transition: transform 0.8s ease-in-out, filter 0.8s ease-in-out;
-}
-
-.projects__overlay {
-  @apply fixed inset-0 will-change-auto w-full bg-gradient-to-t from-[rgba(0,0,0,0.95)] via-[rgba(0,0,0,0.6)] to-transparent block isolate overflow-hidden pointer-events-none;
 }
 
 .projects__content {
@@ -242,11 +253,11 @@ const breakpoints = {
 }
 
 .projects__tech-stack {
-  @apply flex flex-wrap gap-2 mb-2;
+  @apply flex flex-wrap justify-center gap-2 mb-2;
 }
 
 .projects__tech-tag {
-  @apply px-2 py-1  font-semibold transition transform rounded-full text-white bg-green-500  cursor-pointer select-none sm:px-5 py-2 px-5 sm:py-2;
+  @apply px-2 py-1 font-semibold transition transform rounded-full text-white bg-green-500 cursor-pointer select-none sm:px-5 py-2 px-5 sm:py-2;
 }
 
 .projects__description {
