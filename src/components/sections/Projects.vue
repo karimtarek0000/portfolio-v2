@@ -181,9 +181,8 @@ const breakpoints = {
   --swiper-pagination-bullet-horizontal-gap: 6px;
   @apply overflow-visible w-full;
 }
-
 .projects__slide {
-  @apply transition-all duration-500 opacity-60 blur-[1px] grayscale-[20%] scale-[0.92] will-change-transform h-[500px] w-auto;
+  @apply transition-all duration-500 opacity-60 blur-[1px] grayscale-[20%] lg:scale-[0.92] will-change-transform h-[500px] w-auto;
 }
 
 .projects__slide.swiper-slide-active {
@@ -192,7 +191,7 @@ const breakpoints = {
 
 .projects__slide.swiper-slide-next,
 .projects__slide.swiper-slide-prev {
-  @apply opacity-80 blur-[0.5px] grayscale-[5%] scale-[0.96] z-[1];
+  @apply opacity-80 blur-[0.5px] grayscale-[5%] lg:scale-[0.96] z-[1];
 }
 
 .projects__card {
