@@ -17,7 +17,7 @@
           :centered-slides="true"
           :breakpoints="breakpoints"
           :navigation="false"
-          :pagination="{ clickable: true }"
+          :pagination="false"
           :initial-slide="0"
           :keyboard="{ enabled: true }"
           :grab-cursor="true"
