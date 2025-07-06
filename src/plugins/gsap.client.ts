@@ -1,28 +1,25 @@
-import { gsap } from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
-
-export default defineNuxtPlugin(() => {
-  // Register GSAP plugins only on client side
+export default defineNuxtPlugin(async () => {
   if (import.meta.client) {
+    const { gsap } = await import('gsap')
+    const { ScrollTrigger } = await import('gsap/ScrollTrigger')
+
     gsap.registerPlugin(ScrollTrigger)
 
-    // Set GSAP defaults for performance
     gsap.defaults({
       ease: 'power2.out',
       duration: 1,
     })
 
-    // Configure ScrollTrigger defaults
     ScrollTrigger.defaults({
       toggleActions: 'play none none reverse',
-      markers: false, // Set to true for debugging
+      markers: false,
     })
-  }
 
-  return {
-    provide: {
-      gsap,
-      ScrollTrigger,
-    },
+    return {
+      provide: {
+        gsap,
+        ScrollTrigger,
+      },
+    }
   }
 })
