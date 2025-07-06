@@ -86,7 +86,9 @@
 </template>
 
 <script lang="ts" setup>
-import { Vue3Lottie } from 'vue3-lottie'
+const Vue3Lottie = defineAsyncComponent(() =>
+  import('vue3-lottie').then(mod => mod.Vue3Lottie),
+)
 
 const { isDark } = useToggleTheme()
 const data: Ref<Data> = useState('data')
