@@ -43,3 +43,14 @@
     will-change: transform;
   }
 }
+
+/* Hide the scrollbar in Firefox */
+* {
+  scrollbar-width: none;
+}
+
+/* Optional: You can also hide the scrollbar in WebKit-based browsers like Chrome and Safari */
+*::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
