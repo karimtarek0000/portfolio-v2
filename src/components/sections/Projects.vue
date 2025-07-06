@@ -43,6 +43,7 @@
                 sizes="sm:100vw lg:50vw xl:80vw"
                 :alt="`Screenshot of ${project.title} project`"
                 class="projects__image"
+                loading="lazy"
               />
 
               <div class="projects__overlay" />
