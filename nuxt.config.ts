@@ -78,33 +78,12 @@ export default defineNuxtConfig({
   routeRules: {
     '/': { prerender: true },
   },
-  modules: [
-    '@nuxtjs/tailwindcss',
-    '@nuxt/image',
-    '@nuxtjs/google-fonts',
-    'nuxt-swiper',
-    'nuxt-simple-sitemap',
-    'nuxt-simple-robots',
-  ],
+  modules: ['@nuxtjs/tailwindcss', '@nuxt/image', '@nuxtjs/google-fonts', 'nuxt-swiper', '@nuxtjs/sitemap', '@nuxtjs/robots'],
   css: ['~/assets/style/main.css'],
 
   site: {
     url: 'https://karim-tarek.vercel.app',
-  },
-
-  sitemap: {
-    autoLastmod: true,
-    urls: [{ loc: '/', changefreq: 'monthly', priority: 1.0 }],
-  },
-
-  robots: {
-    groups: [
-      {
-        userAgent: '*',
-        allow: '/',
-      },
-    ],
-    sitemap: 'https://karim-tarek.vercel.app/sitemap.xml',
+    name: 'Karim tarek - Frontend Engineer',
   },
 
   image: {

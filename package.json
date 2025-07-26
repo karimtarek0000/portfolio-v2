@@ -11,6 +11,8 @@
   },
   "dependencies": {
     "@nuxt/image": "^1.10.0",
+    "@nuxtjs/robots": "^5.4.0",
+    "@nuxtjs/sitemap": "^7.4.3",
     "@nuxtjs/tailwindcss": "^6.12.1",
     "gsap": "^3.13.0",
     "hex-rgb": "^5.0.0",
@@ -21,8 +23,6 @@
     "vue3-lottie": "^3.3.1"
   },
   "devDependencies": {
-    "@nuxtjs/google-fonts": "^3.0.0-1",
-    "nuxt-simple-robots": "^4.0.1",
-    "nuxt-simple-sitemap": "^4.4.1"
+    "@nuxtjs/google-fonts": "^3.0.0-1"
   }
 }
