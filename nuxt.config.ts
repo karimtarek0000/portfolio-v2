@@ -9,6 +9,10 @@ export default defineNuxtConfig({
       viewport: 'width=device-width, initial-scale=1, maximum-scale=1',
       meta: [
         {
+          name: 'google-site-verification',
+          content: '4RO_bRh5fWXWNWU_LsETY6WTBH8BUOxYYYNxSAj6P10',
+        },
+        {
           name: 'description',
           content:
             'Karim Tarek - Frontend Software Engineer. Explore my portfolio showcasing web development projects, technical skills, and professional experience.',
