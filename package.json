@@ -21,6 +21,8 @@
     "vue3-lottie": "^3.3.1"
   },
   "devDependencies": {
-    "@nuxtjs/google-fonts": "^3.0.0-1"
+    "@nuxtjs/google-fonts": "^3.0.0-1",
+    "nuxt-simple-robots": "^4.0.1",
+    "nuxt-simple-sitemap": "^4.4.1"
   }
 }

@@ -79,8 +79,29 @@ export default defineNuxtConfig({
     '@nuxt/image',
     '@nuxtjs/google-fonts',
     'nuxt-swiper',
+    'nuxt-simple-sitemap',
+    'nuxt-simple-robots',
   ],
   css: ['~/assets/style/main.css'],
+
+  site: {
+    url: 'https://karim-tarek.vercel.app',
+  },
+
+  sitemap: {
+    autoLastmod: true,
+    urls: [{ loc: '/', changefreq: 'monthly', priority: 1.0 }],
+  },
+
+  robots: {
+    groups: [
+      {
+        userAgent: '*',
+        allow: '/',
+      },
+    ],
+    sitemap: 'https://karim-tarek.vercel.app/sitemap.xml',
+  },
 
   image: {
     cloudinary: {
