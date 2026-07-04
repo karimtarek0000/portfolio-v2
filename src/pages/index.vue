@@ -3,7 +3,11 @@
     <SectionsSkills />
     <SectionsAbout />
     <SectionsExperience />
+  </main>
+
+  <SectionsProjects />
+
+  <main class="layout-container">
     <SectionsServices />
   </main>
-  <SectionsProjects />
 </template>

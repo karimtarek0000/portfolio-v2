@@ -30,33 +30,18 @@ const headerAnimationOptions = {
 const services: Service[] = [
   {
     id: 1,
-    title: 'Legacy Code Transformation',
+    title: 'Pixel-Perfect UI',
     description:
-      'Breathe new life into outdated codebases with modern architecture, improved performance, and maintainable code that scales with your business needs.',
+      'Transform designs into stunning, responsive interfaces that deliver exceptional user experiences across all devices and platforms.',
     features: [
-      'Code modernization & optimization',
-      'Performance improvements',
-      'Clean architecture implementation',
-      'Component based-architecture',
-      'Testing suite',
+      'Design system development',
+      'Mobile-first responsive design',
+      'Animations & interactions',
     ],
-    icon: 'refactor',
+    icon: 'ui-design',
   },
   {
     id: 2,
-    title: 'Full-Stack Development',
-    description:
-      'End-to-end application development from initial concept to production deployment, utilizing cutting-edge technologies and industry best practices.',
-    features: [
-      'Modern frontend & backend development',
-      'RESTful APIs & GraphQL integration',
-      'Renders mode (CSR-SSR-SSG-ISR)',
-      'Automated CI/CD pipelines',
-    ],
-    icon: 'development',
-  },
-  {
-    id: 3,
     title: 'Framework Migration',
     description:
       'Seamlessly transition between Vue and React ecosystems while maintaining functionality, improving performance, and future-proofing your applications.',
@@ -70,16 +55,31 @@ const services: Service[] = [
     icon: 'migration',
   },
   {
-    id: 4,
-    title: 'Pixel-Perfect UI',
+    id: 3,
+    title: 'Legacy Code Transformation',
     description:
-      'Transform designs into stunning, responsive interfaces that deliver exceptional user experiences across all devices and platforms.',
+      'Breathe new life into outdated codebases with modern architecture, improved performance, and maintainable code that scales with your business needs.',
     features: [
-      'Design system development',
-      'Mobile-first responsive design',
-      'Animations & interactions',
+      'Code modernization & optimization',
+      'Performance improvements',
+      'Clean architecture implementation',
+      'Component based-architecture',
+      'Testing suite',
     ],
-    icon: 'ui-design',
+    icon: 'refactor',
+  },
+  {
+    id: 4,
+    title: 'Full Stack Development',
+    description:
+      'End-to-end application development from initial concept to production deployment, utilizing cutting-edge technologies and industry best practices.',
+    features: [
+      'React, Vue, Nuxt, Next frontend & backend nodejs development',
+      'RESTful APIs',
+      'Renders mode (CSR-SSR-SSG-ISR)',
+      'Automated CI/CD Github',
+    ],
+    icon: 'development',
   },
 ]
 
@@ -90,10 +90,7 @@ const services: Service[] = [
 /**
  * Set service card ref for animations
  */
-const setServiceCardRef = (
-  el: Element | ComponentPublicInstance | null,
-  index: number,
-) => {
+const setServiceCardRef = (el: Element | ComponentPublicInstance | null, index: number) => {
   if (el && '$el' in el) {
     // Handle component instance
     serviceCardRefs.value[index] = el.$el as HTMLElement
@@ -174,11 +171,7 @@ useServicesAnimations(
 
             <!-- Features List -->
             <ul class="service-card__features">
-              <li
-                v-for="feature in service.features"
-                :key="feature"
-                class="service-card__feature"
-              >
+              <li v-for="feature in service.features" :key="feature" class="service-card__feature">
                 <svg
                   class="service-card__feature-icon"
                   viewBox="0 0 20 20"
@@ -289,7 +282,9 @@ useServicesAnimations(
     transparent,
     rgba(var(--primary-2), 0.3)
   );
-  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
   mask-composite: xor;
 }
 
@@ -314,20 +309,25 @@ useServicesAnimations(
   /* 3D properties that need regular CSS */
   transform-style: preserve-3d;
   perspective: 1000px;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.1), 0 4px 20px rgba(var(--primary-2), 0.1);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.1),
+    0 4px 20px rgba(var(--primary-2), 0.1);
 }
 
 .service-card:hover .service-card__icon {
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.1), 0 8px 40px rgba(var(--primary-2), 0.25);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.2),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.1),
+    0 8px 40px rgba(var(--primary-2), 0.25);
 }
 
 .service-card__icon-bg {
   @apply absolute inset-0 rounded-2xl opacity-0 transition-all duration-500 blur-[15px];
 
   /* Complex gradients with CSS variables */
-  background: radial-gradient(
+  background:
+    radial-gradient(
       circle at center,
       rgba(var(--primary-2), 0.4) 0%,
       rgba(var(--primary-2), 0.2) 30%,
@@ -339,12 +339,16 @@ useServicesAnimations(
       rgba(var(--primary-2), 0.1),
       rgba(var(--primary-2), 0.3)
     );
-  background-size: 100% 100%, 200% 200%;
+  background-size:
+    100% 100%,
+    200% 200%;
   animation: pulse-glow 3s ease-in-out infinite;
 }
 
 .service-card:hover .service-card__icon-bg {
-  animation: pulse-glow 2s ease-in-out infinite, rotate-glow 8s linear infinite;
+  animation:
+    pulse-glow 2s ease-in-out infinite,
+    rotate-glow 8s linear infinite;
 }
 
 .service-card__content {
@@ -411,16 +415,9 @@ useServicesAnimations(
   @apply absolute inset-0 rounded-2xl opacity-0 transition-all duration-500 pointer-events-none;
 
   /* Complex multi-gradient backgrounds */
-  background: radial-gradient(
-      circle at 30% 30%,
-      rgba(var(--primary-2), 0.1) 0%,
-      transparent 50%
-    ),
-    radial-gradient(
-      circle at 70% 70%,
-      rgba(var(--primary-2), 0.08) 0%,
-      transparent 50%
-    ),
+  background:
+    radial-gradient(circle at 30% 30%, rgba(var(--primary-2), 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 70% 70%, rgba(var(--primary-2), 0.08) 0%, transparent 50%),
     linear-gradient(
       135deg,
       rgba(var(--primary-2), 0.05) 0%,
@@ -492,7 +489,8 @@ useServicesAnimations(
 @media (min-width: 1024px) {
   .service-card:hover {
     @apply shadow-2xl;
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25),
+    box-shadow:
+      0 25px 50px -12px rgba(0, 0, 0, 0.25),
       0 0 50px rgba(var(--primary-2), 0.15);
   }
 
