@@ -3,7 +3,7 @@ const data = useState('data')
 
 await callOnce(async () => {
   const { data: fetchedData } = await useFetch(
-    'https://jsonblob.com/api/jsonBlob/019f2d80-3fe1-73ee-8a53-0c5b6f9154a4',
+    'https://jsonblob.com/api/jsonBlob/01a0ee19-633c-7645-ae66-5232e8d7899e',
     {
       key: 'data-portfolio',
     },
