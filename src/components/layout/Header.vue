@@ -34,7 +34,7 @@
           <span class="text-[#FFC948]">i'm,</span> {{ data?.info.name }}
         </span>
         <span class="graident text-md text-nowrap">{{ data?.info.title }}</span>
-        <span class="graident text-md text-nowrap">{{ data?.info.years }}+</span>
+        <span class="graident text-sm text-nowrap">{{ data?.info.years }}+ Years</span>
       </h1>
 
       <!-- SOCIAL ICONS -->
