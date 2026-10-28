@@ -1,7 +1,7 @@
 <template>
   <section ref="containerRef" class="skills-section glassmorphism">
     <SharedHeader
-      title="skills"
+      title="my skills"
       subTitle="Languages and technologies"
       :animation-options="{
         triggerStart: 'top 75%',
