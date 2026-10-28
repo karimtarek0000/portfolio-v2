@@ -70,7 +70,7 @@ useAboutAnimations(
 <template>
   <section ref="sectionRef" class="py-10 mt-20 glassmorphism">
     <!-- Use SharedHeader with animations instead of custom header -->
-    <SharedHeader title="about me" :animation-options="headerAnimationOptions" />
+    <SharedHeader title="about" :animation-options="headerAnimationOptions" />
 
     <!-- Text content broken into lines for animation -->
     <div
