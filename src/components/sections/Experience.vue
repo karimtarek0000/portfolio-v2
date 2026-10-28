@@ -136,7 +136,7 @@ onBeforeUnmount(() => {
   <section class="py-10 mt-20 glassmorphism">
     <div ref="sharedHeaderRef">
       <SharedHeader
-        title="experience"
+        title="my experiences"
         :animation-options="animationConfig.header"
       />
     </div>
